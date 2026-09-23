@@ -63,6 +63,13 @@
     setIcon(theme);
     var sw = document.getElementById("darkmodeSwitch");
     if (sw) sw.checked = theme === "dark";
+    /* Clear 3D tilt inline transforms so light/dark swap never leaves a shrunk card */
+    try {
+      ["login-card", "reg-card", "logout-card", "wordmark"].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el && el.style) el.style.transform = "";
+      });
+    } catch (e) {}
     try {
       global.dispatchEvent(new CustomEvent("ra-theme-change", { detail: { theme: theme } }));
     } catch (e) {}

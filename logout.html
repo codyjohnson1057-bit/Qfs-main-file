@@ -8,29 +8,61 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
-<link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790030000">
 <style>
   :root{
     --gold:#D4AF37;--gold-bright:#F4D874;--green-mint:#98FF98;--ink:#020403;
+    --green-deep:#064e3b;
     --panel:rgba(12,28,32,0.48);--panel-border:rgba(255,255,255,0.22);
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html,body{height:100%;background:var(--ink);color:var(--gold);font-family:'Space Mono',monospace;overflow:hidden;-webkit-tap-highlight-color:transparent;}
+  html.light, html.light body,
+  html:not(.dark), html:not(.dark) body{
+    background:linear-gradient(165deg,#ecfdf5 0%,#d1fae5 40%,#f0fdf4 100%) !important;
+    color:var(--green-deep) !important;
+  }
   #rain{position:fixed;inset:0;z-index:0;display:block;}
   #burst{position:fixed;inset:0;z-index:1;pointer-events:none;}
   #vignette{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at center,rgba(2,4,3,0.10) 0%,rgba(2,4,3,0.60) 55%,rgba(2,4,3,0.93) 100%);}
+  html.light #vignette, html:not(.dark) #vignette{
+    background:radial-gradient(ellipse at center,rgba(236,253,245,0.05) 0%,rgba(5,150,105,0.08) 55%,rgba(6,78,59,0.18) 100%) !important;
+  }
   #scroll-wrap{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3vh 1.25rem;}
   .brand-wordmark{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(1.4rem,5vw,2.4rem);letter-spacing:.18em;color:var(--gold);text-shadow:0 0 30px rgba(212,175,55,.40);will-change:transform;transition:transform .12s ease-out;}
+  html.light .brand-wordmark, html:not(.dark) .brand-wordmark{color:#047857;text-shadow:0 0 24px rgba(16,185,129,.35);}
   .brand-sub{font-family:'Orbitron',sans-serif;font-weight:600;font-size:.65rem;letter-spacing:.6em;color:var(--green-mint);margin-top:.45rem;margin-bottom:2rem;}
-  .card{width:100%;max-width:420px;background:var(--panel);border:1px solid var(--panel-border);backdrop-filter:blur(28px) saturate(1.45);-webkit-backdrop-filter:blur(28px) saturate(1.45);padding:2.4rem 2rem;border-radius:1.75rem;box-shadow:0 20px 60px rgba(0,0,0,0.35),0 2px 12px rgba(16,185,129,0.1),inset 0 1px 0 rgba(255,255,255,0.28);text-align:center;will-change:transform;transition:transform .12s ease-out;}
+  html.light .brand-sub, html:not(.dark) .brand-sub{color:#059669;}
+  .card, #logout-card{
+    width:100%;max-width:min(480px,100%);
+    background:rgba(236,253,245,0.52);
+    background-image:
+      linear-gradient(145deg, rgba(16,185,129,0.28) 0%, transparent 45%),
+      linear-gradient(225deg, rgba(212,175,55,0.12) 0%, transparent 40%),
+      linear-gradient(180deg, rgba(255,255,255,0.55), rgba(236,253,245,0.42));
+    border:1px solid rgba(5,150,105,0.38);
+    backdrop-filter:blur(28px) saturate(1.55);-webkit-backdrop-filter:blur(28px) saturate(1.55);
+    padding:2.6rem 2.2rem 2.4rem;
+    border-radius:1.75rem;
+    clip-path:none;-webkit-clip-path:none;
+    box-shadow:0 20px 50px rgba(15,80,60,0.14),0 0 0 1px rgba(16,185,129,0.12),0 0 40px rgba(16,185,129,0.12),inset 0 1px 0 rgba(255,255,255,0.65);
+    text-align:center;will-change:transform;transition:transform .12s ease-out;
+    color:var(--green-deep);
+  }
   .card-eyebrow{font-size:.6rem;letter-spacing:.5em;color:var(--green-mint);margin-bottom:.7rem;opacity:.75;}
+  html.light .card-eyebrow, html:not(.dark) .card-eyebrow{color:#059669;}
   .card-title{font-family:'Orbitron',sans-serif;font-weight:800;font-size:clamp(1rem,3vw,1.35rem);letter-spacing:.2em;color:var(--gold-bright);}
+  html.light .card-title, html:not(.dark) .card-title{color:#047857;}
   .card-sub{font-size:.72rem;color:rgba(152,255,152,.65);margin-top:.8rem;letter-spacing:.1em;line-height:1.6;}
+  html.light .card-sub, html:not(.dark) .card-sub{color:rgba(5,150,105,.75);}
   .pulse{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--green-mint);box-shadow:0 0 12px rgba(152,255,152,.7);margin-top:1.4rem;animation:pulse 1s ease-in-out infinite;}
   @keyframes pulse{0%,100%{opacity:.35;transform:scale(.85);}50%{opacity:1;transform:scale(1.1);}}
 </style>
+<link rel="stylesheet" href="static/css/ra-auth.css?v=1790245600">
 </head>
-<body class="glass-ui">
+<body>
+<button type="button" id="raThemeToggle" class="headerButton ra-theme-toggle ra-theme-fab" aria-label="Switch theme" title="Theme" style="position:fixed;top:max(12px,env(safe-area-inset-top));right:12px;z-index:10001;width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(212,175,55,0.45);background:rgba(2,4,3,0.92);color:#F4D874;cursor:pointer;pointer-events:auto;box-shadow:0 4px 16px rgba(0,0,0,0.55);font-size:20px;line-height:1;">
+  <span class="ra-theme-emoji" aria-hidden="true">☀</span>
+</button>
 <canvas id="rain"></canvas>
 <canvas id="burst"></canvas>
 <div id="vignette"></div>
@@ -56,8 +88,12 @@ const rctx=rainCanvas.getContext('2d');
 let cols,drops,fontSize=16;
 function sizeRain(){rainCanvas.width=innerWidth;rainCanvas.height=innerHeight;cols=Math.floor(rainCanvas.width/fontSize);drops=new Array(cols).fill(0).map(()=>Math.random()*-100);}
 sizeRain();addEventListener('resize',sizeRain);
+function rainFill(){
+  var dark=document.documentElement.classList.contains('dark');
+  return dark?'rgba(2,4,3,0.12)':'rgba(232,245,240,0.14)';
+}
 function drawRain(){
-  rctx.fillStyle='rgba(2,4,3,0.12)';rctx.fillRect(0,0,rainCanvas.width,rainCanvas.height);
+  rctx.fillStyle=rainFill();rctx.fillRect(0,0,rainCanvas.width,rainCanvas.height);
   rctx.font=fontSize+'px monospace';
   for(let i=0;i<cols;i++){
     const char=Math.random()<0.5?'0':'1';
@@ -94,12 +130,13 @@ addEventListener('pointerdown',e=>spawnBurst(e.clientX,e.clientY));
 const wordmark=document.getElementById('wordmark');
 const card=document.getElementById('logout-card');
 function applyTilt(el,x,y,str){const r=el.getBoundingClientRect();const rx=(x-r.left)/r.width-0.5;const ry=(y-r.top)/r.height-0.5;el.style.transform=`rotateX(${(-ry*str).toFixed(2)}deg) rotateY(${(rx*str).toFixed(2)}deg) translateZ(6px)`;}
-function resetTilt(el){el.style.transform='rotateX(0) rotateY(0) translateZ(0)';}
+function resetTilt(el){el.style.transform='';}
 addEventListener('pointermove',e=>{applyTilt(wordmark,e.clientX,e.clientY,12);applyTilt(card,e.clientX,e.clientY,4);});
 addEventListener('pointerleave',()=>{resetTilt(wordmark);resetTilt(card);});
+window.addEventListener('ra-theme-change',function(){resetTilt(wordmark);resetTilt(card);});
 
 setTimeout(function(){window.location.replace('login.html');},1800);
 </script>
-<script src="/static/js/ra-theme.js?v=1790241600"></script>
+<script src="/static/js/ra-theme.js?v=1790245600"></script>
 </body>
 </html>

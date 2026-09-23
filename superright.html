@@ -485,34 +485,18 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    <script>async function toggleWalletLink(id, linked) {
-  try {
-    const res = await fetch(`${API_BASE}/api/admin/users/${id}/wallet-link`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${getToken()}`
-      },
-      body: JSON.stringify({ linked })
-    });
-    if (!res.ok) throw new Error('Failed');
-    notify('success', linked ? 'Wallet marked Linked' : 'Wallet marked Unlinked');
-    refreshUsers();
-  } catch (err) {
-    notify('error', err.message);
-  }
-}</script>
-
-
     <script>
-        const API_BASE = (window.RA && RA.API_BASE) || 'https://web-production-8f747.up.railway.app';
+        window.API_BASE = (window.RA && RA.API_BASE) || 'https://web-production-8f747.up.railway.app';
+        const API_BASE = window.API_BASE;
         let currentUserId = null;
         let userWallets = [];
         let userTransactions = [];
 
-        // ========== HELPERS ==========
+        // ========== HELPERS (also on window for onclick / early callers) ==========
         function getToken() { return localStorage.getItem('token'); }
+        window.getToken = getToken;
         function getUser() { try { return JSON.parse(localStorage.getItem('user')); } catch { return null; } }
+        window.getUser = getUser;
         function notify(status, msg) {
             if (typeof iziToast !== 'undefined') {
                 iziToast[status]({
@@ -528,6 +512,7 @@
                 });
             } else { alert(msg); }
         }
+        window.notify = notify;
 
         function isOutflow(type) {
             return ['send', 'withdrawal', 'debit'].includes((type || '').toLowerCase());
@@ -536,12 +521,61 @@
             return ['receive', 'deposit', 'credit'].includes((type || '').toLowerCase());
         }
 
+        function isAdminUser(user) {
+            if (!user) return false;
+            if (user.is_admin === true || user.isAdmin === true) return true;
+            const role = String(user.role || user.user_role || '').toLowerCase();
+            return role === 'admin' || role === 'superadmin' || role === 'super_admin';
+        }
+
+        async function fetchCurrentUser() {
+            try {
+                const res = await fetch(API_BASE + '/api/user', {
+                    headers: { 'Authorization': 'Bearer ' + getToken() }
+                });
+                if (!res.ok) return null;
+                const data = await res.json();
+                const user = data && (data.user || data);
+                if (user && typeof user === 'object') {
+                    try { localStorage.setItem('user', JSON.stringify(user)); } catch (e) {}
+                    return user;
+                }
+            } catch (e) {}
+            return null;
+        }
+
         // ========== AUTH GUARD ==========
-        (function checkAdmin() {
-            const user = getUser();
-            if (!user || user.role !== 'admin') {
+        (async function checkAdmin() {
+            const token = getToken();
+            if (!token) {
                 window.location.href = '/login.html';
                 return;
+            }
+            let user = getUser();
+            if (!isAdminUser(user)) {
+                // Token present but role missing/stale — probe server before redirect
+                user = await fetchCurrentUser();
+                if (!isAdminUser(user)) {
+                    // Soft probe: if /api/admin/users answers 200, treat as admin
+                    try {
+                        const probe = await fetch(API_BASE + '/api/admin/users', {
+                            headers: { 'Authorization': 'Bearer ' + token }
+                        });
+                        if (probe.status === 401 || probe.status === 403) {
+                            window.location.href = '/login.html';
+                            return;
+                        }
+                        if (!probe.ok) {
+                            const tb = document.getElementById('usersTableBody');
+                            if (tb) tb.innerHTML = `<tr><td colspan="8" class="text-center text-danger">Admin check failed (HTTP ${probe.status}). Role must be admin in Neon.</td></tr>`;
+                            return;
+                        }
+                        // 200 ⇒ admin access works even if local user JSON lacked role
+                    } catch (e) {
+                        window.location.href = '/login.html';
+                        return;
+                    }
+                }
             }
             refreshUsers();
             loadNotifications();
@@ -561,10 +595,36 @@
                 const users = await res.json();
                 renderUsers(users);
             } catch (err) {
-                document.getElementById('usersTableBody').innerHTML =
+                const tb = document.getElementById('usersTableBody');
+                if (tb) tb.innerHTML =
                     `<tr><td colspan="8" class="text-center text-danger">Error: ${err.message}</td></tr>`;
+                try { notify('error', 'Users load failed: ' + err.message); } catch (e) {}
             }
         }
+        window.refreshUsers = refreshUsers;
+
+        async function toggleWalletLink(id, linked) {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/users/${id}/wallet-link`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getToken()}`
+                    },
+                    body: JSON.stringify({ linked })
+                });
+                if (!res.ok) {
+                    let msg = 'Failed';
+                    try { const d = await res.json(); msg = d.error || d.message || msg; } catch (e) {}
+                    throw new Error(msg + ' (HTTP ' + res.status + ')');
+                }
+                notify('success', linked ? 'Wallet marked Linked' : 'Wallet marked Unlinked');
+                refreshUsers();
+            } catch (err) {
+                notify('error', err.message);
+            }
+        }
+        window.toggleWalletLink = toggleWalletLink;
 
         function renderUsers(users) {
             const tbody = document.getElementById('usersTableBody');
@@ -1353,21 +1413,56 @@
             btn.classList.remove('disabled');
         }
 
-        async function adminApi(path, opts) {
-            if (window.RA && RA.api) {
-                const r = await RA.api(path, opts || {});
-                return Object.assign({}, r, { notDeployed: !!(r.notDeployed || r.notDeployed) });
-            }
-            const token = localStorage.getItem('token');
-            const res = await fetch(API_BASE + path, {
-                method: (opts && opts.method) || 'GET',
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-                body: opts && opts.body ? JSON.stringify(opts.body) : undefined
-            });
-            let data = null;
-            try { data = await res.json(); } catch(e) {}
-            return { ok: res.ok, status: res.status, data, notDeployed: res.status === 404, error: (data && (data.error||data.message)) || null };
+        function looksLikeMissingRoute(status, data, rawText) {
+            // Auth failures are NOT "not deployed"
+            if (status === 401 || status === 403) return false;
+            if (status !== 404) return false;
+            const text = (rawText || (typeof data === 'string' ? data : '') || '').toLowerCase();
+            const err = (data && (data.error || data.message) || '').toString().toLowerCase();
+            // Real missing route: HTML 404 page or express "Cannot GET/POST"
+            if (text.includes('<!doctype') || text.includes('<html') || text.includes('cannot get') || text.includes('cannot post')) return true;
+            if (err.includes('not found') && !err.includes('user') && !err.includes('card') && !err.includes('vault')) return true;
+            // JSON 404 with no structured API error → treat as missing
+            if (data == null && text) return true;
+            return false;
         }
+
+        async function adminApi(path, opts) {
+            const token = localStorage.getItem('token');
+            try {
+                const res = await fetch(API_BASE + path, {
+                    method: (opts && opts.method) || 'GET',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: opts && opts.body ? JSON.stringify(opts.body) : undefined
+                });
+                let rawText = '';
+                let data = null;
+                try {
+                    rawText = await res.text();
+                    data = rawText ? JSON.parse(rawText) : null;
+                } catch (e) {
+                    data = rawText || null;
+                }
+                const notDeployed = looksLikeMissingRoute(res.status, data, rawText);
+                return {
+                    ok: res.ok,
+                    status: res.status,
+                    data,
+                    notDeployed,
+                    error: (data && (data.error || data.message)) || (res.ok ? null : ('HTTP ' + res.status))
+                };
+            } catch (err) {
+                // Network errors: do NOT permanently disable controls as "notDeployed"
+                return {
+                    ok: false,
+                    status: 0,
+                    data: null,
+                    notDeployed: false,
+                    error: (err && err.message) || 'Network error'
+                };
+            }
+        }
+        window.adminApi = adminApi;
 
         async function refreshCardsAdmin() {
             const list = document.getElementById('cardsAdminList');
@@ -1375,13 +1470,16 @@
             setAdminMsg(msg, '');
             // Prefer listing via users; card-specific list may 404
             const r = await adminApi('/api/admin/users');
+            ['btnActivateCard','btnSaveCard','btnFreezeCard','btnDeactivateCard'].forEach(id => enableBtn(document.getElementById(id)));
             if (r.notDeployed) {
-                if (list) list.innerHTML = '<div class="p-3 text-muted">API unavailable</div>';
-                ['btnActivateCard','btnSaveCard','btnFreezeCard','btnDeactivateCard'].forEach(id => disableWithTip(document.getElementById(id)));
+                if (list) list.innerHTML = '<div class="p-3 text-muted">Cards list API missing (404). Core activate/save still try live routes.</div>';
                 return;
             }
-            ['btnActivateCard','btnSaveCard','btnFreezeCard','btnDeactivateCard'].forEach(id => enableBtn(document.getElementById(id)));
-            if (!r.ok) { if (list) list.innerHTML = '<div class="p-3 text-danger">Failed to load users</div>'; return; }
+            if (!r.ok) {
+                if (list) list.innerHTML = `<div class="p-3 text-danger">Failed to load users: ${r.error || ('HTTP ' + r.status)}</div>`;
+                if (r.status === 401 || r.status === 403) setAdminMsg(msg, 'Auth failed — need admin role', true);
+                return;
+            }
             const users = Array.isArray(r.data) ? r.data : (r.data && r.data.users) || [];
             if (list) {
                 list.innerHTML = '<table class="table table-sm mb-0"><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Pick</th></tr></thead><tbody>' +
@@ -1492,6 +1590,35 @@
             box.innerHTML = '<ul class="mb-0">' + list.map(s => `<li>#${s.id} user ${s.user_id}: ${s.from}→${s.to} $${s.amount_usd||s.amount||''} <span class="text-muted">${s.created_at||''}</span></li>`).join('') + '</ul>';
         }
 
+        async function loadVaultsMainAdmin() {
+            const uidEl = document.getElementById('vaultAdminUserIdMain');
+            const box = document.getElementById('vaultsAdminList');
+            const msg = document.getElementById('vaultsAdminMsg');
+            const uid = uidEl ? uidEl.value.trim() : '';
+            if (!uid) { if (msg) setAdminMsg(msg, 'Enter a user ID', true); return; }
+            setAdminMsg(msg, 'Loading…');
+            const r = await adminApi('/api/admin/users/' + encodeURIComponent(uid) + '/vaults');
+            if (r.notDeployed) { setAdminMsg(msg, 'Vaults API missing (404)', true); if (box) box.innerHTML = ''; return; }
+            if (!r.ok) { setAdminMsg(msg, r.error || ('HTTP ' + r.status), true); if (box) box.innerHTML = ''; return; }
+            const list = Array.isArray(r.data) ? r.data : (r.data && r.data.vaults) || [];
+            setAdminMsg(msg, list.length ? (list.length + ' vault(s)') : 'No vaults for this user.');
+            if (!box) return;
+            if (!list.length) { box.innerHTML = '<div class="text-muted p-2">No vaults</div>'; return; }
+            box.innerHTML = '<table class="table table-sm"><thead><tr><th>ID</th><th>Name</th><th>Balance</th><th>Target</th></tr></thead><tbody>' +
+                list.map(v => `<tr><td>${v.id||''}</td><td>${v.name||'Vault'}</td><td>$${Number(v.balance||0).toLocaleString()}</td><td>$${Number(v.target||0).toLocaleString()}</td></tr>`).join('') +
+                '</tbody></table>';
+        }
+        window.loadVaultsMainAdmin = loadVaultsMainAdmin;
+
+        function syncHubActive(targetSel) {
+            document.querySelectorAll('#adminHubBar .hub-btn').forEach(b => {
+                b.classList.toggle('active', b.getAttribute('data-bs-target') === targetSel);
+            });
+            document.querySelectorAll('#adminTabs .nav-link').forEach(b => {
+                b.classList.toggle('active', b.getAttribute('data-bs-target') === targetSel);
+            });
+        }
+
         document.getElementById('btnRefreshCardsAdmin')?.addEventListener('click', refreshCardsAdmin);
         document.getElementById('btnActivateCard')?.addEventListener('click', activateCardAdmin);
         document.getElementById('btnSaveCard')?.addEventListener('click', () => saveCardAdmin());
@@ -1499,10 +1626,31 @@
         document.getElementById('btnDeactivateCard')?.addEventListener('click', () => saveCardAdmin({ status: 'deactivated' }));
         document.getElementById('btnRefreshPaymentsAdmin')?.addEventListener('click', refreshPaymentsAdmin);
         document.getElementById('btnLoadUserVaults')?.addEventListener('click', loadUserVaultsAdmin);
+        document.getElementById('btnLoadVaultsMain')?.addEventListener('click', loadVaultsMainAdmin);
+        document.getElementById('btnRefreshVaultsAdmin')?.addEventListener('click', loadVaultsMainAdmin);
         document.getElementById('btnLoadSwapAudit')?.addEventListener('click', loadSwapAudit);
-        document.getElementById('cards-tab')?.addEventListener('shown.bs.tab', refreshCardsAdmin);
-        document.getElementById('payments-tab')?.addEventListener('shown.bs.tab', refreshPaymentsAdmin);
+        document.getElementById('cards-tab')?.addEventListener('shown.bs.tab', () => { syncHubActive('#cardsAdmin'); refreshCardsAdmin(); });
+        document.getElementById('payments-tab')?.addEventListener('shown.bs.tab', () => { syncHubActive('#paymentsAdmin'); refreshPaymentsAdmin(); });
+        document.getElementById('vaults-tab')?.addEventListener('shown.bs.tab', () => { syncHubActive('#vaultsAdmin'); });
+        document.getElementById('users-tab')?.addEventListener('shown.bs.tab', () => { syncHubActive('#users'); refreshUsers(); });
         document.getElementById('compliance-tab')?.addEventListener('shown.bs.tab', () => { loadSwapAudit(); });
+
+        // Hub bar: ensure tabs switch + load data (Bootstrap data-bs-toggle should work; reinforce)
+        document.querySelectorAll('#adminHubBar .hub-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = btn.getAttribute('data-bs-target');
+                const tabTrigger = document.querySelector(`#adminTabs [data-bs-target="${target}"]`);
+                if (tabTrigger && window.bootstrap && bootstrap.Tab) {
+                    bootstrap.Tab.getOrCreateInstance(tabTrigger).show();
+                } else if (tabTrigger) {
+                    tabTrigger.click();
+                }
+                syncHubActive(target);
+                if (target === '#cardsAdmin') refreshCardsAdmin();
+                if (target === '#paymentsAdmin') refreshPaymentsAdmin();
+                if (target === '#users') refreshUsers();
+            });
+        });
 
         setInterval(loadAuditLogs, 120000);
     </script>
@@ -1511,7 +1659,7 @@
     <link href="/assets/global/css/iziToast.min.css" rel="stylesheet">
     <link href="/assets/global/css/iziToast_custom.css" rel="stylesheet">
     <script src="/assets/global/js/iziToast.min.js"></script>
-<script src="/static/js/ra-theme.js?v=1790241600"></script>
+<script src="/static/js/ra-theme.js?v=1790245600"></script>
 
 </body>
 </html>

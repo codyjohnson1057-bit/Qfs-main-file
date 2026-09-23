@@ -125,10 +125,16 @@
     will-change:transform;transition:transform .12s ease-out,box-shadow .35s ease,border-color .35s ease;
   }
   /* beat glass-dashboard flat white overrides */
-  body.glass-ui #login-card,
-  body.glass-ui .card#login-card,
-  html:not(.dark) body.glass-ui #login-card,
-  html:not(.dark) body.glass-ui .card#login-card{
+  html.light #login-card,
+  html.light .card#login-card,
+  html:not(.dark) #login-card,
+  html:not(.dark) .card#login-card{
+    clip-path:none !important;
+    -webkit-clip-path:none !important;
+    border-radius:1.75rem !important;
+    width:100% !important;
+    max-width:min(480px,100%) !important;
+    padding:2.6rem 2.2rem 2.4rem !important;
     background-image:
       linear-gradient(145deg, rgba(16,185,129,0.28) 0%, transparent 45%),
       linear-gradient(225deg, rgba(212,175,55,0.12) 0%, transparent 40%),
@@ -622,7 +628,7 @@
 
 </style>
 <script src="/static/js/ra-api.js?v=1790241600"></script>
-    <link rel="stylesheet" href="static/css/ra-auth.css?v=1790241600">
+    <link rel="stylesheet" href="static/css/ra-auth.css?v=1790245600">
 </head>
 <body>
 <button type="button" id="raThemeToggle" class="headerButton ra-theme-toggle ra-theme-fab" aria-label="Switch theme" title="Theme" style="position:fixed;top:max(12px,env(safe-area-inset-top));right:12px;z-index:10001;width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(212,175,55,0.45);background:rgba(2,4,3,0.92);color:#F4D874;cursor:pointer;pointer-events:auto;box-shadow:0 4px 16px rgba(0,0,0,0.55);font-size:20px;line-height:1;">
@@ -815,7 +821,7 @@ function applyTilt(el, x, y, str){
   const ry = (y - r.top)   / r.height - 0.5;
   el.style.transform = `rotateX(${(-ry * str).toFixed(2)}deg) rotateY(${(rx * str).toFixed(2)}deg) translateZ(6px)`;
 }
-function resetTilt(el){ el.style.transform = 'rotateX(0) rotateY(0) translateZ(0)'; }
+function resetTilt(el){ el.style.transform = ''; }
 
 window.addEventListener('pointermove', e => {
   applyTilt(wordmark,  e.clientX, e.clientY, 12);
@@ -908,7 +914,10 @@ if (loginForm) loginForm.addEventListener('submit', async (e) => {
 })();
 </script>
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-<script src="/static/js/ra-theme.js?v=1790241600"></script>
+<script>
+window.addEventListener('ra-theme-change', function(){ try{ ['login-card','reg-card','logout-card','wordmark'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.transform=''; }); }catch(e){} });
+</script>
+<script src="/static/js/ra-theme.js?v=1790245600"></script>
 </body>
 
 </html>
