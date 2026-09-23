@@ -546,6 +546,9 @@ function switchDarkModeCheck(value) {
   } catch (e) {}
 })();
 
+// Re-read after ra-theme sync so stale FinappDarkmode cannot fight preference
+try { checkDarkModeStatus = localStorage.getItem("FinappDarkmode"); } catch (e) {}
+
 // if dark mode on
 if (checkDarkModeStatus === 1 || checkDarkModeStatus === "1" || pageBody.classList.contains('dark-mode')) {
     switchDarkModeCheck(true);

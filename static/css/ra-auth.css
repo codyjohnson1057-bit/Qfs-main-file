@@ -1,0 +1,122 @@
+/* Shared auth pages (index / login / register) — linked LAST.
+   Dark = solid ink black original look. Light = page inline light styles. */
+
+/* Theme FAB — always above intro overlay */
+#raThemeToggle.ra-theme-fab,
+.ra-theme-fab {
+  position: fixed !important;
+  top: max(12px, env(safe-area-inset-top)) !important;
+  right: 12px !important;
+  z-index: 10001 !important;
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+#raThemeToggle .ra-theme-emoji {
+  display: inline-block;
+  font-size: 20px;
+  line-height: 1;
+  pointer-events: none;
+}
+#raThemeToggle ion-icon {
+  display: none !important; /* emoji is the visible affordance */
+}
+
+html.dark #raThemeToggle.ra-theme-fab {
+  background: rgba(2, 4, 3, 0.92) !important;
+  border: 1px solid rgba(212, 175, 55, 0.45) !important;
+  color: #F4D874 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.55) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html.light #raThemeToggle.ra-theme-fab,
+html:not(.dark) #raThemeToggle.ra-theme-fab {
+  background: rgba(236, 253, 245, 0.95) !important;
+  border: 1px solid rgba(5, 150, 105, 0.45) !important;
+  color: #064e3b !important;
+  box-shadow: 0 4px 14px rgba(5, 80, 60, 0.18) !important;
+}
+
+/* Overlay must never permanently block clicks */
+#overlay.hide {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* ---- DARK: solid original ink black (no grey glass) ---- */
+html.dark,
+html.dark body {
+  background: #020403 !important;
+  background-image: none !important;
+  color: #D4AF37 !important;
+}
+html.dark body::before,
+html.dark body::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+}
+html.dark #vignette {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(2, 4, 3, 0.05) 0%,
+    rgba(2, 4, 3, 0.55) 55%,
+    rgba(2, 4, 3, 0.9) 100%
+  ) !important;
+}
+html.dark #overlay {
+  background: #020403 !important;
+}
+
+/* Auth cards: solid dark panel + gold border + cut corners — NOT frosted grey */
+html.dark .card,
+html.dark #login-card,
+html.dark #reg-card,
+html.dark .card#login-card,
+html.dark .card#reg-card {
+  background: #0a140f !important;
+  background-image: none !important;
+  border: 1px solid rgba(212, 175, 55, 0.35) !important;
+  color: #D4AF37 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px)) !important;
+  -webkit-clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px)) !important;
+}
+html.dark .card::before {
+  opacity: 0.2 !important;
+  border-radius: 0 !important;
+}
+html.dark .card input,
+html.dark .card select,
+html.dark #login-card input,
+html.dark #login-card select,
+html.dark #reg-card input,
+html.dark #reg-card select {
+  background: rgba(2, 4, 3, 0.85) !important;
+  border: 1px solid rgba(212, 175, 55, 0.3) !important;
+  color: #D4AF37 !important;
+  border-radius: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html.dark .btn-primary {
+  background: #D4AF37 !important;
+  color: #020403 !important;
+  border: 2px solid #D4AF37 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}

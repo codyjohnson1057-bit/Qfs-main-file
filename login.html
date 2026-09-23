@@ -435,7 +435,7 @@
     display:flex;align-items:center;justify-content:center;
     transition:opacity 1.2s ease, visibility 1.2s ease;
   }
-  #overlay.hide{opacity:0;visibility:hidden;}
+  #overlay.hide{opacity:0;visibility:hidden;pointer-events:none;}
   .glitch-logo{
     font-family:'Orbitron',sans-serif;
     font-weight:900;
@@ -487,7 +487,7 @@
     --green-mint:#98FF98;
     --ink:#020403;
     --panel:rgba(10,20,14,0.72);
-    --panel-solid:rgba(10,20,14,0.72);
+    --panel-solid:#0a140f;
     --panel-border:rgba(212,175,55,0.28);
     --red-alert:#FF4C4C;
   }
@@ -524,14 +524,13 @@
   html.dark body.glass-ui #reg-card,
   html.dark body.glass-ui .card#login-card,
   html.dark body.glass-ui .card#reg-card{
-    background:rgba(10,20,14,0.72) !important;
+    background:#0a140f !important;
     background-image:none !important;
     border:1px solid rgba(212,175,55,0.28) !important;
     color:#D4AF37 !important;
     border-radius:0 !important;
     box-shadow:none !important;
-    backdrop-filter:blur(10px) !important;
-    -webkit-backdrop-filter:blur(10px) !important;
+    backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
     clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px)) !important;
     -webkit-clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px)) !important;
   }
@@ -622,12 +621,12 @@
   }
 
 </style>
-    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790230000">
-  <script src="/static/js/ra-api.js?v=1790230000"></script>
+<script src="/static/js/ra-api.js?v=1790241600"></script>
+    <link rel="stylesheet" href="static/css/ra-auth.css?v=1790241600">
 </head>
-<body class="glass-ui">
-<button type="button" id="raThemeToggle" class="headerButton ra-theme-toggle ra-theme-fab" aria-label="Switch theme" title="Theme" style="position:fixed;top:max(12px,env(safe-area-inset-top));right:12px;z-index:9999;width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(16,185,129,0.35);background:rgba(8,18,20,0.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#ecfdf5;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.35);">
-  <ion-icon name="sunny-outline" style="font-size:22px;"></ion-icon>
+<body>
+<button type="button" id="raThemeToggle" class="headerButton ra-theme-toggle ra-theme-fab" aria-label="Switch theme" title="Theme" style="position:fixed;top:max(12px,env(safe-area-inset-top));right:12px;z-index:10001;width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(212,175,55,0.45);background:rgba(2,4,3,0.92);color:#F4D874;cursor:pointer;pointer-events:auto;box-shadow:0 4px 16px rgba(0,0,0,0.55);font-size:20px;line-height:1;">
+  <span class="ra-theme-emoji" aria-hidden="true">☀</span>
 </button>
 
 
@@ -829,11 +828,13 @@ window.addEventListener('pointerleave', () => {
 /* ============ PASSWORD TOGGLE ============ */
 const pwInput = document.getElementById('password-input');
 const eyeBtn  = document.getElementById('eye-btn');
-eyeBtn.addEventListener('click', () => {
-  const show = pwInput.type === 'password';
-  pwInput.type = show ? 'text' : 'password';
-  eyeBtn.textContent = show ? '◎' : '◉';
-});
+if (eyeBtn && pwInput) {
+  eyeBtn.addEventListener('click', () => {
+    const show = pwInput.type === 'password';
+    pwInput.type = show ? 'text' : 'password';
+    eyeBtn.textContent = show ? '◎' : '◉';
+  });
+}
 
 /* ============ LOGIN LOGIC ============ */
 const API_BASE = (window.RA && RA.API_BASE) || ((location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'http://127.0.0.1:5987' : 'https://web-production-8f747.up.railway.app');
@@ -850,21 +851,20 @@ const loginForm = document.getElementById('login-form');
 const loginBtn  = document.getElementById('loginBtn');
 const errMsg    = document.getElementById('err-msg');
 
-loginForm.addEventListener('submit', async (e) => {
+if (loginForm) loginForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  errMsg.classList.remove('show');
+  if (errMsg) errMsg.classList.remove('show');
 
-  const email = document.getElementById('email').value.trim();
-  const password = pwInput.value;
+  const emailEl = document.getElementById('email');
+  const email = emailEl ? emailEl.value.trim() : '';
+  const password = pwInput ? pwInput.value : '';
 
   if (!email || !password) {
-    errMsg.textContent = '⚠ All fields are required.';
-    errMsg.classList.add('show');
+    if (errMsg) { errMsg.textContent = '⚠ All fields are required.'; errMsg.classList.add('show'); }
     return;
   }
 
-  loginBtn.classList.add('loading');
-  loginBtn.textContent = 'AUTHENTICATING...';
+  if (loginBtn) { loginBtn.classList.add('loading'); loginBtn.textContent = 'AUTHENTICATING...'; }
 
   try {
     const __api = (window.RA && RA.API_BASE) || ((location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'http://127.0.0.1:5987' : 'https://web-production-8f747.up.railway.app');
@@ -887,22 +887,28 @@ loginForm.addEventListener('submit', async (e) => {
     // Redirect to dashboard
     window.location.href = 'dashboard.html';
   } catch (err) {
-    errMsg.textContent = '⚠ ' + err.message;
-    errMsg.classList.add('show');
-    loginBtn.classList.remove('loading');
-    loginBtn.textContent = 'LOG IN';
+    if (errMsg) { errMsg.textContent = '⚠ ' + (err && err.message ? err.message : 'Login failed'); errMsg.classList.add('show'); }
+    if (loginBtn) { loginBtn.classList.remove('loading'); loginBtn.textContent = 'LOG IN'; }
   }
 });
 
 /* ============ INTRO OVERLAY ============ */
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    document.getElementById('overlay').classList.add('hide');
-  }, 1500);
-});
+(function hideOverlaySoon(){
+  function hide(){
+    var ov = document.getElementById('overlay');
+    if (!ov) return;
+    ov.classList.add('hide');
+    ov.style.pointerEvents = 'none';
+  }
+  // Hide sooner so theme toggle / form never stay blocked
+  if (document.readyState === 'complete') setTimeout(hide, 600);
+  else window.addEventListener('load', function(){ setTimeout(hide, 600); });
+  // Safety: always clear after 2.5s even if load hangs
+  setTimeout(hide, 2500);
+})();
 </script>
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-<script src="/static/js/ra-theme.js?v=1790230000"></script>
+<script src="/static/js/ra-theme.js?v=1790241600"></script>
 </body>
 
 </html>

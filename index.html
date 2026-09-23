@@ -74,8 +74,7 @@
   }
   #overlay.hide{
     opacity:0;
-    visibility:hidden;
-  }
+    visibility:hidden;pointer-events:none;}
   .glitch-logo{
     font-family:'Orbitron',sans-serif;font-weight:900;
     font-size:clamp(1.3rem,5vw,2.5rem);
@@ -244,7 +243,7 @@
     --green-deep:#0A3D2A;
     --green-mint:#98FF98;
     --ink:#020403;
-    --panel:rgba(10,20,14,0.55);
+    --panel:#0a140f;
   }
   html.dark, html.dark body{
     background:#020403 !important;
@@ -327,11 +326,11 @@
   }
 
 </style>
-    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790230000">
+    <link rel="stylesheet" href="static/css/ra-auth.css?v=1790241600">
 </head>
-<body class="glass-ui">
-<button type="button" id="raThemeToggle" class="headerButton ra-theme-toggle ra-theme-fab" aria-label="Switch theme" title="Theme" style="position:fixed;top:max(12px,env(safe-area-inset-top));right:12px;z-index:9999;width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(16,185,129,0.35);background:rgba(8,18,20,0.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#ecfdf5;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.35);">
-  <ion-icon name="sunny-outline" style="font-size:22px;"></ion-icon>
+<body>
+<button type="button" id="raThemeToggle" class="headerButton ra-theme-toggle ra-theme-fab" aria-label="Switch theme" title="Theme" style="position:fixed;top:max(12px,env(safe-area-inset-top));right:12px;z-index:10001;width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(212,175,55,0.45);background:rgba(2,4,3,0.92);color:#F4D874;cursor:pointer;pointer-events:auto;box-shadow:0 4px 16px rgba(0,0,0,0.55);font-size:20px;line-height:1;">
+  <span class="ra-theme-emoji" aria-hidden="true">☀</span>
 </button>
 
 
@@ -508,13 +507,13 @@ window.addEventListener('pointerleave', () => {
 /* ============ INTRO OVERLAY ============ */
 window.addEventListener('load', () => {
   setTimeout(() => {
-    document.getElementById('overlay').classList.add('hide');
+    (function(){var ov=document.getElementById('overlay'); if(ov){ ov.classList.add('hide'); ov.style.pointerEvents='none'; }})();
   }, 1600);
 });
 </script>
 
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-<script src="/static/js/ra-theme.js?v=1790230000"></script>
+<script src="/static/js/ra-theme.js?v=1790241600"></script>
 </body>
 
 </html>

@@ -11,7 +11,6 @@
   function getTheme() {
     var t = stored();
     if (t === "light" || t === "dark") return t;
-    // Migrate legacy FinappDarkmode if ra-theme unset
     try {
       var f = localStorage.getItem(FIN);
       if (f === "1") return "dark";
@@ -23,14 +22,18 @@
   function setIcon(theme) {
     var btn = document.getElementById("raThemeToggle");
     if (!btn) return;
-    var icon = btn.querySelector("ion-icon");
     var emoji = btn.querySelector(".ra-theme-emoji");
+    if (!emoji) {
+      emoji = document.createElement("span");
+      emoji.className = "ra-theme-emoji";
+      emoji.setAttribute("aria-hidden", "true");
+      btn.insertBefore(emoji, btn.firstChild);
+    }
+    emoji.textContent = theme === "dark" ? "☀" : "☾";
+    var icon = btn.querySelector("ion-icon");
     if (icon) {
       icon.setAttribute("name", theme === "dark" ? "sunny-outline" : "moon-outline");
-    } else if (emoji) {
-      emoji.textContent = theme === "dark" ? "☀" : "☾";
-    } else if (!btn.querySelector("img")) {
-      /* leave custom markup */
+      icon.style.display = "none";
     }
     btn.setAttribute("aria-label", theme === "dark" ? "Switch to light mode" : "Switch to dark mode");
     btn.title = theme === "dark" ? "Light mode" : "Dark mode";
@@ -55,7 +58,6 @@
         localStorage.setItem(FIN, theme === "dark" ? "1" : "0");
       } catch (e) {}
     } else {
-      // Keep FinappDarkmode aligned even on FOUC apply
       try { localStorage.setItem(FIN, theme === "dark" ? "1" : "0"); } catch (e) {}
     }
     setIcon(theme);
@@ -78,13 +80,14 @@
       btn = document.createElement("button");
       btn.id = "raThemeToggle";
       btn.type = "button";
-      btn.className = "headerButton ra-theme-toggle";
-      btn.innerHTML = '<ion-icon name="sunny-outline"></ion-icon>';
+      btn.className = "headerButton ra-theme-toggle ra-theme-fab";
+      btn.innerHTML = '<span class="ra-theme-emoji" aria-hidden="true">☀</span>';
+      btn.style.cssText = "position:fixed;top:max(12px,env(safe-area-inset-top));right:12px;z-index:10001;width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;pointer-events:auto;";
       var right = document.querySelector(".appHeader .right");
       if (right) {
+        btn.classList.remove("ra-theme-fab");
         right.insertBefore(btn, right.firstChild);
       } else {
-        btn.classList.add("ra-theme-fab");
         (document.body || document.documentElement).appendChild(btn);
       }
     } else {
@@ -101,10 +104,18 @@
       if (!header || hidden) {
         btn.classList.add("ra-theme-fab");
         if (btn.parentNode !== document.body && document.body) document.body.appendChild(btn);
-        if (!btn.querySelector("ion-icon") && !btn.querySelector(".ra-theme-emoji")) {
-          btn.innerHTML = '<span class="ra-theme-emoji">☀</span>';
-        }
+        btn.style.zIndex = "10001";
+        btn.style.pointerEvents = "auto";
       }
+      if (!btn.querySelector(".ra-theme-emoji")) {
+        var span = document.createElement("span");
+        span.className = "ra-theme-emoji";
+        span.setAttribute("aria-hidden", "true");
+        span.textContent = "☀";
+        btn.insertBefore(span, btn.firstChild);
+      }
+      var ion = btn.querySelector("ion-icon");
+      if (ion) ion.style.display = "none";
     }
     if (!btn._raBound) {
       btn._raBound = 1;
@@ -119,7 +130,6 @@
     sw._raBound = 1;
     sw.addEventListener("click", function () {
       setTimeout(function () {
-        // Prefer our source of truth after legacy toggle mutates FinappDarkmode
         var f;
         try { f = localStorage.getItem(FIN); } catch (e) { f = null; }
         if (f === "1" || f === "0") {
@@ -137,7 +147,6 @@
     apply(getTheme(), true);
   }
 
-  // Early apply helper (also used if script loads late)
   apply(getTheme(), false);
 
   global.RATheme = {
@@ -155,4 +164,21 @@
   } else {
     init();
   }
+
+  /* Keep theme synonymous across tabs / bfcache navigations (landing → register) */
+  try {
+    global.addEventListener("storage", function (e) {
+      if (!e) return;
+      if (e.key === KEY || e.key === FIN) {
+        apply(getTheme(), false);
+      }
+    });
+  } catch (e) {}
+  try {
+    global.addEventListener("pageshow", function () {
+      apply(getTheme(), false);
+      ensureBtn();
+      setIcon(getTheme());
+    });
+  } catch (e) {}
 })(window);
