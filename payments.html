@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <script>(function(){try{var t=localStorage.getItem("ra-theme");var mode;if(t==="light"||t==="dark"){mode=t;}else{if(t!=="auto"){try{localStorage.setItem("ra-theme","auto");}catch(x){}}var h=new Date().getHours();mode=(h>=6&&h<18)?"light":"dark";}if(mode==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){}})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Robinhood Alliance - Payments</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/font-awesome.css">
+    <link rel="stylesheet" href="/static/css/App_Global.css">
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790040000">
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <script src="/static/js/ra-api.js"></script>
+    <style>
+      .mock-card { border-radius: 1.25rem; padding: 1.25rem; margin-bottom: 1rem; }
+      .btn-glass { background: rgba(16,185,129,0.2); border: 1px solid rgba(16,185,129,0.35); color: #ecfdf5; border-radius: 12px; padding: 0.55rem 1rem; cursor: pointer; }
+      .btn-glass:disabled { opacity: 0.5; cursor: not-allowed; }
+      .pay-grid { display: grid; gap: 10px; }
+      .pay-action {
+        display: flex; align-items: center; gap: 12px;
+        text-align: left; width: 100%;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: inherit; border-radius: 14px; padding: 0.75rem 0.9rem;
+        transition: background 0.2s ease, border-color 0.2s ease;
+        cursor: pointer;
+      }
+      .pay-action:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.16); }
+      .pay-action.active { border-color: rgba(16,185,129,0.55); background: rgba(16,185,129,0.12); }
+      .pay-action strong { display:block; font-size: 0.9rem; font-weight: 600; }
+      .pay-action span.sub { display:block; font-size: 0.7rem; opacity: 0.6; margin-top: 2px; }
+      .pay-icon {
+        flex-shrink: 0;
+        width: 42px; height: 42px;
+        display: inline-flex; align-items: center; justify-content: center;
+        border-radius: 12px;
+        border: 1px solid #000;
+        background: transparent;
+        color: #10b981;
+      }
+      .pay-icon ion-icon { font-size: 22px; color: #10b981; --ionicon-stroke-width: 32px; }
+      .code-box {
+        font-family: ui-monospace, SFMono-Regular, monospace;
+        font-size: 0.8rem; letter-spacing: 0.04em;
+        padding: 0.75rem; border-radius: 10px;
+        background: rgba(0,0,0,0.25); border: 1px solid rgba(16,185,129,0.3);
+        word-break: break-all; margin-top: 0.75rem;
+      }
+      .hidden { display: none !important; }
+      html:not(.dark) .pay-action {
+        background: rgba(255,255,255,0.55);
+        border-color: rgba(16,185,129,0.2);
+        color: #0f172a;
+      }
+      html:not(.dark) .pay-icon { border: 1px solid #000; background: rgba(255,255,255,0.7); color: #047857; }
+      html:not(.dark) .pay-icon ion-icon { color: #047857; }
+      html:not(.dark) .btn-glass { color: #064e3b; }
+    </style>
+</head>
+<body class="glass-ui">
+    <div class="appHeader text-light ico1">
+        <div class="left">
+            <a href="/dashboard.html" class="headerButton"><ion-icon name="chevron-back-outline"></ion-icon></a>
+        </div>
+        <div class="pageTitle"><span class="brand-title">ROBINHOOD</span></div>
+        <div class="right" style="position:relative;">
+            <button type="button" id="raThemeToggle" class="headerButton ra-theme-toggle" aria-label="Switch theme" title="Theme">
+                <ion-icon name="sunny-outline"></ion-icon>
+            </button>
+        </div>
+    </div>
+    <div id="appCapsule" class="container" style="padding-bottom: 100px;">
+        <div class="section mt-2 mb-2">
+            <h2 class="title" style="font-size:1.25rem;">Payments</h2>
+            <p class="text-muted" style="font-size:0.85rem;opacity:0.75;">ACH &amp; wire — contact support with your unique code to complete.</p>
+        </div>
+
+        <div class="wallet-card mock-card glass-panel">
+            <h3 style="font-size:1rem;margin-bottom:0.75rem;">Move money</h3>
+            <div class="pay-grid">
+                <button class="pay-action active" type="button" data-type="ach" id="btnAch">
+                    <span class="pay-icon"><ion-icon name="swap-horizontal-outline"></ion-icon></span>
+                    <span><strong>ACH transfer</strong><span class="sub">Bank transfer · 1–3 days</span></span>
+                </button>
+                <button class="pay-action" type="button" data-type="wire" id="btnWire">
+                    <span class="pay-icon"><ion-icon name="flash-outline"></ion-icon></span>
+                    <span><strong>Wire transfer</strong><span class="sub">Same-day cutoff 3pm ET</span></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="wallet-card mock-card glass-panel">
+            <h3 style="font-size:1rem;">New <span id="payTypeLabel">ACH</span> request</h3>
+            <form id="paymentForm">
+              <div class="form-group basic">
+                  <label class="text-muted" style="font-size:0.75rem;">Amount</label>
+                  <input class="form-control" type="number" id="payAmount" placeholder="0.00" min="0.01" step="0.01" required>
+              </div>
+              <div class="form-group basic mt-2">
+                  <label class="text-muted" style="font-size:0.75rem;">Currency</label>
+                  <select class="form-control" id="payCurrency">
+                    <option value="USD" selected>USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="GBP">GBP</option>
+                  </select>
+              </div>
+              <div class="form-group basic mt-2">
+                  <label class="text-muted" style="font-size:0.75rem;">Note (optional)</label>
+                  <input class="form-control" type="text" id="payNote" placeholder="Reference / payee">
+              </div>
+              <button class="btn-glass mt-3 w-100" type="submit" id="paySubmit">Submit request</button>
+            </form>
+            <div id="payResult" class="hidden">
+              <p style="margin-top:1rem;font-size:0.9rem;"><strong>Your unique code</strong></p>
+              <div class="code-box" id="payCodeDisplay"></div>
+              <p class="text-muted mt-2" style="font-size:0.8rem;" id="payResultMsg">
+                Contact support to complete this ACH/wire. Share the code above with support staff.
+              </p>
+            </div>
+            <p id="payError" class="text-muted mt-2 hidden" style="font-size:0.8rem;color:#f87171;"></p>
+        </div>
+
+        <div class="section mb-3">
+            <h3 class="title" style="font-size:1rem;">History</h3>
+            <div class="wallet-card mock-card" id="payHistory">
+              <p class="text-muted" style="font-size:0.8rem;margin:0;">Loading…</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="appBottomMenu">
+        <a href="/dashboard.html" class="item"><div class="col"><ion-icon name="home-outline"></ion-icon><strong>Home</strong></div></a>
+        <a href="/swap.html" class="item"><div class="col"><ion-icon name="reload-outline"></ion-icon><strong>Swap</strong></div></a>
+        <a href="/buy.html" class="item"><div class="col"><ion-icon name="cart-outline"></ion-icon><strong>Buy</strong></div></a>
+        <a href="/cards.html" class="item"><div class="col"><ion-icon name="card-outline"></ion-icon><strong>Cards</strong></div></a>
+        <a href="/payments.html" class="item active"><div class="col"><ion-icon name="cash-outline"></ion-icon><strong>Payments</strong></div></a>
+        <a href="/vaults.html" class="item"><div class="col"><ion-icon name="lock-closed-outline"></ion-icon><strong>Vaults</strong></div></a>
+        <a href="/profile-setting.html" class="item"><div class="col"><ion-icon name="settings-outline"></ion-icon><strong>Settings</strong></div></a>
+    </div>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="/static/js/lib/bootstrap.bundle.min.js"></script>
+    <script>
+    (function(){
+      var KEY="ra-theme";
+      function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
+      function timeTheme(){var h=new Date().getHours();return (h>=6&&h<18)?"light":"dark";}
+      function getTheme(){var t=stored();if(t==="light"||t==="dark")return t;return timeTheme();}
+      function apply(theme,persist){
+        var root=document.documentElement, body=document.body;
+        if(theme==="light"){ root.classList.remove("dark"); root.classList.add("light"); if(body) body.classList.remove("dark-mode"); }
+        else { root.classList.add("dark"); root.classList.remove("light"); if(body) body.classList.add("dark-mode"); }
+        if(persist!==false){try{localStorage.setItem(KEY,theme);}catch(e){}}
+        var btn=document.getElementById("raThemeToggle");
+        if(btn){ var ic=btn.querySelector("ion-icon"); if(ic) ic.setAttribute("name", theme==="dark"?"sunny-outline":"moon-outline"); }
+      }
+      var btn=document.getElementById("raThemeToggle");
+      if(btn) btn.addEventListener("click", function(e){ e.preventDefault(); apply(getTheme()==="dark"?"light":"dark"); });
+      apply(getTheme());
+
+      var payType = 'ach';
+      function setType(t) {
+        payType = t;
+        document.getElementById('payTypeLabel').textContent = t === 'wire' ? 'Wire' : 'ACH';
+        document.querySelectorAll('.pay-action[data-type]').forEach(function(el){
+          el.classList.toggle('active', el.getAttribute('data-type') === t);
+        });
+      }
+      document.getElementById('btnAch').addEventListener('click', function(){ setType('ach'); });
+      document.getElementById('btnWire').addEventListener('click', function(){ setType('wire'); });
+
+      function showHistoryEmpty(msg) {
+        document.getElementById('payHistory').innerHTML = RA.portalEmptyHtml(msg || 'History syncs from portal');
+      }
+
+      async function loadHistory() {
+        var box = document.getElementById('payHistory');
+        // Prefer dedicated payments API; fall back to transactions filter; never mock
+        var r = await RA.api('/api/payments');
+        if (r.notDeployed) {
+          var tx = await RA.api('/api/transactions');
+          if (tx.ok && Array.isArray(tx.data)) {
+            var filtered = tx.data.filter(function(t){
+              var typ = String(t.type || t.kind || '').toLowerCase();
+              return typ.indexOf('ach') >= 0 || typ.indexOf('wire') >= 0 || typ.indexOf('payment') >= 0;
+            });
+            if (!filtered.length) { showHistoryEmpty('History syncs from portal'); return; }
+            box.innerHTML = filtered.map(renderPayRow).join('');
+            return;
+          }
+          showHistoryEmpty('History syncs from portal');
+          return;
+        }
+        if (!r.ok) {
+          showHistoryEmpty('History syncs from portal');
+          return;
+        }
+        var list = Array.isArray(r.data) ? r.data : (r.data && r.data.payments) || [];
+        if (!list.length) { showHistoryEmpty('History syncs from portal'); return; }
+        box.innerHTML = '<div class="transactions">' + list.map(renderPayRow).join('') + '</div>';
+      }
+
+      function renderPayRow(p) {
+        var code = p.code || p.id || '—';
+        var amt = p.amount != null ? (p.currency || 'USD') + ' ' + Number(p.amount).toFixed(2) : '—';
+        var st = p.status || 'pending_support';
+        return '<div class="item card-coin" style="padding:0.65rem 0;border-bottom:1px solid rgba(255,255,255,0.06);">' +
+          '<div class="detail"><div class="ms-2"><strong>' + (p.type || 'payment').toUpperCase() + '</strong>' +
+          '<p class="text-muted fs-12 mb-0" style="font-size:0.7rem;word-break:break-all;">' + code + ' · ' + st + '</p></div></div>' +
+          '<div class="right text-end"><div class="price">' + amt + '</div></div></div>';
+      }
+
+      document.getElementById('paymentForm').addEventListener('submit', async function(e){
+        e.preventDefault();
+        var amount = parseFloat(document.getElementById('payAmount').value);
+        var currency = document.getElementById('payCurrency').value;
+        var note = document.getElementById('payNote').value || '';
+        var errEl = document.getElementById('payError');
+        var resEl = document.getElementById('payResult');
+        errEl.classList.add('hidden');
+        resEl.classList.add('hidden');
+        if (!(amount > 0)) {
+          errEl.textContent = 'Enter a valid amount.';
+          errEl.classList.remove('hidden');
+          return;
+        }
+        var code = RA.uuid();
+        var btn = document.getElementById('paySubmit');
+        btn.disabled = true;
+        btn.textContent = 'Submitting…';
+        var r = await RA.api('/api/payments', {
+          method: 'POST',
+          body: { type: payType, amount: amount, currency: currency, note: note, code: code }
+        });
+        btn.disabled = false;
+        btn.textContent = 'Submit request';
+        // Always show client UUID as display code (even if API 404 — support flow)
+        var displayCode = (r.data && r.data.code) || code;
+        document.getElementById('payCodeDisplay').textContent = displayCode;
+        var msg = document.getElementById('payResultMsg');
+        if (r.notDeployed) {
+          msg.textContent = 'API not deployed yet — your code was generated locally. Contact support to complete this ' + payType.toUpperCase() + ' when the payments API goes live.';
+        } else if (!r.ok) {
+          msg.textContent = (r.error || 'Request failed') + ' — still share this code with support if needed.';
+        } else {
+          msg.textContent = 'Contact support to complete this ' + payType.toUpperCase() + '/wire. Share the unique code above with support staff. Status: ' + ((r.data && r.data.status) || 'pending_support') + '.';
+        }
+        resEl.classList.remove('hidden');
+        loadHistory();
+      });
+
+      loadHistory();
+    })();
+    </script>
+</body>
+</html>

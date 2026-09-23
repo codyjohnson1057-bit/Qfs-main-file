@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <script>(function(){try{var t=localStorage.getItem("ra-theme");var mode;if(t==="light"||t==="dark"){mode=t;}else{if(t!=="auto"){try{localStorage.setItem("ra-theme","auto");}catch(x){}}var h=new Date().getHours();mode=(h>=6&&h<18)?"light":"dark";}if(mode==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){}})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Robinhood Alliance - Cards</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/font-awesome.css">
+    <link rel="stylesheet" href="/static/css/App_Global.css">
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790040000">
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <script src="/static/js/ra-api.js"></script>
+    <style>
+      .mock-card { border-radius: 1.25rem; padding: 1rem; margin-bottom: 1rem; }
+      .toggle-row { display:flex; align-items:center; justify-content:space-between; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+      .pill { display:inline-block; padding: 0.15rem 0.5rem; border-radius: 999px; font-size: 0.65rem; background: rgba(16,185,129,0.18); color: #6ee7b7; }
+      .pill.warn { background: rgba(234,179,8,0.2); color: #fde68a; }
+      .pill.lock { background: rgba(148,163,184,0.2); color: #cbd5e1; }
+      .btn-glass { background: rgba(16,185,129,0.2); border: 1px solid rgba(16,185,129,0.35); color: #ecfdf5; border-radius: 12px; padding: 0.5rem 0.9rem; font-size: 0.85rem; cursor:pointer; }
+      .btn-glass:disabled { opacity:0.5; cursor:not-allowed; }
+      .btn-glass.danger { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.35); }
+      .flip-scene { perspective: 1000px; width: 100%; max-width: 340px; margin: 0 auto 0.5rem; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+      .flip-card { position: relative; width: 100%; aspect-ratio: 1.68 / 1; transform-style: preserve-3d; transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1); }
+      .flip-scene.is-flipped .flip-card { transform: rotateY(180deg); }
+      .flip-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 14px; padding: 0.9rem 1rem; border: 1px solid rgba(255,255,255,0.14); box-shadow: 0 10px 28px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.1); overflow: hidden; }
+      .flip-face.front { background: linear-gradient(135deg, rgba(16,185,129,0.42), rgba(212,175,55,0.22) 48%, rgba(10,24,28,0.92)); backdrop-filter: blur(12px); }
+      .flip-face.back { background: linear-gradient(160deg, #0f1f22 0%, #16322c 55%, #0a1416 100%); transform: rotateY(180deg); }
+      .chip { width: 34px; height: 26px; border-radius: 5px; background: linear-gradient(135deg,#d4af37,#b8860b); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15); }
+      .visa-brand { font-weight: 800; letter-spacing: 0.12em; font-size: 0.85rem; opacity: 0.95; }
+      .pan { letter-spacing: 0.22em; font-size: 0.95rem; margin-top: 1.15rem; font-family: ui-monospace, SFMono-Regular, monospace; font-weight: 600; }
+      .meta-row { display:flex; justify-content:space-between; margin-top: 0.85rem; font-size: 0.7rem; opacity: 0.88; gap: 8px; }
+      .meta-row .lbl { opacity: 0.55; font-size: 0.55rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 2px; }
+      .flip-hint { text-align:center; font-size: 0.7rem; opacity: 0.55; margin: 0.15rem 0 0.75rem; }
+      .mag-stripe { height: 36px; margin: 0.55rem -1rem 0.7rem; background: linear-gradient(180deg, #1a1a1a, #0d0d0d 40%, #2a2a2a 55%, #111); }
+      .cvv-box { margin-left: auto; background: #f5f5f5; color: #111; border-radius: 4px; padding: 0.35rem 0.55rem; width: 72%; font-family: ui-monospace, monospace; display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; }
+      .sig-strip { background: repeating-linear-gradient(-45deg, #e8e0d4, #e8e0d4 6px, #d4cbb8 6px, #d4cbb8 12px); height: 28px; border-radius: 3px; margin-bottom: 0.55rem; }
+      .net-badge { position: absolute; bottom: 0.75rem; right: 1rem; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; opacity: 0.85; }
+      .locked-card { opacity: 0.55; filter: grayscale(0.35); pointer-events: none; }
+      .hidden { display:none !important; }
+      html:not(.dark) .toggle-row { border-bottom-color: rgba(16,185,129,0.12); }
+      html:not(.dark) .btn-glass { color: #064e3b; }
+    </style>
+</head>
+<body class="glass-ui">
+    <div class="appHeader text-light ico1">
+        <div class="left">
+            <a href="/dashboard.html" class="headerButton"><ion-icon name="chevron-back-outline"></ion-icon></a>
+        </div>
+        <div class="pageTitle"><span class="brand-title">ROBINHOOD</span></div>
+        <div class="right" style="position:relative;">
+            <button type="button" id="raThemeToggle" class="headerButton ra-theme-toggle" aria-label="Switch theme" title="Theme">
+                <ion-icon name="sunny-outline"></ion-icon>
+            </button>
+        </div>
+    </div>
+    <div id="appCapsule" class="container" style="padding-bottom: 100px;">
+        <div class="section mt-2 mb-2">
+            <h2 class="title" style="font-size:1.25rem;">Cards</h2>
+            <p class="text-muted" style="font-size:0.85rem;opacity:0.75;" id="cardsSubtitle">Virtual debit · $350 request fee</p>
+        </div>
+
+        <div id="cardRequestPanel" class="wallet-card mock-card glass-panel hidden">
+            <h3 style="font-size:1rem;">Request a card</h3>
+            <p class="text-muted" style="font-size:0.85rem;">Get a virtual Visa debit for <strong>$350</strong>. Card stays locked until an admin activates it.</p>
+            <button class="btn-glass" type="button" id="btnRequestCard">Request card — $350</button>
+            <p id="requestMsg" class="text-muted mt-2" style="font-size:0.8rem;"></p>
+        </div>
+
+        <div id="cardPendingPanel" class="wallet-card mock-card glass-panel hidden">
+            <span class="pill warn">Pending activation</span>
+            <h3 style="font-size:1rem;margin-top:0.5rem;">Waiting for admin</h3>
+            <p class="text-muted" style="font-size:0.85rem;">Your $350 card request was received. Support will activate your card shortly.</p>
+            <div class="flip-scene locked-card" aria-hidden="true">
+                <div class="flip-card">
+                    <div class="flip-face front">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <div class="chip"></div>
+                            <span class="pill lock">Locked</span>
+                        </div>
+                        <div class="pan">•••• •••• •••• ••••</div>
+                        <div class="meta-row">
+                            <div><div class="lbl">Cardholder</div>—</div>
+                            <div><div class="lbl">Exp</div>—</div>
+                            <div class="visa-brand">VISA</div>
+                        </div>
+                    </div>
+                    <div class="flip-face back"><div class="mag-stripe"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="cardActivePanel" class="wallet-card mock-card glass-panel hidden">
+            <div class="flip-scene" id="cardFlip" role="button" tabindex="0" aria-label="Flip card to see details">
+                <div class="flip-card">
+                    <div class="flip-face front">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <div class="chip"></div>
+                            <span class="pill" id="cardStatusPill">Virtual Debit</span>
+                        </div>
+                        <div class="pan" id="cardPan">•••• •••• •••• ••••</div>
+                        <div class="meta-row">
+                            <div><div class="lbl">Cardholder</div><span id="cardName">—</span></div>
+                            <div><div class="lbl">Exp</div><span id="cardExp">—</span></div>
+                            <div class="visa-brand">VISA</div>
+                        </div>
+                    </div>
+                    <div class="flip-face back">
+                        <div class="mag-stripe" aria-hidden="true"></div>
+                        <div class="sig-strip" aria-hidden="true"></div>
+                        <div class="cvv-box">
+                            <span style="opacity:0.55;font-size:0.6rem;">CVV</span>
+                            <strong id="cardCvv">•••</strong>
+                        </div>
+                        <div style="margin-top:0.65rem;font-size:0.65rem;opacity:0.7;">Network · Visa Debit · Contactless</div>
+                        <div class="net-badge">VISA</div>
+                    </div>
+                </div>
+            </div>
+            <p class="flip-hint">Tap card to flip</p>
+
+            <div class="toggle-row">
+                <div><strong>Freeze card</strong><div class="text-muted" style="font-size:0.75rem;">Instantly block new charges</div></div>
+                <label><input type="checkbox" id="freezeToggle"> Freeze</label>
+            </div>
+            <div class="toggle-row">
+                <div><strong>Daily limit</strong><div class="text-muted" style="font-size:0.75rem;" id="limitLabel">$2,500 / day</div></div>
+                <button class="btn-glass" type="button" id="btnEditLimit">Edit</button>
+            </div>
+            <div class="toggle-row" style="border-bottom:none;">
+                <div><strong>Online payments</strong></div>
+                <label><input type="checkbox" id="onlineToggle"> On</label>
+            </div>
+            <p id="cardApiMsg" class="text-muted mt-2" style="font-size:0.75rem;"></p>
+        </div>
+
+        <div id="cardsApiNote"></div>
+
+        <div class="section mb-3">
+            <h3 class="title" style="font-size:1rem;">Recent card activity</h3>
+            <div class="wallet-card mock-card" id="cardHistory"></div>
+        </div>
+    </div>
+
+    <div class="appBottomMenu">
+        <a href="/dashboard.html" class="item"><div class="col"><ion-icon name="home-outline"></ion-icon><strong>Home</strong></div></a>
+        <a href="/swap.html" class="item"><div class="col"><ion-icon name="reload-outline"></ion-icon><strong>Swap</strong></div></a>
+        <a href="/buy.html" class="item"><div class="col"><ion-icon name="cart-outline"></ion-icon><strong>Buy</strong></div></a>
+        <a href="/cards.html" class="item active"><div class="col"><ion-icon name="card-outline"></ion-icon><strong>Cards</strong></div></a>
+        <a href="/payments.html" class="item"><div class="col"><ion-icon name="cash-outline"></ion-icon><strong>Payments</strong></div></a>
+        <a href="/vaults.html" class="item"><div class="col"><ion-icon name="lock-closed-outline"></ion-icon><strong>Vaults</strong></div></a>
+        <a href="/profile-setting.html" class="item"><div class="col"><ion-icon name="settings-outline"></ion-icon><strong>Settings</strong></div></a>
+    </div>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="/static/js/lib/bootstrap.bundle.min.js"></script>
+    <script>
+    (function(){
+      var KEY="ra-theme";
+      function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
+      function timeTheme(){var h=new Date().getHours();return (h>=6&&h<18)?"light":"dark";}
+      function getTheme(){var t=stored();if(t==="light"||t==="dark")return t;return timeTheme();}
+      function apply(theme,persist){
+        var root=document.documentElement, body=document.body;
+        if(theme==="light"){ root.classList.remove("dark"); root.classList.add("light"); if(body) body.classList.remove("dark-mode"); }
+        else { root.classList.add("dark"); root.classList.remove("light"); if(body) body.classList.add("dark-mode"); }
+        if(persist!==false){try{localStorage.setItem(KEY,theme);}catch(e){}}
+        var btn=document.getElementById("raThemeToggle");
+        if(btn){ var ic=btn.querySelector("ion-icon"); if(ic) ic.setAttribute("name", theme==="dark"?"sunny-outline":"moon-outline"); }
+      }
+      var btn=document.getElementById("raThemeToggle");
+      if(btn) btn.addEventListener("click", function(e){ e.preventDefault(); apply(getTheme()==="dark"?"light":"dark"); });
+      apply(getTheme());
+
+      document.getElementById('cardHistory').innerHTML = RA.portalEmptyHtml('Synced from portal');
+
+      var currentCard = null;
+
+      function showOnly(id) {
+        ['cardRequestPanel','cardPendingPanel','cardActivePanel'].forEach(function(x){
+          document.getElementById(x).classList.toggle('hidden', x !== id);
+        });
+      }
+
+      function bindFlip() {
+        var scene=document.getElementById("cardFlip");
+        function toggleFlip(){ if(scene) scene.classList.toggle("is-flipped"); }
+        if(scene && !scene._bound){
+          scene._bound = 1;
+          scene.addEventListener("click", toggleFlip);
+          scene.addEventListener("keydown", function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggleFlip(); } });
+        }
+      }
+
+      function renderActive(card) {
+        currentCard = card;
+        showOnly('cardActivePanel');
+        document.getElementById('cardPan').textContent = RA.maskPan(card.number || card.pan || '');
+        document.getElementById('cardName').textContent = card.cardholder_name || card.name || '—';
+        document.getElementById('cardExp').textContent = card.expiry || card.exp || '—';
+        document.getElementById('cardCvv').textContent = card.cvv || '•••';
+        var frozen = !!(card.frozen || card.status === 'frozen');
+        document.getElementById('freezeToggle').checked = frozen;
+        document.getElementById('onlineToggle').checked = card.online_enabled !== false;
+        var lim = card.daily_limit != null ? card.daily_limit : 2500;
+        document.getElementById('limitLabel').textContent = '$' + Number(lim).toLocaleString() + ' / day';
+        document.getElementById('cardStatusPill').textContent = frozen ? 'Frozen' : 'Virtual Debit';
+        bindFlip();
+      }
+
+      async function loadCards() {
+        var note = document.getElementById('cardsApiNote');
+        note.innerHTML = '';
+        var r = await RA.api('/api/cards');
+        if (r.notDeployed) {
+          showOnly('cardRequestPanel');
+          note.innerHTML = RA.apiNotDeployedHtml('Cards');
+          return;
+        }
+        if (!r.ok) {
+          showOnly('cardRequestPanel');
+          note.innerHTML = '<p class="text-muted" style="font-size:0.85rem;">Could not load cards.</p>';
+          return;
+        }
+        var list = Array.isArray(r.data) ? r.data : (r.data && (r.data.cards || r.data.data)) || [];
+        if (!list.length) {
+          showOnly('cardRequestPanel');
+          return;
+        }
+        var card = list[0];
+        var st = String(card.status || '').toLowerCase();
+        if (st === 'active' || (st !== 'pending' && st !== 'requested' && card.number)) {
+          renderActive(card);
+        } else {
+          showOnly('cardPendingPanel');
+        }
+      }
+
+      document.getElementById('btnRequestCard').addEventListener('click', async function(){
+        var msg = document.getElementById('requestMsg');
+        msg.textContent = '';
+        this.disabled = true;
+        var r = await RA.api('/api/cards/request', { method: 'POST', body: {} });
+        this.disabled = false;
+        if (r.notDeployed) {
+          msg.textContent = 'API not deployed yet — card request endpoint is not live on Railway.';
+          return;
+        }
+        if (!r.ok) {
+          // try POST /api/cards as alias
+          var r2 = await RA.api('/api/cards', { method: 'POST', body: { fee: 350 } });
+          if (r2.notDeployed) {
+            msg.textContent = 'API not deployed yet — card request endpoint is not live on Railway.';
+            return;
+          }
+          if (!r2.ok) {
+            msg.textContent = r.error || r2.error || 'Request failed';
+            return;
+          }
+        }
+        msg.textContent = 'Request submitted ($350). Waiting for admin activation.';
+        showOnly('cardPendingPanel');
+      });
+
+      async function patchCard(body) {
+        var msg = document.getElementById('cardApiMsg');
+        if (!currentCard || !currentCard.id) {
+          msg.textContent = 'No card id — cannot update.';
+          return;
+        }
+        var r = await RA.api('/api/cards/' + encodeURIComponent(currentCard.id), { method: 'PATCH', body: body });
+        if (r.notDeployed) {
+          msg.textContent = 'API not deployed yet — freeze/limits will sync when cards API is live.';
+          return;
+        }
+        if (!r.ok) {
+          msg.textContent = r.error || 'Update failed';
+          return;
+        }
+        msg.textContent = 'Updated.';
+        Object.assign(currentCard, body);
+      }
+
+      document.getElementById('freezeToggle').addEventListener('change', function(){
+        patchCard({ frozen: this.checked, status: this.checked ? 'frozen' : 'active' });
+      });
+      document.getElementById('onlineToggle').addEventListener('change', function(){
+        patchCard({ online_enabled: this.checked });
+      });
+      document.getElementById('btnEditLimit').addEventListener('click', function(){
+        var cur = currentCard && currentCard.daily_limit != null ? currentCard.daily_limit : 2500;
+        var v = prompt('Daily limit (USD)', String(cur));
+        if (v == null) return;
+        var n = parseFloat(v);
+        if (!(n > 0)) return;
+        document.getElementById('limitLabel').textContent = '$' + Number(n).toLocaleString() + ' / day';
+        patchCard({ daily_limit: n });
+      });
+
+      loadCards();
+    })();
+    </script>
+</body>
+</html>

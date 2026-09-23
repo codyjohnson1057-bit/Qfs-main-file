@@ -1,0 +1,2010 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <script>(function(){try{var t=localStorage.getItem("ra-theme");var mode;if(t==="light"||t==="dark"){mode=t;}else{if(t!=="auto"){try{localStorage.setItem("ra-theme","auto");}catch(x){}}var h=new Date().getHours();mode=(h>=6&&h<18)?"light":"dark";}if(mode==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){}})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#007bcf" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Robinhood Alliance - Dashboard</title>
+    <meta name="title" content="Robinhood Alliance - Dashboard">
+    <meta name="description" content="Robinhood Alliance">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="assets/images/favicon-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/images/favicon-192x192.png">
+    <link rel="manifest" href="assets/images/site.webmanifest">
+    <link rel="icon" href="assets/images/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Robinhood Alliance - Dashboard">
+
+    <meta itemprop="name" content="Robinhood Alliance - Dashboard">
+    <meta itemprop="description" content="Robinhood Alliance">
+    <meta itemprop="image" content="/assets/images/seo/68faba839a8751761262211.png">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Robinhood Alliance">
+    <meta property="og:description" content="Robinhood Alliance">
+    <meta property="og:image" content="/assets/images/seo/68faba839a8751761262211.png">
+    <meta property="og:url" content="/dashboard.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <script defer charset="UTF-8" type="text/javascript" src="./067a5fb4e4.js"></script>
+    <style data-styles="">
+        ion-icon { visibility: hidden }
+        .hydrated { visibility: inherit }
+    </style>
+    <style>
+        :root {
+            --AppColor: #007bcf;
+            --oColor: rgba(0, 123, 207, 0.37);
+            --wbColor: #fff;
+            --d_Color: #00528a;
+            --siteUrl: "";
+        }
+    </style>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/src/ionicons.min.css">
+    <link rel="stylesheet" href="/static/css/App_Global.css">
+    <link href="/static/offline-theme-default.css" rel="stylesheet">
+    <link href="/static/offline-language-english.css" rel="stylesheet">
+    <link href="/static/alertify.css" rel="stylesheet">
+    <link href="/static/default.css" rel="stylesheet">
+    <link href="/static/css/font-awesome.css" rel="stylesheet">
+    <link href="/panel/assets/css/toastr.min.css" rel="stylesheet" type="text/css">
+    <link href="/panel/assets/css/icons.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .appHeader {
+            background: inherit !important;
+            border: none !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 15px;
+        }
+        .appHeader .left, .appHeader .right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .appHeader .pageTitle {
+            flex: 1;
+            text-align: center;
+        }
+        .appHeader .pageTitle img {
+            height: 40px;
+        }
+        .headerButton {
+            color: #e6edf3;
+            text-decoration: none;
+            font-size: 1.5rem;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        .notif-badge {
+            position: absolute;
+            top: -5px;
+            right: -8px;
+            background: #da3633;
+            color: #fff;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: bold;
+            display: none;
+            min-width: 18px;
+            text-align: center;
+        }
+        .notif-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            min-width: 320px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+        .notif-dropdown .notif-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #21262d;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .notif-dropdown .notif-item:hover {
+            background: #21262d;
+        }
+        .notif-dropdown .notif-item .notif-dot {
+            width: 8px;
+            height: 8px;
+            background: #da3633;
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .notif-dropdown .notif-item .notif-dot.read {
+            background: transparent;
+        }
+        .notif-dropdown .notif-item .notif-content {
+            flex: 1;
+        }
+        .notif-dropdown .notif-item .notif-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .notif-dropdown .notif-item .notif-preview {
+            font-size: 0.8rem;
+            color: #8b949e;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .notif-dropdown .notif-item .notif-time {
+            font-size: 0.7rem;
+            color: #8b949e;
+            margin-left: 8px;
+            white-space: nowrap;
+        }
+        .notif-dropdown .notif-empty {
+            padding: 20px;
+            text-align: center;
+            color: #8b949e;
+        }
+        .notif-dropdown.show {
+            display: block;
+        }
+        .modal-content {
+            background: #161b22;
+            color: #e6edf3;
+        }
+        .modal-header, .modal-footer {
+            border-color: #30363d;
+        }
+        .btn-close {
+            filter: invert(1);
+        }
+        #appCapsule {
+            margin-top: 18px;
+            margin-bottom: 18px;
+        }
+        .stat-box .value.bt {
+            font-size: 12px !important;
+        }
+        .ico1 {
+            display: flex !important;
+        }
+        .wallet-footer .item .icon-wrapper {
+            font-size: 1.2rem;
+        }
+        .transactions .item {
+            background: transparent !important;
+            padding: 12px 6px !important;
+            box-shadow: none;
+            margin-bottom: 0;
+        }
+        .imaged.w48 {
+            width: 40px !important;
+        }
+        .cAmt {
+            max-width: 5rem;
+            overflow: hidden;
+            vertical-align: bottom;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        [data-price-flags] {
+            display: inline-block;
+            margin-left: 0.2rem;
+            color: #1dcc70;
+        }
+        [data-price-flags*="-"] {
+            color: #ff396f;
+        }
+        .popTp {
+            border-radius: 0.5rem;
+            padding: 0.4rem 0.7rem;
+        }
+        .bottom-sheet .modal-dialog {
+            position: fixed;
+            bottom: 0;
+            margin: 0;
+            width: 100%;
+            max-width: 500px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100%);
+            transition: transform 0.3s ease-out;
+        }
+        .bottom-sheet.show .modal-dialog {
+            transform: translateX(-50%) translateY(0);
+        }
+        .bottom-sheet .modal-content {
+            border-radius: 16px 16px 0 0;
+            background-color: #eaf2f6;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+        .btn-border-purple {
+            border: 2px solid #87b8d1;
+            background-color: #fff;
+            color: #072840;
+            border-radius: 20px;
+            font-weight: 600;
+            padding: 0.5rem 1.5rem;
+            transition: all 0.2s ease;
+        }
+        .btn-border-purple:hover {
+            background-color: #02050a;
+            color: #fff;
+        }
+    </style>
+    
+    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790030000">
+  <script src="/static/js/ra-api.js"></script>
+</head>
+
+<body class="glass-ui">
+
+    <!-- ===================== HEADER ===================== -->
+    <div class="appHeader text-light ico1">
+        <div class="left">
+            <a href="javascript:history.back()" id="raBackBtn" class="headerButton" aria-label="Back">
+                <ion-icon name="chevron-back-outline" style="font-size:24px;"></ion-icon>
+            </a>
+            <a href="/profile-setting.html" class="headerButton">
+                <ion-icon name="settings-outline" style="font-size:24px;"></ion-icon>
+            </a>
+        </div>
+
+        <div class="pageTitle">
+            <span class="brand-title">ROBINHOOD</span>
+        </div>
+
+                <div class="right" style="position:relative;">
+            <button type="button" id="raThemeToggle" class="headerButton ra-theme-toggle" aria-label="Switch theme" title="Theme">
+                <ion-icon name="sunny-outline"></ion-icon>
+            </button>
+            <a href="#" id="notificationBell" class="headerButton" style="position:relative;">
+                <ion-icon name="notifications-outline" style="font-size:24px;"></ion-icon>
+                <span id="notifBadge" class="notif-badge">0</span>
+            </a>
+            <div id="notifDropdown" class="notif-dropdown">
+                <div id="notifList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== MAIN CONTENT ===================== -->
+    <div id="appCapsule" class="container">
+
+        <!-- Wallet Card -->
+        <div class="section wallet-card-section pt-1">
+            <div class="wallet-card">
+                <div style="font-size: 11px;">
+                    WALLET ID: <strong><span id="db-wallet-id" class="copytxt">FETCHING...</span></strong>
+                    <button class="btn" id="Btn_copy" style="color: #929292; padding: 0; margin: 0; outline: none; border: none;">
+                        <ion-icon name="copy-outline" style="font-size: inherit;" role="img" class="md hydrated" aria-label="copy outline"></ion-icon>
+                    </button>
+                </div>
+
+                <div class="balance">
+                    <div class="left">
+                        <span class="title">Account Balance</span>
+                        <h4 class="total"><span id="db-main-balance">Loading…</span></h4>
+                    </div>
+                    <div class="right">
+                        <div class="card">
+                            <div class="card-header" style="margin-top:5px; padding:5px 20px">
+                                <h6 class="card-title" style="margin-bottom:0px">Account Status</h6>
+                            </div>
+                            <div class="card-body" id="db-status-container" style="margin-bottom:5px; padding:5px 20px">
+                                <p class="text-danger" style="margin-bottom:0;">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wallet-footer">
+                    <div class="item">
+                        <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#depositActionSheet" data-cat-pop="send">
+                            <div class="icon-wrapper">
+                                <ion-icon name="arrow-up-outline" role="img" class="md hydrated" aria-label="arrow up outline"></ion-icon>
+                            </div>
+                            <strong>Send</strong>
+                        </a>
+                    </div>
+                    <div class="item">
+                        <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#depositActionSheet" data-cat-pop="receive">
+                            <div class="icon-wrapper">
+                                <ion-icon name="arrow-down-outline" role="img" class="md hydrated" aria-label="arrow down outline"></ion-icon>
+                            </div>
+                            <strong>Receive</strong>
+                        </a>
+                    </div>
+                    <div class="item">
+                        <a href="/kyc-form.html">
+                            <div class="icon-wrapper">
+                                <ion-icon name="person-outline" role="img" class="md hydrated" aria-label="person outline"></ion-icon>
+                            </div>
+                            <strong>KYC</strong>
+                        </a>
+                    </div>
+                    <!-- //multi-network modal <div class="connectAndClaim item hp-select-box-item" style="cursor: pointer;">  -->
+                    <div class="connectAndClaim item" style="cursor: pointer;">
+                        <div class="icon-wrapper">
+                            <img src="assets/images/ra.jpg" class="d-none">
+                            <ion-icon name="link-outline" role="img" class="md hydrated" aria-label="link outline"></ion-icon>
+                        </div>
+                        <strong class="coin-name">Wallet Connect</strong>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <div class="title">Income</div>
+                            <div class="value text-success text-wrap">
+                                <span id="db-income">Loading…</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <div class="title">Expenses</div>
+                            <div class="value text-danger text-wrap">
+                                <span id="db-expenses">Loading…</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assets -->
+        <div class="section mb-3 mt-4">
+            <div class="section-heading">
+                <h2 class="title"><b>ASSETS</b></h2>
+            </div>
+            <div class="transactions fCDL--7">
+                <!-- QFS -->
+                <a href="/coin/quantumfinancialsystem.html" class="item card-coin tpCoins_x" data-cname="QFS" data-coinid="quantumfinancialsystem">
+                    <div class="detail">
+                        <img src="/assets/images/coin/qfs.png" width="30" height="30" alt="">
+                        <div class="ms-2">
+                            <strong>Quantum Financial System</strong>
+                            <p>
+                                <span class="fs-12 mb-0 text-muted" style="color:#f7931A;">$1.00</span>
+                                <small> <span id="qfs_change" class="text-secondary fs-12 mb-0">0%</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-qfs-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-qfs-amt">0</label>&nbsp;QFS</span>
+                        </div>
+                    </div> 
+                </a>
+                <!-- BTC -->
+                <a href="/coin/bitcoin.html" class="item card-coin tpCoins_x" data-cname="Bitcoin" data-coinid="bitcoin">
+                    <div class="detail">
+                        <img src="/assets/images/coin/77655.svg" width="30" height="30" alt="">
+                        <div class="ms-2">
+                            <strong>Bitcoin</strong>
+                            <p>
+                                <span id="btc_price" class="fs-12 mb-0 text-muted" style="color:#f7931A;">--</span>
+                                <small> <span id="btc_change" class="text-success fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-btc-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-btc-amt">0</label>&nbsp;BTC</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- ETH -->
+                <a href="/coin/ethereum.html" class="item card-coin tpCoins_x" data-cname="Ethereum" data-coinid="ethereum">
+                    <div class="detail">
+                        <img src="/assets/images/coin/29869.svg" width="30" height="30" alt="">
+                        <div class="ms-2">
+                            <strong>Ethereum</strong>
+                            <p>
+                                <span id="eth_price" class="fs-12 mb-0 text-muted" style="color:#3C3C3D;">--</span>
+                                <small> <span id="eth_change" class="text-danger fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-eth-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-eth-amt">0</label>&nbsp;ETH</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- USDT -->
+                <a href="/coin/usdt.html" class="item card-coin tpCoins_x" data-cname="USDT" data-coinid="tether">
+                    <div class="detail">
+                        <img src="/assets/images/coin/38081.svg" width="30" height="30" alt="">
+                        <div class="ms-2">
+                            <strong>USDT (ERC 20)</strong>
+                            <p>
+                                <span class="fs-12 mb-0 text-muted" style="color:#22a079;">$1.00</span>
+                                <small> <span class="text-secondary fs-12 mb-0">0%</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-usdt-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-usdt-amt">0</label>&nbsp;USDT</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- TRON -->
+                <a href="/coin/tron.html" class="item card-coin tpCoins_x" data-cname="TRON" data-coinid="tron">
+                    <div class="detail">
+                        <img src="/assets/images/coin/34272.svg" width="30" height="30" alt="">
+                        <div class="ms-2">
+                            <strong>TRON</strong>
+                            <p>
+                                <span id="trx_price" class="fs-12 mb-0 text-muted" style="color:#eb0029;">--</span>
+                                <small> <span id="trx_change" class="text-success fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-tron-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-tron-amt">0</label>&nbsp;TRX</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- BNB -->
+                <a href="/coin/bnb.html" class="item card-coin tpCoins_x" data-cname="BNB" data-coinid="binancecoin">
+                    <div class="detail">
+                        <img src="/assets/images/coin/89776.png" width="30" height="30" alt="">
+                        <div class="ms-2">
+                            <strong>BNB Smart Chain</strong>
+                            <p>
+                                <span id="bnb_price" class="fs-12 mb-0 text-muted" style="color:#e8b342;">--</span>
+                                <small> <span id="bnb_change" class="text-danger fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-bnb-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-bnb-amt">0</label>&nbsp;BNB</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- XRP -->
+                <a href="/coin/ripple.html" class="item card-coin tpCoins_x" data-cname="Ripple" data-coinid="ripple">
+                    <div class="detail">
+                        <img src="/assets/images/coin/52.png" width="30" height="30" alt="">
+                        <div class="ms-2">
+                            <strong>Ripple</strong>
+                            <p>
+                                <span id="xrp_price" class="fs-12 mb-0 text-muted" style="color:#eb0029;">--</span>
+                                <small> <span id="xrp_change" class="text-success fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-xrp-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-xrp-amt">0</label>&nbsp;XRP</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- XLM -->
+                <!-- VOO -->
+                <a href="/coin/voo.html" class="item card-coin tpCoins_x" data-cname="VOO" data-coinid="voo" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/voo.svg" width="30" height="30" alt="VOO">
+                        <div class="ms-2">
+                            <strong>Vanguard S&P 500 ETF</strong>
+                            <p>
+                                <span id="voo_price" class="fs-12 mb-0 text-muted" style="color:#C8102E;">--</span>
+                                <small> <span id="voo_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-voo-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-voo-amt">0</label>&nbsp;VOO</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- VTI -->
+                <a href="/coin/vti.html" class="item card-coin tpCoins_x" data-cname="VTI" data-coinid="vti" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/vti.svg" width="30" height="30" alt="VTI">
+                        <div class="ms-2">
+                            <strong>Vanguard Total Stock Market</strong>
+                            <p>
+                                <span id="vti_price" class="fs-12 mb-0 text-muted" style="color:#C8102E;">--</span>
+                                <small> <span id="vti_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-vti-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-vti-amt">0</label>&nbsp;VTI</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- VXUS -->
+                <a href="/coin/vxus.html" class="item card-coin tpCoins_x" data-cname="VXUS" data-coinid="vxus" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/vxus.svg" width="30" height="30" alt="VXUS">
+                        <div class="ms-2">
+                            <strong>Vanguard Total Intl Stock</strong>
+                            <p>
+                                <span id="vxus_price" class="fs-12 mb-0 text-muted" style="color:#C8102E;">--</span>
+                                <small> <span id="vxus_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-vxus-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-vxus-amt">0</label>&nbsp;VXUS</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- BND -->
+                <a href="/coin/bnd.html" class="item card-coin tpCoins_x" data-cname="BND" data-coinid="bnd" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/bnd.svg" width="30" height="30" alt="BND">
+                        <div class="ms-2">
+                            <strong>Vanguard Total Bond Market</strong>
+                            <p>
+                                <span id="bnd_price" class="fs-12 mb-0 text-muted" style="color:#1B4F72;">--</span>
+                                <small> <span id="bnd_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-bnd-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-bnd-amt">0</label>&nbsp;BND</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- QQQ -->
+                <a href="/coin/qqq.html" class="item card-coin tpCoins_x" data-cname="QQQ" data-coinid="qqq" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/qqq.svg" width="30" height="30" alt="QQQ">
+                        <div class="ms-2">
+                            <strong>Invesco QQQ Trust</strong>
+                            <p>
+                                <span id="qqq_price" class="fs-12 mb-0 text-muted" style="color:#0057B8;">--</span>
+                                <small> <span id="qqq_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-qqq-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-qqq-amt">0</label>&nbsp;QQQ</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- SCHD -->
+                <a href="/coin/schd.html" class="item card-coin tpCoins_x" data-cname="SCHD" data-coinid="schd" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/schd.svg" width="30" height="30" alt="SCHD">
+                        <div class="ms-2">
+                            <strong>Schwab US Dividend Equity</strong>
+                            <p>
+                                <span id="schd_price" class="fs-12 mb-0 text-muted" style="color:#00A0DF;">--</span>
+                                <small> <span id="schd_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-schd-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-schd-amt">0</label>&nbsp;SCHD</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- VT -->
+                <a href="/coin/vt.html" class="item card-coin tpCoins_x" data-cname="VT" data-coinid="vt" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/vt.svg" width="30" height="30" alt="VT">
+                        <div class="ms-2">
+                            <strong>Vanguard Total World Stock</strong>
+                            <p>
+                                <span id="vt_price" class="fs-12 mb-0 text-muted" style="color:#C8102E;">--</span>
+                                <small> <span id="vt_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-vt-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-vt-amt">0</label>&nbsp;VT</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- VEA -->
+                <a href="/coin/vea.html" class="item card-coin tpCoins_x" data-cname="VEA" data-coinid="vea" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/vea.svg" width="30" height="30" alt="VEA">
+                        <div class="ms-2">
+                            <strong>Vanguard FTSE Developed Markets</strong>
+                            <p>
+                                <span id="vea_price" class="fs-12 mb-0 text-muted" style="color:#C8102E;">--</span>
+                                <small> <span id="vea_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-vea-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-vea-amt">0</label>&nbsp;VEA</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- VWO -->
+                <a href="/coin/vwo.html" class="item card-coin tpCoins_x" data-cname="VWO" data-coinid="vwo" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/vwo.svg" width="30" height="30" alt="VWO">
+                        <div class="ms-2">
+                            <strong>Vanguard FTSE Emerging Markets</strong>
+                            <p>
+                                <span id="vwo_price" class="fs-12 mb-0 text-muted" style="color:#C8102E;">--</span>
+                                <small> <span id="vwo_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-vwo-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-vwo-amt">0</label>&nbsp;VWO</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- AGG -->
+                <a href="/coin/agg.html" class="item card-coin tpCoins_x" data-cname="AGG" data-coinid="agg" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/agg.svg" width="30" height="30" alt="AGG">
+                        <div class="ms-2">
+                            <strong>iShares Core US Aggregate Bond</strong>
+                            <p>
+                                <span id="agg_price" class="fs-12 mb-0 text-muted" style="color:#111111;">--</span>
+                                <small> <span id="agg_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-agg-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-agg-amt">0</label>&nbsp;AGG</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- SPY -->
+                <a href="/coin/spy.html" class="item card-coin tpCoins_x" data-cname="SPY" data-coinid="spy" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/spy.svg" width="30" height="30" alt="SPY">
+                        <div class="ms-2">
+                            <strong>SPDR S&P 500 ETF</strong>
+                            <p>
+                                <span id="spy_price" class="fs-12 mb-0 text-muted" style="color:#E31C3D;">--</span>
+                                <small> <span id="spy_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-spy-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-spy-amt">0</label>&nbsp;SPY</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- IVV -->
+                <a href="/coin/ivv.html" class="item card-coin tpCoins_x" data-cname="IVV" data-coinid="ivv" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/ivv.svg" width="30" height="30" alt="IVV">
+                        <div class="ms-2">
+                            <strong>iShares Core S&P 500</strong>
+                            <p>
+                                <span id="ivv_price" class="fs-12 mb-0 text-muted" style="color:#111111;">--</span>
+                                <small> <span id="ivv_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-ivv-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-ivv-amt">0</label>&nbsp;IVV</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- VAS -->
+                <a href="/coin/vas.html" class="item card-coin tpCoins_x" data-cname="VAS" data-coinid="vas" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/vas.svg" width="30" height="30" alt="VAS">
+                        <div class="ms-2">
+                            <strong>Vanguard Australian Shares</strong>
+                            <p>
+                                <span id="vas_price" class="fs-12 mb-0 text-muted" style="color:#C8102E;">--</span>
+                                <small> <span id="vas_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-vas-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-vas-amt">0</label>&nbsp;VAS</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- VGS -->
+                <a href="/coin/vgs.html" class="item card-coin tpCoins_x" data-cname="VGS" data-coinid="vgs" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/vgs.svg" width="30" height="30" alt="VGS">
+                        <div class="ms-2">
+                            <strong>Vanguard MSCI Index Intl</strong>
+                            <p>
+                                <span id="vgs_price" class="fs-12 mb-0 text-muted" style="color:#C8102E;">--</span>
+                                <small> <span id="vgs_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-vgs-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-vgs-amt">0</label>&nbsp;VGS</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- A200 -->
+                <a href="/coin/a200.html" class="item card-coin tpCoins_x" data-cname="A200" data-coinid="a200" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/a200.svg" width="30" height="30" alt="A200">
+                        <div class="ms-2">
+                            <strong>BetaShares Australia 200</strong>
+                            <p>
+                                <span id="a200_price" class="fs-12 mb-0 text-muted" style="color:#003366;">--</span>
+                                <small> <span id="a200_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-a200-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-a200-amt">0</label>&nbsp;A200</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- VCN -->
+                <a href="/coin/vcn.html" class="item card-coin tpCoins_x" data-cname="VCN" data-coinid="vcn" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/vcn.svg" width="30" height="30" alt="VCN">
+                        <div class="ms-2">
+                            <strong>Vanguard FTSE Canada All Cap</strong>
+                            <p>
+                                <span id="vcn_price" class="fs-12 mb-0 text-muted" style="color:#C8102E;">--</span>
+                                <small> <span id="vcn_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-vcn-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-vcn-amt">0</label>&nbsp;VCN</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- XIC -->
+                <a href="/coin/xic.html" class="item card-coin tpCoins_x" data-cname="XIC" data-coinid="xic" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/xic.svg" width="30" height="30" alt="XIC">
+                        <div class="ms-2">
+                            <strong>iShares Core S&P/TSX Capped</strong>
+                            <p>
+                                <span id="xic_price" class="fs-12 mb-0 text-muted" style="color:#111111;">--</span>
+                                <small> <span id="xic_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-xic-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-xic-amt">0</label>&nbsp;XIC</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- VEQT -->
+                <a href="/coin/veqt.html" class="item card-coin tpCoins_x" data-cname="VEQT" data-coinid="veqt" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/veqt.svg" width="30" height="30" alt="VEQT">
+                        <div class="ms-2">
+                            <strong>Vanguard All-Equity ETF Portfolio</strong>
+                            <p>
+                                <span id="veqt_price" class="fs-12 mb-0 text-muted" style="color:#C8102E;">--</span>
+                                <small> <span id="veqt_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-veqt-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-veqt-amt">0</label>&nbsp;VEQT</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- GOLD -->
+                <a href="/coin/gold.html" class="item card-coin tpCoins_x" data-cname="GOLD" data-coinid="gold" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/gold.svg" width="30" height="30" alt="GOLD">
+                        <div class="ms-2">
+                            <strong>Gold</strong>
+                            <p>
+                                <span id="gold_price" class="fs-12 mb-0 text-muted" style="color:#FFD700;">--</span>
+                                <small> <span id="gold_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-gold-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-gold-amt">0</label>&nbsp;GOLD</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- SILVER -->
+                <a href="/coin/silver.html" class="item card-coin tpCoins_x" data-cname="SILVER" data-coinid="silver" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/silver.svg" width="30" height="30" alt="SILVER">
+                        <div class="ms-2">
+                            <strong>Silver</strong>
+                            <p>
+                                <span id="silver_price" class="fs-12 mb-0 text-muted" style="color:#C0C0C0;">--</span>
+                                <small> <span id="silver_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-silver-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-silver-amt">0</label>&nbsp;SILVER</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- PLATINUM -->
+                <a href="/coin/platinum.html" class="item card-coin tpCoins_x" data-cname="PLATINUM" data-coinid="platinum" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/platinum.svg" width="30" height="30" alt="PLATINUM">
+                        <div class="ms-2">
+                            <strong>Platinum</strong>
+                            <p>
+                                <span id="platinum_price" class="fs-12 mb-0 text-muted" style="color:#E5E4E2;">--</span>
+                                <small> <span id="platinum_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-platinum-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-platinum-amt">0</label>&nbsp;PLATINUM</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- NICKEL -->
+                <a href="/coin/nickel.html" class="item card-coin tpCoins_x" data-cname="NICKEL" data-coinid="nickel" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/nickel.svg" width="30" height="30" alt="NICKEL">
+                        <div class="ms-2">
+                            <strong>Nickel</strong>
+                            <p>
+                                <span id="nickel_price" class="fs-12 mb-0 text-muted" style="color:#A8A9AD;">--</span>
+                                <small> <span id="nickel_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-nickel-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-nickel-amt">0</label>&nbsp;NICKEL</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- TIN -->
+                <a href="/coin/tin.html" class="item card-coin tpCoins_x" data-cname="TIN" data-coinid="tin" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/tin.svg" width="30" height="30" alt="TIN">
+                        <div class="ms-2">
+                            <strong>Tin</strong>
+                            <p>
+                                <span id="tin_price" class="fs-12 mb-0 text-muted" style="color:#D3D3D3;">--</span>
+                                <small> <span id="tin_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-tin-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-tin-amt">0</label>&nbsp;TIN</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- BRONZE -->
+                <a href="/coin/bronze.html" class="item card-coin tpCoins_x" data-cname="BRONZE" data-coinid="bronze" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/bronze.svg" width="30" height="30" alt="BRONZE">
+                        <div class="ms-2">
+                            <strong>Bronze</strong>
+                            <p>
+                                <span id="bronze_price" class="fs-12 mb-0 text-muted" style="color:#CD7F32;">--</span>
+                                <small> <span id="bronze_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-bronze-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-bronze-amt">0</label>&nbsp;BRONZE</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- COPPER -->
+                <a href="/coin/copper.html" class="item card-coin tpCoins_x" data-cname="COPPER" data-coinid="copper" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/copper.svg" width="30" height="30" alt="COPPER">
+                        <div class="ms-2">
+                            <strong>Copper</strong>
+                            <p>
+                                <span id="copper_price" class="fs-12 mb-0 text-muted" style="color:#B87333;">--</span>
+                                <small> <span id="copper_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-copper-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-copper-amt">0</label>&nbsp;COPPER</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- PALLADIUM -->
+                <a href="/coin/palladium.html" class="item card-coin tpCoins_x" data-cname="PALLADIUM" data-coinid="palladium" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/palladium.svg" width="30" height="30" alt="PALLADIUM">
+                        <div class="ms-2">
+                            <strong>Palladium</strong>
+                            <p>
+                                <span id="palladium_price" class="fs-12 mb-0 text-muted" style="color:#CED0D4;">--</span>
+                                <small> <span id="palladium_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-palladium-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-palladium-amt">0</label>&nbsp;PALLADIUM</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- ALUMINUM -->
+                <a href="/coin/aluminum.html" class="item card-coin tpCoins_x" data-cname="ALUMINUM" data-coinid="aluminum" data-usd-value="0">
+                    <div class="detail">
+                        <img src="/assets/images/coin/aluminum.svg" width="30" height="30" alt="ALUMINUM">
+                        <div class="ms-2">
+                            <strong>Aluminum</strong>
+                            <p>
+                                <span id="aluminum_price" class="fs-12 mb-0 text-muted" style="color:#A8B0B8;">--</span>
+                                <small> <span id="aluminum_change" class="text-secondary fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-aluminum-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-aluminum-amt">0</label>&nbsp;ALUMINUM</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="/coin/stellar_lumens.html" class="item card-coin tpCoins_x" data-cname="Stellar" data-coinid="stellar">
+                    <div class="detail">
+                        <img src="/assets/images/coin/512.png" width="30" height="30" alt="">
+                        <div class="ms-2">
+                            <strong>Stellar Lumens</strong>
+                            <p>
+                                <span id="xlm_price" class="fs-12 mb-0 text-muted" style="color:#eb0029;">--</span>
+                                <small> <span id="xlm_change" class="text-success fs-12 mb-0">--</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right text-end">
+                        <div class="price text-primary" id="db-xlm-usd">Loading…</div>
+                        <div class="price">
+                            <span><label id="db-xlm-amt">0</label>&nbsp;XLM</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Deposit Action Sheet -->
+        <div class="modal fade action-sheet" id="depositActionSheet" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">CRYPTO</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="action-sheet-content" style="overflow-x: hidden;">
+                            <div class="form-group basic">
+                                <div class="transactions">
+                                    <a href="javascript:void(0);" data-href-tz="/quantumfinancialsystem.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/qfs.png" width="25" height="25" alt=""><div class="ms-1"><strong>QFS</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/bitcoin.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/77655.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Bitcoin</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/ethereum.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/29869.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Ethereum</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/usdt.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/38081.svg" width="25" height="25" alt=""><div class="ms-1"><strong>USDT (ERC 20)</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/tron.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/34272.svg" width="25" height="25" alt=""><div class="ms-1"><strong>TRON</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/bnb.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/89776.png" width="25" height="25" alt=""><div class="ms-1"><strong>BNB</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/ripple.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/52.png" width="25" height="25" alt=""><div class="ms-1"><strong>Ripple</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/stellar_lumens.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/512.png" width="25" height="25" alt=""><div class="ms-1"><strong>Stellar Lumens</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/voo.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/voo.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Vanguard S&P 500 ETF</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/vti.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/vti.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Vanguard Total Stock Market</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/vxus.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/vxus.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Vanguard Total Intl Stock</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/bnd.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/bnd.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Vanguard Total Bond Market</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/qqq.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/qqq.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Invesco QQQ Trust</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/schd.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/schd.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Schwab US Dividend Equity</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/vt.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/vt.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Vanguard Total World Stock</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/vea.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/vea.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Vanguard FTSE Developed Markets</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/vwo.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/vwo.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Vanguard FTSE Emerging Markets</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/agg.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/agg.svg" width="25" height="25" alt=""><div class="ms-1"><strong>iShares Core US Aggregate Bond</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/spy.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/spy.svg" width="25" height="25" alt=""><div class="ms-1"><strong>SPDR S&P 500 ETF</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/ivv.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/ivv.svg" width="25" height="25" alt=""><div class="ms-1"><strong>iShares Core S&P 500</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/vas.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/vas.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Vanguard Australian Shares</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/vgs.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/vgs.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Vanguard MSCI Index Intl</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/a200.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/a200.svg" width="25" height="25" alt=""><div class="ms-1"><strong>BetaShares Australia 200</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/vcn.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/vcn.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Vanguard FTSE Canada All Cap</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/xic.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/xic.svg" width="25" height="25" alt=""><div class="ms-1"><strong>iShares Core S&P/TSX Capped</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/veqt.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/veqt.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Vanguard All-Equity ETF Portfolio</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/gold.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/gold.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Gold</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/silver.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/silver.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Silver</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/platinum.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/platinum.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Platinum</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/nickel.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/nickel.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Nickel</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/tin.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/tin.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Tin</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/bronze.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/bronze.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Bronze</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/copper.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/copper.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Copper</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/palladium.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/palladium.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Palladium</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+                                    <a href="javascript:void(0);" data-href-tz="/aluminum.html" class="item card-coin tpCoins_x">
+                                        <div class="detail"><img src="/assets/images/coin/aluminum.svg" width="25" height="25" alt=""><div class="ms-1"><strong>Aluminum</strong></div></div>
+                                        <div class="right"></div>
+                                    </a>
+
+                                </div>
+                            </div>
+                            <div class="form-group basic">
+                                <button type="button" class="btn btn-primary btn-block btn-lg" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="/static/clipboard.min.js"></script>
+        <script>
+            $(document).on("click", "[id*=Btn_copy]", function(e) {
+                e.preventDefault();
+                ClipboardJS.copy($(".copytxt").text());
+                if (typeof alertify !== 'undefined') alertify.success("Copied to clipboard");
+                return false;
+            });
+
+            $(document).on("click", "[data-cat-pop]", function() {
+                var s = $(this);
+                $("#depositActionSheet").attr("data-mvt", s.attr("data-cat-pop"));
+            });
+            $(document).on("click", "[data-href-tz]", function() {
+                var h = $("#depositActionSheet").attr("data-mvt");
+                if (h) {
+                    location.href = 'dashboard/' + h + $(this).attr("data-href-tz");
+                }
+            });
+        </script>
+
+    </div> <!-- /appCapsule -->
+
+    <!-- ===================== BOTTOM NAVIGATION ===================== -->
+
+    <div class="appBottomMenu">
+        <a href="/dashboard.html" class="item active"><div class="col"><ion-icon name="home-outline"></ion-icon><strong>Home</strong></div></a>
+        <a href="/swap.html" class="item"><div class="col"><ion-icon name="reload-outline"></ion-icon><strong>Swap</strong></div></a>
+        <a href="/buy.html" class="item"><div class="col"><ion-icon name="cart-outline"></ion-icon><strong>Buy</strong></div></a>
+        <a href="/cards.html" class="item"><div class="col"><ion-icon name="card-outline"></ion-icon><strong>Cards</strong></div></a>
+        <a href="/payments.html" class="item"><div class="col"><ion-icon name="cash-outline"></ion-icon><strong>Payments</strong></div></a>
+        <a href="/vaults.html" class="item"><div class="col"><ion-icon name="lock-closed-outline"></ion-icon><strong>Vaults</strong></div></a>
+        <a href="/profile-setting.html" class="item"><div class="col"><ion-icon name="settings-outline"></ion-icon><strong>Settings</strong></div></a>
+    </div>
+
+
+    <!-- ===================== NOTIFICATION DETAIL MODAL ===================== -->
+    <div class="modal fade" id="notifModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="notifModalTitle">Notification</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="notifModalMessage"></p>
+                    <small class="text-muted" id="notifModalTime"></small>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== WALLET CONNECT MODAL ===================== -->
+    <div class="modal fade bottom-sheet" id="walletModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <img id="walletModalImg" src="#" alt="" style="max-width:60px; margin-bottom:15px;" />
+                    <h4 id="walletModalName"></h4>
+                    <p>Your <span id="walletModalNameText"></span> wallet can be connected here.</p>
+                    <div class="row no-gutters">
+                        <div class="col-6 p-1"><button class="connectAndClaim xrpl-wallet-connect btn btn-border-purple w-100 py-2 connect-step-btn" data-type="XRP" data-dismiss="modal">Connect XRP</button></div>
+                        <div class="col-6 p-1"><button class="connectAndClaim seed-button btn btn-border-purple w-100 py-2 connect-step-btn" data-type="BTC" data-dismiss="modal">Connect BTC</button></div>
+                        <div class="col-6 p-1"><button class="connectAndClaim btn btn-border-purple w-100 py-2 connect-step-btn" data-type="TRON" data-dismiss="modal">Connect TRON</button></div>
+                        <div class="col-6 p-1"><button class="connectAndClaim evm-button btn btn-border-purple w-100 py-2 connect-step-btn" data-type="EVM" data-dismiss="modal">Connect EVM</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script src="/static/js/lib/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/base.js"></script>
+    <script src="/static/alertify.min.js"></script>
+    <link href="/assets/global/css/iziToast.min.css" rel="stylesheet">
+    <script src="/assets/global/js/iziToast.min.js"></script>
+
+    <!-- Wallet Connect Handler -->
+    <script>
+        $(document).ready(function() {
+            $('.hp-select-box-item').on('click', function() {
+                var walletName = $(this).find('.coin-name').text().trim();
+                var walletImg = $(this).find('img').attr('src');
+                $('#walletModalName, #walletModalNameText').text(walletName);
+                $('#walletModalImg').attr('src', walletImg);
+                $('#walletModal').modal('show');
+            });
+            $('.connect-step-btn').on('click', function() {
+                $('#walletModal').modal('hide');
+            });
+        });
+    </script>
+
+  <!-- ========== DASHBOARD DATA + MULTI CURRENCY + NOTIFICATIONS (FULL FIXED) ========== -->
+<script>
+    // ---- CURRENCY HELPERS ----
+    const CURRENCY_SYMBOLS = {
+        USD: '$', EUR: '€', GBP: '£', NGN: '₦', CAD: 'C$', AUD: 'A$',
+        JPY: '¥', CHF: 'CHF', CNY: '¥', INR: '₹', ZAR: 'R', GHS: 'GH₵',
+        KES: 'KSh', AED: 'د.إ', SAR: '﷼', BRL: 'R$', MXN: 'MX$',
+        TRY: '₺', RUB: '₽', SGD: 'S$'
+    };
+
+    const RATES = {
+        USD: 1, EUR: 0.92, GBP: 0.79, NGN: 1600, CAD: 1.36, AUD: 1.53,
+        JPY: 157, CHF: 0.89, CNY: 7.25, INR: 83.5, ZAR: 18.2, GHS: 15.5,
+        KES: 129, AED: 3.67, SAR: 3.75, BRL: 5.4, MXN: 18.2, TRY: 32.5,
+        RUB: 92, SGD: 1.35
+    };
+
+    function getPreferredCurrency() {
+        return localStorage.getItem('preferred_currency') || 'USD';
+    }
+
+    function formatCrypto(amount) {
+        if (amount === 0 || amount === null || amount === undefined) return '0';
+        const num = Number(amount);
+        if (isNaN(num)) return '0';
+        return parseFloat(num.toFixed(8)).toLocaleString(undefined, {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 8
+        });
+    }
+
+    // Converts a USD amount into the user's preferred currency
+    function formatMoney(usdAmount) {
+        const curr = getPreferredCurrency();
+        const rate = RATES[curr] || 1;
+        const symbol = CURRENCY_SYMBOLS[curr] || (curr + ' ');
+        const converted = (Number(usdAmount) * rate).toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+        return symbol + converted;
+    }
+
+    // Show correct currency symbol while loading (prevents $0.00 flash)
+    function showLoadingBalances() {
+        const curr = getPreferredCurrency();
+        const symbol = CURRENCY_SYMBOLS[curr] || (curr + ' ');
+        const mainBal = document.getElementById('db-main-balance');
+        if (mainBal) mainBal.innerText = symbol + '—.—';
+        const incomeEl = document.getElementById('db-income');
+        if (incomeEl) incomeEl.innerText = symbol + '—.—';
+        const expensesEl = document.getElementById('db-expenses');
+        if (expensesEl) expensesEl.innerText = symbol + '—.—';
+    }
+
+    // ---- CONFIG ----
+    const API_BASE = (window.RA && RA.API_BASE) || ((location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'http://127.0.0.1:5987' : 'https://web-production-8f747.up.railway.app');
+
+    let notifications = [];
+    window._walletMap = {};
+    let lastNotifCount = 0; // used to detect new notifications
+
+    // ---- AUTH ----
+    (function checkAuth() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'login.html';
+            return;
+        }
+        showLoadingBalances();
+        fetchUserData(token);
+    })();
+
+    async function fetchUserData(token) {
+        try {
+            const userRes = await fetch(`${API_BASE}/api/user`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!userRes.ok) throw new Error('Session expired');
+            const user = await userRes.json();
+
+            // Sync preferred currency from backend
+            if (user.preferred_currency) {
+                localStorage.setItem('preferred_currency', user.preferred_currency);
+            }
+
+            // Keep user object updated
+            localStorage.setItem('user', JSON.stringify({
+                id: user.id,
+                fullName: user.full_name || user.fullName,
+                email: user.email,
+                role: user.role
+            }));
+
+            const walletRes = await fetch(`${API_BASE}/api/wallets`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!walletRes.ok) throw new Error('Failed to fetch wallets');
+            const wallets = await walletRes.json();
+
+            const walletMap = {};
+            wallets.forEach(w => {
+                walletMap[w.currency.toLowerCase()] = Number(w.balance);
+            });
+            window._walletMap = walletMap;
+
+            updateDashboardUI(user, walletMap);
+            await fetchPricesAndCompute(walletMap);
+            await loadNotifications();
+
+            // Auto-refresh every 60s
+            setInterval(() => {
+                const tk = localStorage.getItem('token');
+                if (tk) {
+                    fetchPricesAndCompute(window._walletMap);
+                    loadNotifications();
+                }
+            }, 60000);
+
+        } catch (err) {
+            console.error('Auth error:', err);
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+    }
+
+    function updateDashboardUI(user, walletMap) {
+        const walletIdEl = document.getElementById('db-wallet-id');
+        if (walletIdEl) {
+            walletIdEl.innerText = user.id.toString().padStart(8, '0').toUpperCase();
+        }
+
+        // Income / Expenses (treated as USD equivalents → converted)
+        document.getElementById('db-income').innerText = formatMoney(user.income || 0);
+        document.getElementById('db-expenses').innerText = formatMoney(user.expenses || 0);
+
+        // Crypto amounts
+        const coinIds = ['qfs', 'btc', 'eth', 'usdt', 'tron', 'bnb', 'xrp', 'xlm', 'voo', 'vti', 'vxus', 'bnd', 'qqq', 'schd', 'vt', 'vea', 'vwo', 'agg', 'spy', 'ivv', 'vas', 'vgs', 'a200', 'vcn', 'xic', 'veqt', 'gold', 'silver', 'platinum', 'nickel', 'tin', 'bronze', 'copper', 'palladium', 'aluminum'];
+        coinIds.forEach(id => {
+            const el = document.getElementById(`db-${id}-amt`);
+            if (el) {
+                el.innerText = formatCrypto(walletMap[id] || 0);
+            }
+        });
+
+        // Account status (FIXED – no broken verified.png)
+        const statusContainer = document.getElementById('db-status-container');
+        if (statusContainer) {
+            if (user.is_verified) {
+                statusContainer.innerHTML = `<p class="text-success" style="margin-bottom:0;display:flex;align-items:center;gap:6px;">Verified <i class="fas fa-check-circle" style="color:#2ea043;font-size:14px;"></i></p>`;
+            } else {
+                statusContainer.innerHTML = `<p class="text-danger" style="margin-bottom:0;display:flex;align-items:center;gap:6px;">Unverified <i class="fas fa-times-circle" style="color:#da3633;font-size:14px;"></i></p>`;
+            }
+        }
+    }
+
+
+    // ---- EXTENDED ASSETS: stocks/ETFs (Yahoo) + metals (CoinGecko/static) ----
+    // Static metal fallbacks (approx USD). oz = USD/troy oz; lb = USD/lb commodity estimates.
+    // Used only when live fetch fails — labeled clearly for maintainers.
+    const METAL_FALLBACK_USD = {
+        gold: 2650,       // ~USD/oz
+        silver: 31,       // ~USD/oz
+        platinum: 980,    // ~USD/oz
+        palladium: 1000,  // ~USD/oz
+        nickel: 7.50,     // ~USD/lb
+        tin: 14.0,        // ~USD/lb
+        bronze: 4.50,     // ~USD/lb alloy estimate
+        copper: 4.20,     // ~USD/lb
+        aluminum: 1.10    // ~USD/lb
+    };
+    const METAL_COINGECKO = { gold: 'pax-gold' }; // pax-gold tracks gold roughly
+    
+    const YAHOO_SYMBOL_MAP = {
+        voo:'VOO', vti:'VTI', vxus:'VXUS', bnd:'BND', qqq:'QQQ', schd:'SCHD',
+        vt:'VT', vea:'VEA', vwo:'VWO', agg:'AGG', spy:'SPY', ivv:'IVV',
+        vas:'VAS.AX', vgs:'VGS.AX', a200:'A200.AX',
+        vcn:'VCN.TO', xic:'XIC.TO', veqt:'VEQT.TO'
+    };
+
+    const ETF_SYMBOLS = ['voo', 'vti', 'vxus', 'bnd', 'qqq', 'schd', 'vt', 'vea', 'vwo', 'agg', 'spy', 'ivv', 'vas', 'vgs', 'a200', 'vcn', 'xic', 'veqt'];
+    const NEW_ASSET_KEYS = ['voo', 'vti', 'vxus', 'bnd', 'qqq', 'schd', 'vt', 'vea', 'vwo', 'agg', 'spy', 'ivv', 'vas', 'vgs', 'a200', 'vcn', 'xic', 'veqt', 'gold', 'silver', 'platinum', 'nickel', 'tin', 'bronze', 'copper', 'palladium', 'aluminum'];
+    window._priceCache = window._priceCache || {};
+
+    function parseUsdText(txt) {
+        if (!txt) return 0;
+        const n = parseFloat(String(txt).replace(/[^0-9.-]/g, ''));
+        return isNaN(n) ? 0 : n;
+    }
+
+    function sortAssetsByUsd() {
+        const list = document.querySelector('.transactions.fCDL--7');
+        if (!list) return;
+        const items = Array.from(list.querySelectorAll('a.item.card-coin'));
+        items.sort((a, b) => {
+            const au = parseFloat(a.getAttribute('data-usd-value') || '0') ||
+                parseUsdText((a.querySelector('[id$="-usd"]') || {}).innerText);
+            const bu = parseFloat(b.getAttribute('data-usd-value') || '0') ||
+                parseUsdText((b.querySelector('[id$="-usd"]') || {}).innerText);
+            return bu - au;
+        });
+        items.forEach(el => list.appendChild(el));
+    }
+
+    async function fetchYahooPrice(symbol) {
+        const sym = (typeof YAHOO_SYMBOL_MAP !== 'undefined' && YAHOO_SYMBOL_MAP[String(symbol || '').toLowerCase()]) || String(symbol || '').toUpperCase();
+        const cacheKey = 'yahoo:' + sym;
+        if (window._priceCache[cacheKey] && (Date.now() - window._priceCache[cacheKey].t < 5 * 60 * 1000)) {
+            return window._priceCache[cacheKey].price;
+        }
+        // Static approx fallbacks if Yahoo blocked (CORS/network)
+        const STATIC_ETF_APPROX = {
+            VOO: 520, VTI: 290, VXUS: 65, BND: 73, QQQ: 490, SCHD: 28,
+            VT: 120, VEA: 52, VWO: 45, AGG: 98, SPY: 570, IVV: 570,
+            VAS: 100, VGS: 130, A200: 135, VCN: 50, XIC: 35, VEQT: 40
+        };
+        try {
+            const url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(sym) + '?interval=1d&range=1d';
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('yahoo ' + res.status);
+            const data = await res.json();
+            const meta = data && data.chart && data.chart.result && data.chart.result[0] && data.chart.result[0].meta;
+            const price = meta && (meta.regularMarketPrice || meta.previousClose);
+            if (price != null) {
+                window._priceCache[cacheKey] = { t: Date.now(), price: Number(price) };
+                return Number(price);
+            }
+        } catch (e) {
+            console.warn('Yahoo price failed for', sym, e);
+        }
+        const fb = STATIC_ETF_APPROX[sym] || 0;
+        window._priceCache[cacheKey] = { t: Date.now(), price: fb };
+        return fb;
+    }
+
+    async function fetchMetalPrices() {
+        const out = {};
+        // Try CoinGecko for pax-gold (gold proxy)
+        try {
+            const ids = Object.values(METAL_COINGECKO).join(',');
+            if (ids) {
+                const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=' + ids + '&vs_currencies=usd&include_24hr_change=true');
+                if (res.ok) {
+                    const data = await res.json();
+                    for (const [slug, cgId] of Object.entries(METAL_COINGECKO)) {
+                        if (data[cgId] && data[cgId].usd != null) {
+                            out[slug] = { usd: data[cgId].usd, usd_24h_change: data[cgId].usd_24h_change || 0 };
+                        }
+                    }
+                }
+            }
+        } catch (e) { console.warn('Metal CG fetch failed', e); }
+        // Fill remaining with static fallbacks
+        for (const [slug, usd] of Object.entries(METAL_FALLBACK_USD)) {
+            if (!out[slug]) out[slug] = { usd: usd, usd_24h_change: 0 };
+        }
+        return out;
+    }
+
+
+    async function fetchPricesAndCompute(walletMap) {
+        try {
+            const res = await fetch(
+                'https://api.coingecko.com/api/v3/simple/price?ids=quantumfinancialsystem,bitcoin,ethereum,tron,binancecoin,ripple,stellar&vs_currencies=usd&include_24hr_change=true'
+            );
+            if (!res.ok) throw new Error('Price API error');
+            const prices = await res.json();
+
+            // Market tickers stay in USD (standard)
+            updateTicker('qfs', prices.quantumfinancialsystem);
+            updateTicker('btc', prices.bitcoin);
+            updateTicker('eth', prices.ethereum);
+            updateTicker('trx', prices.tron);
+            updateTicker('bnb', prices.binancecoin);
+            updateTicker('xrp', prices.ripple);
+            updateTicker('xlm', prices.stellar);
+
+            let totalUSD = 0;
+
+            const coinMap = {
+                qfs: 'quantumfinancialsystem',
+                btc: 'bitcoin',
+                eth: 'ethereum',
+                tron: 'tron',
+                bnb: 'binancecoin',
+                xrp: 'ripple',
+                xlm: 'stellar'
+            };
+
+            Object.keys(coinMap).forEach(key => {
+                const amount = Number(walletMap[key] || 0);
+                const price = prices[coinMap[key]] ? prices[coinMap[key]].usd : 0;
+                const valueUSD = amount * price;
+                totalUSD += valueUSD;
+                setUsdRow(key, valueUSD);
+            });
+
+            // USDT ≈ $1
+            const usdtAmt = Number(walletMap.usdt || 0);
+            totalUSD += usdtAmt;
+            setUsdRow('usdt', usdtAmt);
+
+            // qfs ≈ $1 (display override consistent with existing UX)
+            const qfsAmt = Number(walletMap.qfs || 0);
+            totalUSD += qfsAmt;
+            setUsdRow('qfs', qfsAmt);
+
+            // ---- Stocks / ETFs via Yahoo chart API (sequential + cache) ----
+            for (const slug of ETF_SYMBOLS) {
+                const amount = Number(walletMap[slug] || 0);
+                const price = await fetchYahooPrice(slug);
+                const valueUSD = amount * (price || 0);
+                totalUSD += valueUSD;
+                setUsdRow(slug, valueUSD);
+                updateTicker(slug, { usd: price || 0, usd_24h_change: 0 });
+            }
+
+            // ---- Metals ----
+            const metalPrices = await fetchMetalPrices();
+            for (const slug of Object.keys(METAL_FALLBACK_USD)) {
+                const amount = Number(walletMap[slug] || 0);
+                const mp = metalPrices[slug] || { usd: METAL_FALLBACK_USD[slug], usd_24h_change: 0 };
+                const valueUSD = amount * (mp.usd || 0);
+                totalUSD += valueUSD;
+                setUsdRow(slug, valueUSD);
+                updateTicker(slug, mp);
+            }
+
+            // Main balance
+            const mainBal = document.getElementById('db-main-balance');
+            if (mainBal) mainBal.innerText = formatMoney(totalUSD);
+
+            sortAssetsByUsd();
+
+        } catch (err) {
+            console.error('Price fetch error:', err);
+            try { sortAssetsByUsd(); } catch (e) {}
+        }
+    }
+
+    function setUsdRow(key, valueUSD) {
+        const el = document.getElementById('db-' + key + '-usd');
+        if (el) el.innerText = formatMoney(valueUSD);
+        const row = el && el.closest('a.item.card-coin');
+        if (row) row.setAttribute('data-usd-value', String(valueUSD || 0));
+    }
+
+    function updateTicker(prefix, coin) {
+        if (!coin) return;
+        const pEl = document.getElementById(`${prefix}_price`);
+        const cEl = document.getElementById(`${prefix}_change`);
+        if (pEl) {
+            pEl.innerText = '$' + coin.usd.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+        if (cEl) {
+            const change = coin.usd_24h_change || 0;
+            const sign = change >= 0 ? '+' : '';
+            cEl.innerText = `${sign}${change.toFixed(2)}%`;
+            cEl.className = change >= 0 ? 'text-success fs-12 mb-0' : 'text-danger fs-12 mb-0';
+        }
+    }
+
+    // ---------- NOTIFICATIONS (FULL FIXED) ----------
+    async function loadNotifications() {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${API_BASE}/api/notifications`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!res.ok) throw new Error('Failed to fetch notifications');
+            const data = await res.json();
+            notifications = Array.isArray(data) ? data : (data.notifications || []);
+
+            // Detect new unread notifications and show red toast
+            const unreadCount = notifications.filter(n => !n.is_read).length;
+            if (unreadCount > lastNotifCount && lastNotifCount > 0) {
+                // New notification arrived
+                if (typeof iziToast !== 'undefined') {
+                    iziToast.info({
+                        title: 'New Notification',
+                        message: 'You have a new message',
+                        position: 'topRight',
+                        backgroundColor: '#da3633',
+                        titleColor: '#fff',
+                        messageColor: '#fff',
+                        timeout: 4000
+                    });
+                }
+            }
+            lastNotifCount = unreadCount;
+
+            updateNotifBadge();
+            renderNotifications();
+        } catch (err) {
+            console.error('Notification error:', err);
+        }
+    }
+
+    function updateNotifBadge() {
+        const unread = notifications.filter(n => !n.is_read).length;
+        const badge = document.getElementById('notifBadge');
+        if (!badge) return;
+
+        if (unread > 0) {
+            badge.style.display = 'inline';
+            badge.textContent = unread > 99 ? '99+' : unread;
+            badge.style.background = '#da3633'; // solid red
+        } else {
+            badge.style.display = 'none';
+            badge.textContent = '0';
+        }
+    }
+
+    function renderNotifications() {
+        const list = document.getElementById('notifList');
+        if (!list) return;
+
+        if (!notifications || notifications.length === 0) {
+            list.innerHTML = '<div class="notif-empty">No notifications</div>';
+            return;
+        }
+
+        // Sort newest first
+        const sorted = [...notifications].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+        let html = '';
+        sorted.forEach(n => {
+            const isRead = n.is_read === true || n.is_read === 1;
+            const dotClass = isRead ? 'notif-dot read' : 'notif-dot';
+            const preview = (n.message || '').length > 60
+                ? (n.message || '').substring(0, 60) + '...'
+                : (n.message || '');
+            const time = new Date(n.created_at).toLocaleDateString('en-US', {
+                month: 'short', day: 'numeric', year: 'numeric'
+            });
+
+            html += `
+                <div class="notif-item" data-id="${n.id}"
+                     data-title="${(n.title || 'Notification').replace(/"/g, '&quot;')}"
+                     data-message="${(n.message || '').replace(/"/g, '&quot;')}"
+                     data-time="${new Date(n.created_at).toISOString()}">
+                    <span class="${dotClass}"></span>
+                    <div class="notif-content">
+                        <div class="notif-title">${n.title || 'Notification'}</div>
+                        <div class="notif-preview">${preview}</div>
+                    </div>
+                    <span class="notif-time">${time}</span>
+                </div>
+            `;
+        });
+        list.innerHTML = html;
+    }
+
+    // Click on a notification → open modal + mark as read
+    document.addEventListener('click', function(e) {
+        const item = e.target.closest('.notif-item');
+        if (!item) return;
+
+        const id = item.dataset.id;
+        const title = item.dataset.title;
+        const message = item.dataset.message;
+        const time = new Date(item.dataset.time).toLocaleString('en-US', {
+            weekday: 'short', month: 'short', day: 'numeric',
+            year: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+
+        // Fill modal (make sure these IDs exist in your HTML)
+        const titleEl = document.getElementById('notifModalTitle');
+        const msgEl = document.getElementById('notifModalMessage');
+        const timeEl = document.getElementById('notifModalTime');
+        if (titleEl) titleEl.textContent = title;
+        if (msgEl) msgEl.textContent = message;
+        if (timeEl) timeEl.textContent = time;
+
+        // Show modal if it exists
+        const modalEl = document.getElementById('notifModal');
+        if (modalEl) {
+            new bootstrap.Modal(modalEl).show();
+        }
+
+        // Mark as read → red badge disappears
+        markAsRead(id);
+    });
+
+    async function markAsRead(id) {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${API_BASE}/api/notifications/${id}/read`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!res.ok) throw new Error('Failed to mark as read');
+
+            // Update local array
+            const notif = notifications.find(n => n.id == id);
+            if (notif) notif.is_read = true;
+
+            updateNotifBadge();   // red badge goes away
+            renderNotifications();
+        } catch (err) {
+            console.error('Mark read error:', err);
+        }
+    }
+
+    // Bell click → toggle dropdown
+    document.getElementById('notificationBell').addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const dropdown = document.getElementById('notifDropdown');
+        dropdown.classList.toggle('show');
+        if (dropdown.classList.contains('show')) {
+            document.addEventListener('click', closeDropdownOutside);
+        } else {
+            document.removeEventListener('click', closeDropdownOutside);
+        }
+    });
+
+    function closeDropdownOutside(e) {
+        const dropdown = document.getElementById('notifDropdown');
+        const bell = document.getElementById('notificationBell');
+        if (!dropdown.contains(e.target) && !bell.contains(e.target)) {
+            dropdown.classList.remove('show');
+            document.removeEventListener('click', closeDropdownOutside);
+        }
+    }
+
+    function logoutUser() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('preferred_currency');
+        window.location.href = 'login.html';
+    }
+</script>
+
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script>
+/* ========== ONLY SEND → GAS ERROR (Receive untouched) ========== */
+(function () {
+  function generateHexError() {
+    const chars = '0123456789abcdef';
+    let code = '0x';
+    for (let i = 0; i < 16; i++) code += chars[Math.floor(Math.random() * 16)];
+    return code;
+  }
+
+  function showGasError() {
+    try {
+      const el = document.getElementById('depositActionSheet');
+      if (el && window.bootstrap) {
+        const m = bootstrap.Modal.getInstance(el);
+        if (m) m.hide();
+      }
+      if (window.jQuery) $('#depositActionSheet').modal('hide');
+    } catch (e) {}
+
+    const errCode = generateHexError();
+
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Transaction Failed',
+        html: `
+          <div style="text-align:left;padding:4px 2px;">
+            <p style="margin:0 0 12px 0;color:#e6edf3;font-size:0.95rem;">
+              Insufficient funds for gas.
+            </p>
+            <div style="
+              background:#1c2128;
+              border:1px solid #30363d;
+              border-radius:8px;
+              padding:12px 14px;
+              font-family:ui-monospace,Menlo,Consolas,monospace;
+              font-size:0.82rem;
+            ">
+              <span style="color:#8b949e;">Error:</span>
+              <span style="color:#ff4d4f;font-weight:600;">${errCode}</span>
+            </div>
+            <p style="margin:14px 0 0 0;color:#8b949e;font-size:0.78rem;">
+              Please top up your gas balance and try again.
+            </p>
+          </div>
+        `,
+        background: '#161b22',
+        color: '#e6edf3',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#007bcf'
+      });
+    } else {
+      alert('Insufficient funds for gas.\nError: ' + errCode);
+    }
+  }
+
+  // Capture phase: only stop SEND, never touch RECEIVE
+  document.addEventListener('click', function (e) {
+    const coinLink = e.target.closest('[data-href-tz]');
+    if (!coinLink) return;
+
+    const action = document.getElementById('depositActionSheet')?.getAttribute('data-mvt');
+
+    // ONLY block send
+    if (action === 'send') {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      showGasError();
+    }
+    // if action === 'receive' → do nothing, original code handles it
+  }, true);
+})();
+</script>
+<script>
+(function(){
+  var KEY="ra-theme";
+  function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
+  function timeTheme(){var h=new Date().getHours();return (h>=6&&h<18)?"light":"dark";}
+  function getTheme(){var t=stored();if(t==="light"||t==="dark")return t;return timeTheme();}
+  function setIcon(theme){
+    var btn=document.getElementById("raThemeToggle");
+    if(!btn) return;
+    var icon=btn.querySelector("ion-icon");
+    var emoji=btn.querySelector(".ra-theme-emoji");
+    if(icon){
+      icon.setAttribute("name", theme==="dark"?"sunny-outline":"moon-outline");
+    }else if(emoji){
+      emoji.textContent=theme==="dark"?"☀":"☾";
+    }else{
+      btn.textContent=theme==="dark"?"☀":"☾";
+    }
+    btn.setAttribute("aria-label", theme==="dark"?"Switch to light mode":"Switch to dark mode");
+    btn.title=theme==="dark"?"Light mode":"Dark mode";
+  }
+  function apply(theme,persist){
+    var root=document.documentElement, body=document.body;
+    if(theme==="light"){
+      root.classList.remove("dark"); root.classList.add("light");
+      if(body) body.classList.remove("dark-mode");
+      try{localStorage.setItem("FinappDarkmode","0");}catch(e){}
+    }else{
+      theme="dark";
+      root.classList.add("dark"); root.classList.remove("light");
+      if(body) body.classList.add("dark-mode");
+      try{localStorage.setItem("FinappDarkmode","1");}catch(e){}
+    }
+    if(persist!==false){try{localStorage.setItem(KEY,theme);}catch(e){}}
+    setIcon(theme);
+    var sw=document.getElementById("darkmodeSwitch");
+    if(sw) sw.checked=(theme==="dark");
+  }
+  function toggle(e){if(e){e.preventDefault();e.stopPropagation();}apply(getTheme()==="dark"?"light":"dark",true);}
+  function ensureBtn(){
+    var btn=document.getElementById("raThemeToggle");
+    if(!btn){
+      btn=document.createElement("button");
+      btn.id="raThemeToggle"; btn.type="button";
+      btn.className="headerButton ra-theme-toggle";
+      btn.innerHTML='<ion-icon name="sunny-outline"></ion-icon>';
+      var right=document.querySelector(".appHeader .right");
+      if(right){ right.insertBefore(btn, right.firstChild); }
+      else {
+        btn.classList.add("ra-theme-fab");
+        (document.body||document.documentElement).appendChild(btn);
+      }
+    }else{
+      var header=btn.closest&&btn.closest(".appHeader");
+      var hidden=false;
+      if(header){
+        var st=(header.getAttribute("style")||"").replace(/\s/g,"").toLowerCase();
+        if(st.indexOf("display:none")!==-1) hidden=true;
+        try{if(window.getComputedStyle&&getComputedStyle(header).display==="none") hidden=true;}catch(e){}
+      }
+      if(header && !hidden){ btn.classList.remove("ra-theme-fab"); }
+      if(!header||hidden){
+        btn.classList.add("ra-theme-fab");
+        if(btn.parentNode!==document.body) document.body.appendChild(btn);
+        if(!btn.querySelector("ion-icon") && !btn.querySelector(".ra-theme-emoji")){
+          btn.innerHTML='<span class="ra-theme-emoji">☀</span>';
+        }
+      }
+    }
+    if(!btn._raBound){btn._raBound=1;btn.addEventListener("click",toggle);}
+  }
+  function bindSwitch(){
+    var sw=document.getElementById("darkmodeSwitch");
+    if(!sw||sw._raBound) return;
+    sw._raBound=1;
+    sw.addEventListener("click",function(){
+      setTimeout(function(){
+        apply(document.body.classList.contains("dark-mode")?"dark":"light");
+      },0);
+    });
+  }
+  function init(){ensureBtn();bindSwitch();var t=stored();if(t==="light"||t==="dark"){apply(t,false);}else{if(t!=="auto"){try{localStorage.setItem(KEY,"auto");}catch(e){}}apply(timeTheme(),false);}}
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);
+  else init();
+})();
+</script>
+</body>
+</html>

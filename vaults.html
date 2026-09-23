@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <script>(function(){try{var t=localStorage.getItem("ra-theme");var mode;if(t==="light"||t==="dark"){mode=t;}else{if(t!=="auto"){try{localStorage.setItem("ra-theme","auto");}catch(x){}}var h=new Date().getHours();mode=(h>=6&&h<18)?"light":"dark";}if(mode==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){}})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Robinhood Alliance - Vaults</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/font-awesome.css">
+    <link rel="stylesheet" href="/static/css/App_Global.css">
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790040000">
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <script src="/static/js/ra-api.js"></script>
+    <style>
+      .mock-card { border-radius: 1.25rem; padding: 1.25rem; margin-bottom: 1rem; }
+      .pill { display:inline-block; padding: 0.2rem 0.55rem; border-radius: 999px; font-size: 0.7rem; background: rgba(16,185,129,0.18); color: #6ee7b7; }
+      .progress { height: 8px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+      .progress > span { display:block; height:100%; background: linear-gradient(90deg,#10b981,#d4af37); }
+      .btn-glass { background: rgba(16,185,129,0.2); border: 1px solid rgba(16,185,129,0.35); color: #ecfdf5; border-radius: 12px; padding: 0.55rem 1rem; cursor: pointer; }
+      .btn-glass:disabled { opacity: 0.5; cursor: not-allowed; }
+      .btn-glass.ghost { background: transparent; }
+      html:not(.dark) .btn-glass { color: #064e3b; }
+    </style>
+</head>
+<body class="glass-ui">
+    <div class="appHeader text-light ico1">
+        <div class="left">
+            <a href="/dashboard.html" class="headerButton"><ion-icon name="chevron-back-outline"></ion-icon></a>
+        </div>
+        <div class="pageTitle"><span class="brand-title">ROBINHOOD</span></div>
+        <div class="right" style="position:relative;">
+            <button type="button" id="raThemeToggle" class="headerButton ra-theme-toggle" aria-label="Switch theme" title="Theme">
+                <ion-icon name="sunny-outline"></ion-icon>
+            </button>
+        </div>
+    </div>
+    <div id="appCapsule" class="container" style="padding-bottom: 100px;">
+        <div class="section mt-2 mb-2">
+            <h2 class="title" style="font-size:1.25rem;">Vaults</h2>
+            <p class="text-muted" style="font-size:0.85rem;opacity:0.75;">Goal buckets synced via Railway — no mock balances.</p>
+        </div>
+
+        <div id="vaultsList"></div>
+        <div id="vaultsApiNote"></div>
+
+        <div class="wallet-card mock-card glass-panel">
+            <h3 style="font-size:1rem;" id="vaultFormTitle">New vault</h3>
+            <form id="vaultForm">
+              <input type="hidden" id="vaultEditId" value="">
+              <input class="form-control mb-2" id="vaultName" placeholder="Goal name" required>
+              <input class="form-control mb-2" id="vaultTarget" type="number" min="1" step="0.01" placeholder="Target amount" required>
+              <label style="font-size:0.75rem;opacity:0.7;display:flex;align-items:center;gap:8px;margin-bottom:0.75rem;">
+                <input type="checkbox" id="vaultAutosave"> Autosave
+              </label>
+              <input class="form-control mb-2" id="vaultAutosaveAmt" type="number" min="0" step="0.01" placeholder="Autosave amount / paycheck">
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn-glass" type="submit" id="vaultSubmit">Create vault</button>
+                <button class="btn-glass ghost hidden" type="button" id="vaultCancelEdit">Cancel edit</button>
+              </div>
+            </form>
+            <p id="vaultMsg" class="text-muted mt-2" style="font-size:0.8rem;"></p>
+        </div>
+
+        <div class="section mb-3">
+            <h3 class="title" style="font-size:1rem;">History</h3>
+            <div class="wallet-card mock-card" id="vaultHistory"></div>
+        </div>
+    </div>
+
+    <div class="appBottomMenu">
+        <a href="/dashboard.html" class="item"><div class="col"><ion-icon name="home-outline"></ion-icon><strong>Home</strong></div></a>
+        <a href="/swap.html" class="item"><div class="col"><ion-icon name="reload-outline"></ion-icon><strong>Swap</strong></div></a>
+        <a href="/buy.html" class="item"><div class="col"><ion-icon name="cart-outline"></ion-icon><strong>Buy</strong></div></a>
+        <a href="/cards.html" class="item"><div class="col"><ion-icon name="card-outline"></ion-icon><strong>Cards</strong></div></a>
+        <a href="/payments.html" class="item"><div class="col"><ion-icon name="cash-outline"></ion-icon><strong>Payments</strong></div></a>
+        <a href="/vaults.html" class="item active"><div class="col"><ion-icon name="lock-closed-outline"></ion-icon><strong>Vaults</strong></div></a>
+        <a href="/profile-setting.html" class="item"><div class="col"><ion-icon name="settings-outline"></ion-icon><strong>Settings</strong></div></a>
+    </div>
+
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="/static/js/lib/bootstrap.bundle.min.js"></script>
+    <script>
+    (function(){
+      var KEY="ra-theme";
+      function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
+      function timeTheme(){var h=new Date().getHours();return (h>=6&&h<18)?"light":"dark";}
+      function getTheme(){var t=stored();if(t==="light"||t==="dark")return t;return timeTheme();}
+      function apply(theme,persist){
+        var root=document.documentElement, body=document.body;
+        if(theme==="light"){ root.classList.remove("dark"); root.classList.add("light"); if(body) body.classList.remove("dark-mode"); }
+        else { root.classList.add("dark"); root.classList.remove("light"); if(body) body.classList.add("dark-mode"); }
+        if(persist!==false){try{localStorage.setItem(KEY,theme);}catch(e){}}
+        var btn=document.getElementById("raThemeToggle");
+        if(btn){ var ic=btn.querySelector("ion-icon"); if(ic) ic.setAttribute("name", theme==="dark"?"sunny-outline":"moon-outline"); }
+      }
+      var btn=document.getElementById("raThemeToggle");
+      if(btn) btn.addEventListener("click", function(e){ e.preventDefault(); apply(getTheme()==="dark"?"light":"dark"); });
+      apply(getTheme());
+
+      document.getElementById('vaultHistory').innerHTML = RA.portalEmptyHtml('History syncs from portal');
+
+      var apiMissing = false;
+
+      function money(n) {
+        return '$' + Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+      }
+
+      function renderVault(v) {
+        var bal = Number(v.balance || 0);
+        var tgt = Number(v.target || 0) || 1;
+        var pct = Math.min(100, Math.round((bal / tgt) * 100));
+        var pill = v.autosave ? '<span class="pill">Autosave on</span>' : '';
+        return '<div class="wallet-card mock-card glass-panel" data-id="' + (v.id || '') + '">' +
+          '<div style="display:flex;justify-content:space-between;align-items:baseline;">' +
+          '<h3 style="font-size:1rem;margin:0;">' + (v.name || 'Vault') + '</h3>' + pill + '</div>' +
+          '<div style="font-size:1.6rem;font-weight:700;margin:0.5rem 0;">' + money(bal) + '</div>' +
+          '<div class="progress"><span style="width:' + pct + '%"></span></div>' +
+          '<div class="text-muted mt-1" style="font-size:0.75rem;">' + money(bal) + ' of ' + money(tgt) +
+          (v.autosave_amount ? ' · $' + Number(v.autosave_amount) + ' / paycheck' : '') + '</div>' +
+          '<button class="btn-glass ghost mt-2" type="button" data-edit="' + (v.id || '') + '">Edit</button>' +
+          '</div>';
+      }
+
+      async function loadVaults() {
+        var listEl = document.getElementById('vaultsList');
+        var note = document.getElementById('vaultsApiNote');
+        var r = await RA.api('/api/vaults');
+        if (r.notDeployed) {
+          apiMissing = true;
+          listEl.innerHTML = '';
+          note.innerHTML = RA.apiNotDeployedHtml('Vaults');
+          return;
+        }
+        apiMissing = false;
+        note.innerHTML = '';
+        if (!r.ok) {
+          listEl.innerHTML = '<p class="text-muted" style="font-size:0.85rem;">Could not load vaults.</p>';
+          return;
+        }
+        var list = Array.isArray(r.data) ? r.data : (r.data && r.data.vaults) || [];
+        if (!list.length) {
+          listEl.innerHTML = '<p class="text-muted" style="font-size:0.85rem;opacity:0.7;">No vaults yet — create one below.</p>';
+          return;
+        }
+        listEl.innerHTML = list.map(renderVault).join('');
+        listEl.querySelectorAll('[data-edit]').forEach(function(b){
+          b.addEventListener('click', function(){
+            var id = b.getAttribute('data-edit');
+            var v = list.find(function(x){ return String(x.id) === String(id); });
+            if (!v) return;
+            document.getElementById('vaultEditId').value = v.id;
+            document.getElementById('vaultName').value = v.name || '';
+            document.getElementById('vaultTarget').value = v.target || '';
+            document.getElementById('vaultAutosave').checked = !!v.autosave;
+            document.getElementById('vaultAutosaveAmt').value = v.autosave_amount || '';
+            document.getElementById('vaultFormTitle').textContent = 'Edit vault';
+            document.getElementById('vaultSubmit').textContent = 'Save changes';
+            document.getElementById('vaultCancelEdit').classList.remove('hidden');
+          });
+        });
+      }
+
+      document.getElementById('vaultCancelEdit').addEventListener('click', function(){
+        document.getElementById('vaultForm').reset();
+        document.getElementById('vaultEditId').value = '';
+        document.getElementById('vaultFormTitle').textContent = 'New vault';
+        document.getElementById('vaultSubmit').textContent = 'Create vault';
+        this.classList.add('hidden');
+      });
+
+      document.getElementById('vaultForm').addEventListener('submit', async function(e){
+        e.preventDefault();
+        var msg = document.getElementById('vaultMsg');
+        msg.textContent = '';
+        var body = {
+          name: document.getElementById('vaultName').value.trim(),
+          target: parseFloat(document.getElementById('vaultTarget').value),
+          autosave: document.getElementById('vaultAutosave').checked,
+          autosave_amount: parseFloat(document.getElementById('vaultAutosaveAmt').value) || 0
+        };
+        var editId = document.getElementById('vaultEditId').value;
+        var btn = document.getElementById('vaultSubmit');
+        btn.disabled = true;
+        var r;
+        if (editId) {
+          r = await RA.api('/api/vaults/' + encodeURIComponent(editId), { method: 'PATCH', body: body });
+        } else {
+          r = await RA.api('/api/vaults', { method: 'POST', body: body });
+        }
+        btn.disabled = false;
+        if (r.notDeployed) {
+          msg.textContent = 'API not deployed yet — vaults endpoint is not live on Railway.';
+          return;
+        }
+        if (!r.ok) {
+          msg.textContent = r.error || 'Failed to save vault';
+          return;
+        }
+        msg.textContent = editId ? 'Vault updated.' : 'Vault created.';
+        document.getElementById('vaultForm').reset();
+        document.getElementById('vaultEditId').value = '';
+        document.getElementById('vaultFormTitle').textContent = 'New vault';
+        document.getElementById('vaultSubmit').textContent = 'Create vault';
+        document.getElementById('vaultCancelEdit').classList.add('hidden');
+        loadVaults();
+      });
+
+      loadVaults();
+    })();
+    </script>
+</body>
+</html>

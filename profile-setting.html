@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <script>(function(){try{var t=localStorage.getItem("ra-theme");var mode;if(t==="light"||t==="dark"){mode=t;}else{if(t!=="auto"){try{localStorage.setItem("ra-theme","auto");}catch(x){}}var h=new Date().getHours();mode=(h>=6&&h<18)?"light":"dark";}if(mode==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){}})();</script>
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6a98d8cd839c9634454405f2/1k1igtopb';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#007bcf" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Robinhood Alliance - Profile Setting</title>
+    <meta name="title" content="Robinhood Alliance - Profile Setting">
+    <meta name="description" content="Robinhood Alliance">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="assets/images/favicon-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/images/favicon-192x192.png">
+    <link rel="manifest" href="assets/images/site.webmanifest">
+    <link rel="icon" href="assets/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/assets/images/logo_icon/logo.jpg">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Robinhood Alliance - Profile Setting">
+
+    <meta itemprop="name" content="Robinhood Alliance - Profile Setting">
+    <meta itemprop="description" content="Robinhood Alliance">
+    <meta itemprop="image" content="/assets/images/seo/68faba839a8751761262211.png">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Robinhood Alliance">
+    <meta property="og:description" content="Robinhood Alliance">
+    <meta property="og:image" content="/assets/images/seo/68faba839a8751761262211.png">
+    <meta property="og:url" content="/profile-setting.html">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <style data-styles="">
+        ion-icon { visibility: hidden }
+        .hydrated { visibility: inherit }
+    </style>
+    <style>
+        :root {
+            --AppColor: #007bcf;
+            --oColor: rgba(0, 123, 207, 0.37);
+            --wbColor: #fff;
+            --d_Color: #00528a;
+            --siteUrl: "";
+        }
+    </style>
+
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/src/ionicons.min.css">
+    <link rel="stylesheet" href="/static/css/App_Global.css">
+    <link href="/static/offline-theme-default.css" rel="stylesheet">
+    <link href="/static/offline-language-english.css" rel="stylesheet">
+    <link href="/static/alertify.css" rel="stylesheet">
+    <link href="/static/default.css" rel="stylesheet">
+    <link href="/static/css/font-awesome.css" rel="stylesheet">
+    <link href="/panel/assets/css/toastr.min.css" rel="stylesheet" type="text/css">
+    <link href="/panel/assets/css/icons.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        .appHeader { background: inherit !important; border: none !important; }
+        #appCapsule { margin-top: 18px; margin-bottom: 18px; }
+        .image-listview>li a.item::after { content: "" !important; }
+
+        .profile-container {
+            position: relative;
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 12px;
+        }
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #eee;
+            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+            background: #222;
+        }
+        .edit-icon {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid #fff;
+        }
+        .edit-icon:hover { background-color: #0056b3; }
+        input[type="file"] { display: none; }
+        .save-btn {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        .save-btn:hover { background-color: #0056b3; }
+        .save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .impo::after { content: " *"; color: red; }
+
+        .wallet-link-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-dot.green { background: #2ea043; box-shadow: 0 0 6px #2ea043; }
+        .status-dot.red { background: #da3633; box-shadow: 0 0 6px #da3633; }
+        .wallet-status-text.linked { color: #2ea043; font-weight: 600; }
+        .wallet-status-text.unlinked { color: #da3633; font-weight: 600; }
+
+        .photo-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 12px 8px;
+        }
+    </style>
+    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790040000">
+    <script src="/static/js/ra-api.js"></script>
+</head>
+
+<body class="glass-ui">
+    
+
+<script>
+    const API_BASE = (window.RA && RA.API_BASE) || ((location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'http://127.0.0.1:5987' : 'https://web-production-8f747.up.railway.app');
+
+    (function checkAuth() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'login.html';
+            return;
+        }
+        fetchUserProfile(token);
+    })();
+
+    async function fetchUserProfile(token) {
+        try {
+            const res = await fetch(`${API_BASE}/api/user`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!res.ok) throw new Error('Session expired');
+            const user = await res.json();
+
+            const mobileEl = document.getElementById('mobile_input');
+            const emailEl = document.getElementById('email_input');
+            if (mobileEl) mobileEl.value = user.phone || '';
+            if (emailEl) emailEl.value = user.email || '';
+
+            const nameEl = document.getElementById('fullNameInput');
+            if (nameEl) nameEl.value = user.full_name || user.fullName || '';
+            window._raUser = user;
+
+            // Profile image (Base64 or URL)
+            const img = document.getElementById('profileImage');
+            if (img) {
+                if (user.profile_image) {
+                    img.src = user.profile_image;
+                } else {
+                    img.src = '/assets/images/default.png';
+                }
+            }
+
+            // Wallet linked status
+            updateWalletLinkUI(!!user.is_wallet_linked);
+
+            if (user.preferred_currency) {
+                localStorage.setItem('preferred_currency', user.preferred_currency);
+                const label = document.getElementById('current-currency-label');
+                if (label) label.textContent = user.preferred_currency;
+            }
+        } catch (err) {
+            console.error('Auth error:', err);
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+    }
+
+    function updateWalletLinkUI(linked) {
+        const textEl = document.getElementById('walletLinkText');
+        const dotEl = document.getElementById('walletLinkDot');
+        if (!textEl || !dotEl) return;
+        if (linked) {
+            textEl.textContent = 'Connected';
+            textEl.className = 'wallet-status-text linked';
+            dotEl.className = 'status-dot green';
+        } else {
+            textEl.textContent = 'Unlinked';
+            textEl.className = 'wallet-status-text unlinked';
+            dotEl.className = 'status-dot red';
+        }
+    }
+
+    function getToken() {
+        return localStorage.getItem('token');
+    }
+
+    function handleApiResponse(res) {
+        if (res.status === 401) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+            throw new Error('Session expired');
+        }
+        return res.json();
+    }
+
+    // ---------- PROFILE IMAGE (Base64) ----------
+    let pendingBase64 = null;
+
+    function onImageSelected(event) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+            notify('error', 'Please select an image file');
+            return;
+        }
+        if (file.size > 2 * 1024 * 1024) {
+            notify('error', 'Image must be under 2MB');
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            pendingBase64 = e.target.result;
+            const img = document.getElementById('profileImage');
+            if (img) img.src = pendingBase64;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    async function handleImageUpload(e) {
+        e.preventDefault();
+        if (!pendingBase64) {
+            notify('error', 'Please choose a photo first');
+            return;
+        }
+        const btn = document.getElementById('savePhotoBtn');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Saving…';
+        }
+        try {
+            const res = await fetch(`${API_BASE}/api/user/profile-image`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`
+                },
+                body: JSON.stringify({ profile_image: pendingBase64 })
+            });
+            const data = await handleApiResponse(res);
+            if (data.success) {
+                notify('success', 'Profile photo saved');
+                pendingBase64 = null;
+            } else {
+                notify('error', data.error || 'Failed to save photo');
+            }
+        } catch (err) {
+            notify('error', err.message || 'Failed to save photo');
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Save Profile Photo';
+            }
+        }
+    }
+
+    // ---------- PHONE ----------
+    async function handlePhoneUpdate(e) {
+        e.preventDefault();
+        const phone = document.getElementById('mobile_input').value;
+        try {
+            const res = await fetch(`${API_BASE}/api/user/phone`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`
+                },
+                body: JSON.stringify({ phone })
+            });
+            const data = await handleApiResponse(res);
+            if (data.success) {
+                const modal = document.getElementById('changePhoneNumber');
+                if (modal) bootstrap.Modal.getInstance(modal)?.hide();
+                notify('success', 'Phone number updated');
+            } else {
+                notify('error', data.error || 'Failed to update phone');
+            }
+        } catch (err) {
+            notify('error', err.message);
+        }
+    }
+
+    // ---------- EMAIL ----------
+    async function handleEmailUpdate(e) {
+        e.preventDefault();
+        const email = document.getElementById('email_input').value;
+        const password = document.getElementById('email_confirm_pass').value;
+        try {
+            const res = await fetch(`${API_BASE}/api/user/email`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`
+                },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await handleApiResponse(res);
+            if (data.success) {
+                const modal = document.getElementById('updateEmail');
+                if (modal) bootstrap.Modal.getInstance(modal)?.hide();
+                notify('success', 'Email updated');
+            } else {
+                notify('error', data.error || 'Failed to update email');
+            }
+        } catch (err) {
+            notify('error', err.message);
+        }
+    }
+
+    // ---------- PASSWORD ----------
+    async function handlePassUpdate(e) {
+        e.preventDefault();
+        const currentPassword = document.getElementById('old_pass').value;
+        const newPassword = document.getElementById('new_pass').value;
+        const confirmPassword = document.getElementById('conf_pass').value;
+        if (newPassword !== confirmPassword) {
+            return notify('error', 'Passwords do not match');
+        }
+        try {
+            const res = await fetch(`${API_BASE}/api/user/password`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`
+                },
+                body: JSON.stringify({ currentPassword, newPassword })
+            });
+            const data = await handleApiResponse(res);
+            if (data.success) {
+                const modal = document.getElementById('changePassword');
+                if (modal) bootstrap.Modal.getInstance(modal)?.hide();
+                notify('success', 'Password changed');
+            } else {
+                notify('error', data.error || 'Failed to change password');
+            }
+        } catch (err) {
+            notify('error', err.message);
+        }
+    }
+
+    // ---------- PIN ----------
+    async function handlePinUpdate(e) {
+        e.preventDefault();
+        const currentPin = document.getElementById('old_pin').value;
+        const newPin = document.getElementById('new_pin').value;
+        const confirmPin = document.getElementById('conf_pin').value;
+        if (newPin !== confirmPin) {
+            return notify('error', 'PINs do not match');
+        }
+        try {
+            const res = await fetch(`${API_BASE}/api/user/pin`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`
+                },
+                body: JSON.stringify({ currentPin, newPin })
+            });
+            const data = await handleApiResponse(res);
+            if (data.success) {
+                const modal = document.getElementById('changePinModal');
+                if (modal) bootstrap.Modal.getInstance(modal)?.hide();
+                notify('success', 'Transaction PIN updated');
+            } else {
+                notify('error', data.error || 'Failed to update PIN');
+            }
+        } catch (err) {
+            notify('error', err.message);
+        }
+    }
+
+    function performLogout() {
+        if (confirm('Are you sure you want to logout?')) {
+            window.location.href = 'logout.html';
+        }
+    }
+
+    // Currency
+    const CURRENCIES = [
+        { code: 'USD', name: 'US Dollar', symbol: '$' },
+        { code: 'EUR', name: 'Euro', symbol: '€' },
+        { code: 'GBP', name: 'British Pound', symbol: '£' },
+        { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$' },
+        { code: 'AUD', name: 'Australian Dollar', symbol: 'A$' },
+        { code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
+        { code: 'CHF', name: 'Swiss Franc', symbol: 'CHF' },
+        { code: 'CNY', name: 'Chinese Yuan', symbol: '¥' },
+        { code: 'INR', name: 'Indian Rupee', symbol: '₹' },
+        { code: 'ZAR', name: 'South African Rand', symbol: 'R ' },
+        { code: 'AED', name: 'UAE Dirham', symbol: 'د.إ' },
+        { code: 'SAR', name: 'Saudi Riyal', symbol: '﷼' },
+        { code: 'BRL', name: 'Brazilian Real', symbol: 'R$' },
+        { code: 'MXN', name: 'Mexican Peso', symbol: 'MX$' },
+        { code: 'TRY', name: 'Turkish Lira', symbol: '₺' },
+        { code: 'RUB', name: 'Russian Ruble', symbol: '₽' },
+        { code: 'SGD', name: 'Singapore Dollar', symbol: 'S$' }
+    ];
+
+    function renderCurrencyList() {
+        const list = document.getElementById('currency-list');
+        if (!list) return;
+        const current = localStorage.getItem('preferred_currency') || 'USD';
+        list.innerHTML = CURRENCIES.map(c => `
+            <li>
+                <a href="#" class="item currency-option" data-code="${c.code}">
+                    <div class="in">
+                        <div>${c.name}</div>
+                        <span class="text-muted">${c.code} (${c.symbol})</span>
+                    </div>
+                    ${c.code === current ? '<ion-icon name="checkmark-circle" class="text-success"></ion-icon>' : ''}
+                </a>
+            </li>
+        `).join('');
+
+        document.querySelectorAll('.currency-option').forEach(el => {
+            el.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const code = el.dataset.code;
+                try {
+                    const res = await fetch(`${API_BASE}/api/user/currency`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${getToken()}`
+                        },
+                        body: JSON.stringify({ currency: code })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        localStorage.setItem('preferred_currency', code);
+                        const label = document.getElementById('current-currency-label');
+                        if (label) label.textContent = code;
+                        bootstrap.Modal.getInstance(document.getElementById('currencyModal'))?.hide();
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({ icon: 'success', title: 'Currency Updated', text: `Now displaying in ${code}`, timer: 1500, showConfirmButton: false });
+                        } else {
+                            notify('success', 'Currency updated');
+                        }
+                    }
+                } catch (err) {
+                    if (typeof Swal !== 'undefined') Swal.fire('Error', 'Could not update currency', 'error');
+                    else notify('error', 'Could not update currency');
+                }
+            });
+        });
+    }
+
+    
+    async function handleNameSave() {
+        const input = document.getElementById('fullNameInput');
+        const msg = document.getElementById('nameSaveMsg');
+        const btn = document.getElementById('saveNameBtn');
+        if (!input) return;
+        const full_name = (input.value || '').trim();
+        if (!full_name) {
+            if (msg) msg.textContent = 'Enter a name.';
+            return;
+        }
+        if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+        if (msg) msg.textContent = '';
+        try {
+            let r;
+            if (window.RA && RA.api) {
+                r = await RA.api('/api/user/name', { method: 'POST', body: { full_name } });
+            } else {
+                const res = await fetch(`${API_BASE}/api/user/name`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
+                    body: JSON.stringify({ full_name })
+                });
+                const data = await res.json().catch(() => ({}));
+                r = { ok: res.ok, notDeployed: res.status === 404, data, error: data.error || data.message };
+            }
+            if (r.notDeployed) {
+                // admin self-edit fallback
+                const u = window._raUser || {};
+                const role = (u.role || (JSON.parse(localStorage.getItem('user')||'{}').role) || '').toLowerCase();
+                if (role === 'admin' && u.id) {
+                    let r2;
+                    if (window.RA && RA.api) {
+                        r2 = await RA.api('/api/admin/users/' + u.id, { method: 'PUT', body: { full_name } });
+                    } else {
+                        const res2 = await fetch(`${API_BASE}/api/admin/users/' + u.id, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
+                            body: JSON.stringify({ full_name })
+                        });
+                        const data2 = await res2.json().catch(() => ({}));
+                        r2 = { ok: res2.ok, notDeployed: res2.status === 404, data: data2, error: data2.error };
+                    }
+                    if (r2.notDeployed) {
+                        if (msg) msg.textContent = 'API not deployed yet — name endpoint is not live.';
+                        return;
+                    }
+                    if (!r2.ok) { if (msg) msg.textContent = r2.error || 'Failed to save name'; return; }
+                    if (msg) msg.textContent = 'Name saved (admin fallback).';
+                    try {
+                        const stored = JSON.parse(localStorage.getItem('user')||'{}');
+                        stored.fullName = full_name; stored.full_name = full_name;
+                        localStorage.setItem('user', JSON.stringify(stored));
+                    } catch(e){}
+                    return;
+                }
+                if (msg) msg.textContent = 'API not deployed yet — name endpoint is not live.';
+                return;
+            }
+            if (!r.ok) { if (msg) msg.textContent = r.error || 'Failed to save name'; return; }
+            if (msg) msg.textContent = 'Name saved.';
+            try {
+                const stored = JSON.parse(localStorage.getItem('user')||'{}');
+                stored.fullName = full_name; stored.full_name = full_name;
+                localStorage.setItem('user', JSON.stringify(stored));
+            } catch(e){}
+        } catch (err) {
+            if (msg) msg.textContent = err.message || 'Failed to save name';
+        } finally {
+            if (btn) { btn.disabled = false; btn.textContent = 'Save'; }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function(){
+        document.getElementById('saveNameBtn')?.addEventListener('click', handleNameSave);
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('currencyModal')?.addEventListener('show.bs.modal', renderCurrencyList);
+    });
+</script>
+
+    <div class="appHeader text-light ico1" style="display: none;">
+        <div class="left">
+            <a href="javascript:void(0)" onclick="history.back();" class="headerButton">
+                <ion-icon name="chevron-back-outline"></ion-icon>
+            </a>
+        </div>
+        <div class="pageTitle">
+            <span class="brand-title">ROBINHOOD</span>
+        </div>
+    </div>
+
+    <div id="appCapsule" class="container">
+        <div>
+
+            <!-- ========== PROFILE PHOTO (Base64) ========== -->
+            <form onsubmit="handleImageUpload(event)" class="photo-section">
+                <div class="profile-container">
+                    <img id="profileImage" src="/assets/images/default.png" class="profile-image" alt="Profile">
+                    <label for="imageUpload" class="edit-icon" title="Change photo">
+                        <ion-icon name="pencil-outline"></ion-icon>
+                    </label>
+                    <input type="file" id="imageUpload" accept="image/*" onchange="onImageSelected(event)">
+                </div>
+                <button type="submit" class="save-btn" id="savePhotoBtn">Save Profile Photo</button>
+            </form>
+
+            <!-- Full name (API) -->
+            <div class="wallet-card mock-card glass-panel" id="nameEditCard" style="margin:0.75rem 12px 1rem;padding:1rem;border-radius:1.25rem;">
+              <label class="text-muted" style="font-size:0.75rem;display:block;margin-bottom:0.35rem;">Name</label>
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <input type="text" id="fullNameInput" class="form-control" placeholder="Full name" style="flex:1;min-width:160px;">
+                <button type="button" class="btn btn-primary" id="saveNameBtn" style="border-radius:20px;padding:8px 18px;">Save</button>
+              </div>
+              <p id="nameSaveMsg" class="text-muted" style="font-size:0.75rem;margin:0.4rem 0 0;"></p>
+            </div>
+
+            <div class="listview-title mt-1">Theme</div>
+            <ul class="listview image-listview text inset no-line">
+                <li>
+                    <div class="item">
+                        <div class="in">
+                            <div>Dark Mode</div>
+                            <div class="form-check form-switch ms-2">
+                                <input class="form-check-input dark-mode-switch" type="checkbox" id="darkmodeSwitch">
+                                <label class="form-check-label" for="darkmodeSwitch"></label>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="listview-title mt-1">Notifications</div>
+            <ul class="listview image-listview text inset">
+                <li>
+                    <div class="item">
+                        <div class="in">
+                            <div>
+                                Payment Alert
+                                <div class="text-muted">Send notification when new payment received</div>
+                            </div>
+                            <div class="form-check form-switch ms-2">
+                                <input class="form-check-input" checked disabled type="checkbox" id="SwitchCheckDefault1">
+                                <label class="form-check-label" for="SwitchCheckDefault1"></label>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="listview-title mt-1">Wallet</div>
+            <ul class="listview image-listview text inset">
+                <li>
+                    <div class="item">
+                        <div class="in wallet-link-row">
+                            <div>Wallet Connect Status</div>
+                            <div style="display:flex;align-items:center;">
+                                <span id="walletLinkDot" class="status-dot red"></span>
+                                <span id="walletLinkText" class="wallet-status-text unlinked">Unlinked</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="listview-title mt-1">Profile Settings</div>
+            <ul class="listview image-listview text inset">
+                <li>
+                    <a href="#" class="item" data-bs-toggle="modal" data-bs-target="#currencyModal">
+                        <div class="in">
+                            <div>Display Currency</div>
+                            <span class="text-muted" id="current-currency-label">USD</span>
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#changePhoneNumber" class="item">
+                        <div class="in"><div>Update Phone Number</div></div>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="item" data-bs-toggle="modal" data-bs-target="#updateEmail">
+                        <div class="in"><div>Update E-mail</div></div>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Phone Modal -->
+            <div class="modal fade" id="changePhoneNumber" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form onsubmit="handlePhoneUpdate(event)">
+                            <div class="modal-header"><h5 class="modal-title">Update Phone</h5></div>
+                            <div class="modal-body">
+                                <div class="form-group basic">
+                                    <label class="impo">New Phone Number</label>
+                                    <input type="text" id="mobile_input" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email Modal -->
+            <div class="modal fade" id="updateEmail" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form onsubmit="handleEmailUpdate(event)">
+                            <div class="modal-header"><h5 class="modal-title">Update Email</h5></div>
+                            <div class="modal-body">
+                                <div class="form-group basic">
+                                    <label class="impo">New Email Address</label>
+                                    <input type="email" id="email_input" class="form-control" required>
+                                </div>
+                                <div class="form-group basic mt-2">
+                                    <label class="impo">Confirm with Password</label>
+                                    <input type="password" id="email_confirm_pass" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary w-100">Update Email</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="listview-title mt-1">Security</div>
+            <ul class="listview image-listview text mb-2 inset">
+                <li>
+                    <a href="#" class="item" data-bs-toggle="modal" data-bs-target="#changePassword">
+                        <div class="in"><div>Change Password</div></div>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#changePinModal" class="item">
+                        <div class="in"><div>Transaction Pin</div></div>
+                    </a>
+                </li>
+                <li>
+                    <div class="item">
+                        <div class="in">
+                            <div>2 Step Verification</div>
+                            <div class="form-check form-switch ms-2">
+                                <input type="checkbox" id="two-step" class="form-check-input">
+                                <label class="form-check-label" for="two-step"></label>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" onclick="performLogout()" class="item">
+                        <div class="in">
+                            <div class="text-danger">
+                                <ion-icon name="power" class="text-danger" style="position:relative;top:2px;"></ion-icon>
+                                Log out
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Password Modal -->
+            <div class="modal fade" id="changePassword" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form onsubmit="handlePassUpdate(event)">
+                            <div class="modal-header"><h5 class="modal-title">Change Password</h5></div>
+                            <div class="modal-body">
+                                <input type="password" id="old_pass" placeholder="Current Password" class="form-control mb-2" required>
+                                <input type="password" id="new_pass" placeholder="New Password" class="form-control mb-2" required>
+                                <input type="password" id="conf_pass" placeholder="Confirm New Password" class="form-control" required>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Update Password</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PIN Modal -->
+            <div class="modal fade" id="changePinModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form onsubmit="handlePinUpdate(event)">
+                            <div class="modal-header"><h5 class="modal-title">Transaction PIN</h5></div>
+                            <div class="modal-body">
+                                <input type="text" id="old_pin" placeholder="Current PIN (Default 0000)" class="form-control mb-2" maxlength="4" required>
+                                <input type="text" id="new_pin" placeholder="New 4-Digit PIN" class="form-control mb-2" maxlength="4" required>
+                                <input type="text" id="conf_pin" placeholder="Confirm New PIN" class="form-control" maxlength="4" required>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Save PIN</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="appBottomMenu">
+        <a href="/dashboard.html" class="item"><div class="col"><ion-icon name="home-outline"></ion-icon><strong>Home</strong></div></a>
+        <a href="/swap.html" class="item"><div class="col"><ion-icon name="reload-outline"></ion-icon><strong>Swap</strong></div></a>
+        <a href="/buy.html" class="item"><div class="col"><ion-icon name="cart-outline"></ion-icon><strong>Buy</strong></div></a>
+        <a href="/cards.html" class="item"><div class="col"><ion-icon name="card-outline"></ion-icon><strong>Cards</strong></div></a>
+        <a href="/payments.html" class="item"><div class="col"><ion-icon name="cash-outline"></ion-icon><strong>Payments</strong></div></a>
+        <a href="/vaults.html" class="item"><div class="col"><ion-icon name="lock-closed-outline"></ion-icon><strong>Vaults</strong></div></a>
+        <a href="/profile-setting.html" class="item active"><div class="col"><ion-icon name="settings-outline"></ion-icon><strong>Settings</strong></div></a>
+    </div>
+
+
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="/static/js/lib/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/base.js"></script>
+    <script src="/static/alertify.min.js"></script>
+    <link href="/assets/global/css/iziToast.min.css" rel="stylesheet">
+    <link href="/assets/global/css/iziToast_custom.css" rel="stylesheet">
+    <script src="/assets/global/js/iziToast.min.js"></script>
+
+    <script>
+        "use strict";
+        const colors = {
+            success: '#28c76f',
+            error: '#eb2222',
+            warning: '#ff9f43',
+            info: '#1e9ff2',
+        };
+        const icons = {
+            success: 'fas fa-check-circle',
+            error: 'fas fa-times-circle',
+            warning: 'fas fa-exclamation-triangle',
+            info: 'fas fa-exclamation-circle',
+        };
+
+        function triggerToaster(status, message) {
+            if (typeof iziToast === 'undefined') {
+                alert(status + ': ' + message);
+                return;
+            }
+            iziToast[status]({
+                title: status.charAt(0).toUpperCase() + status.slice(1),
+                message: message,
+                position: "topRight",
+                backgroundColor: '#fff',
+                icon: icons[status],
+                iconColor: colors[status],
+                progressBarColor: colors[status],
+                titleSize: '1rem',
+                messageSize: '1rem',
+                titleColor: '#474747',
+                messageColor: '#a2a2a2',
+            });
+        }
+
+        function notify(status, message) {
+            if (typeof message === 'string') {
+                triggerToaster(status, message);
+            } else {
+                $.each(message, (i, val) => triggerToaster(status, val));
+            }
+        }
+    </script>
+
+    <!-- Currency Modal -->
+    <div class="modal fade" id="currencyModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content" style="background:#161b22;color:#e6edf3;">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Select Display Currency</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <ul class="listview image-listview text" id="currency-list"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+(function(){
+  var KEY="ra-theme";
+  function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
+  function timeTheme(){var h=new Date().getHours();return (h>=6&&h<18)?"light":"dark";}
+  function getTheme(){var t=stored();if(t==="light"||t==="dark")return t;return timeTheme();}
+  function setIcon(theme){
+    var btn=document.getElementById("raThemeToggle");
+    if(!btn) return;
+    var icon=btn.querySelector("ion-icon");
+    var emoji=btn.querySelector(".ra-theme-emoji");
+    if(icon){
+      icon.setAttribute("name", theme==="dark"?"sunny-outline":"moon-outline");
+    }else if(emoji){
+      emoji.textContent=theme==="dark"?"☀":"☾";
+    }else{
+      btn.textContent=theme==="dark"?"☀":"☾";
+    }
+    btn.setAttribute("aria-label", theme==="dark"?"Switch to light mode":"Switch to dark mode");
+    btn.title=theme==="dark"?"Light mode":"Dark mode";
+  }
+  function apply(theme,persist){
+    var root=document.documentElement, body=document.body;
+    if(theme==="light"){
+      root.classList.remove("dark"); root.classList.add("light");
+      if(body) body.classList.remove("dark-mode");
+      try{localStorage.setItem("FinappDarkmode","0");}catch(e){}
+    }else{
+      theme="dark";
+      root.classList.add("dark"); root.classList.remove("light");
+      if(body) body.classList.add("dark-mode");
+      try{localStorage.setItem("FinappDarkmode","1");}catch(e){}
+    }
+    if(persist!==false){try{localStorage.setItem(KEY,theme);}catch(e){}}
+    setIcon(theme);
+    var sw=document.getElementById("darkmodeSwitch");
+    if(sw) sw.checked=(theme==="dark");
+  }
+  function toggle(e){if(e){e.preventDefault();e.stopPropagation();}apply(getTheme()==="dark"?"light":"dark",true);}
+  function ensureBtn(){
+    var btn=document.getElementById("raThemeToggle");
+    if(!btn){
+      btn=document.createElement("button");
+      btn.id="raThemeToggle"; btn.type="button";
+      btn.className="headerButton ra-theme-toggle ra-theme-fab";
+      btn.innerHTML='<span class="ra-theme-emoji">☀</span>';
+      (document.body||document.documentElement).appendChild(btn);
+    }else{
+      var header=btn.closest&&btn.closest(".appHeader");
+      var hidden=false;
+      if(header){
+        var st=(header.getAttribute("style")||"").replace(/\s/g,"").toLowerCase();
+        if(st.indexOf("display:none")!==-1) hidden=true;
+        try{if(window.getComputedStyle&&getComputedStyle(header).display==="none") hidden=true;}catch(e){}
+      }
+      if(!header||hidden){
+        btn.classList.add("ra-theme-fab");
+        if(btn.parentNode!==document.body) document.body.appendChild(btn);
+        if(!btn.querySelector("ion-icon") && !btn.querySelector(".ra-theme-emoji")){
+          btn.innerHTML='<span class="ra-theme-emoji">☀</span>';
+        }
+      }
+    }
+    if(!btn._raBound){btn._raBound=1;btn.addEventListener("click",toggle);}
+  }
+  function bindSwitch(){
+    var sw=document.getElementById("darkmodeSwitch");
+    if(!sw||sw._raBound) return;
+    sw._raBound=1;
+    sw.addEventListener("click",function(){
+      setTimeout(function(){
+        apply(document.body.classList.contains("dark-mode")?"dark":"light");
+      },0);
+    });
+  }
+  function init(){ensureBtn();bindSwitch();var t=stored();if(t==="light"||t==="dark"){apply(t,false);}else{if(t!=="auto"){try{localStorage.setItem(KEY,"auto");}catch(e){}}apply(timeTheme(),false);}}
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);
+  else init();
+})();
+</script>
+</body>
+</html>

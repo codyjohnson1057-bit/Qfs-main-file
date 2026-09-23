@@ -1,0 +1,1 @@
+No Content: /static/js/panel.js
