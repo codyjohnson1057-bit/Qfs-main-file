@@ -1445,21 +1445,36 @@ body.glass-ui #notifDropdown.notif-dropdown.show {
 }
 
 
-/* Auth cards — dark mode matrix glass (keep light green float above) */
+/* Auth cards — dark = original robinhood-alliance cut-corner matrix panel */
 html.dark body.glass-ui #login-card,
 html.dark body.glass-ui #reg-card,
 html.dark body.glass-ui .card#login-card,
 html.dark body.glass-ui .card#reg-card {
-  background-color: rgba(12, 28, 32, 0.48) !important;
-  background-image:
-    linear-gradient(145deg, rgba(16, 185, 129, 0.18) 0%, transparent 45%),
-    linear-gradient(180deg, rgba(2, 4, 3, 0.55), rgba(10, 28, 24, 0.42)) !important;
-  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  background-color: rgba(10, 20, 14, 0.72) !important;
+  background-image: none !important;
+  border: 1px solid rgba(212, 175, 55, 0.28) !important;
   color: #D4AF37 !important;
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.45),
-    0 0 0 1px rgba(16, 185, 129, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px)) !important;
+  -webkit-clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px)) !important;
+}
+/* Auth pages: pure ink backdrop in dark (no teal glass blobs) */
+html.dark body.glass-ui:has(#login-card),
+html.dark body.glass-ui:has(#reg-card),
+html.dark body.glass-ui:has(#wordmark):not(:has(.appHeader)) {
+  background: #020403 !important;
+  background-image: none !important;
+  font-family: "Space Mono", monospace !important;
+  color: #D4AF37 !important;
+}
+html.dark body.glass-ui:has(#login-card)::before,
+html.dark body.glass-ui:has(#reg-card)::before,
+html.dark body.glass-ui:has(#wordmark):not(:has(.appHeader))::before {
+  display: none !important;
+  content: none !important;
 }
 html.light body.glass-ui > #raThemeToggle.ra-theme-fab,
 html.light body.glass-ui button#raThemeToggle.ra-theme-fab {

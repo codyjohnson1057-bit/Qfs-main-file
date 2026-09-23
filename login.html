@@ -2,7 +2,7 @@
 <html lang="en" class="light">
 
 <head>
-        <script>(function(){try{var t=localStorage.getItem("ra-theme");var mode=(t==="light"||t==="dark")?t:"light";if(mode==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){document.documentElement.classList.add("light");}})();</script>
+    <script>(function(){try{var t=localStorage.getItem("ra-theme");var f=null;try{f=localStorage.getItem("FinappDarkmode");}catch(x){}var mode=(t==="light"||t==="dark")?t:(f==="1"?"dark":f==="0"?"light":"light");if(mode==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){document.documentElement.classList.add("light");}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Robinhood Alliance — Sign In</title>
@@ -478,47 +478,136 @@
     .glitch-logo,.btn-primary::after,#overlay{animation:none;transition:none;}
   }
 
-  /* ---- DARK mode (prior matrix / green glass) ---- */
+  
+  /* ---- DARK = original robinhood-alliance.web.app matrix / cut-glass auth ---- */
+  html.dark{
+    --gold:#D4AF37;
+    --gold-bright:#F4D874;
+    --green-deep:#0A3D2A;
+    --green-mint:#98FF98;
+    --ink:#020403;
+    --panel:rgba(10,20,14,0.72);
+    --panel-solid:rgba(10,20,14,0.72);
+    --panel-border:rgba(212,175,55,0.28);
+    --red-alert:#FF4C4C;
+  }
   html.dark, html.dark body{
     background:#020403 !important;
+    background-image:none !important;
     color:#D4AF37 !important;
+    font-family:'Space Mono',monospace !important;
   }
-  html.dark #vignette, html.dark #vignette{
+  html.dark body.glass-ui{
+    background:#020403 !important;
+    background-image:none !important;
+    color:#D4AF37 !important;
+    font-family:'Space Mono',monospace !important;
+  }
+  html.dark body.glass-ui::before{ display:none !important; content:none !important; }
+  html.dark #vignette{
     background:radial-gradient(ellipse at center,
       rgba(2,4,3,0.10) 0%,
       rgba(2,4,3,0.60) 55%,
       rgba(2,4,3,0.93) 100%) !important;
   }
-  html.dark .brand-wordmark{ color:#D4AF37 !important; text-shadow:0 0 30px rgba(212,175,55,.40); }
-  html.dark .brand-sub{ color:#98FF98 !important; text-shadow:0 0 12px rgba(152,255,152,.45); }
+  html.dark #overlay{ background:#020403 !important; }
+  html.dark .glitch-logo{ color:#F4D874 !important; text-shadow:0 0 18px rgba(212,175,55,.6) !important; }
+  html.dark .glitch-sub{ color:#98FF98 !important; }
+  html.dark .brand-wordmark{ color:#D4AF37 !important; text-shadow:0 0 30px rgba(212,175,55,.40) !important; }
+  html.dark .brand-sub{ color:#98FF98 !important; text-shadow:0 0 12px rgba(152,255,152,.45) !important; }
+  html.dark .card,
   html.dark #login-card,
+  html.dark #reg-card,
   html.dark .card#login-card,
+  html.dark .card#reg-card,
   html.dark body.glass-ui #login-card,
-  html.dark body.glass-ui .card#login-card{
-    background:rgba(12,28,32,0.48) !important;
+  html.dark body.glass-ui #reg-card,
+  html.dark body.glass-ui .card#login-card,
+  html.dark body.glass-ui .card#reg-card{
+    background:rgba(10,20,14,0.72) !important;
     background-image:none !important;
-    border:1px solid rgba(255,255,255,0.22) !important;
+    border:1px solid rgba(212,175,55,0.28) !important;
     color:#D4AF37 !important;
-    box-shadow:0 20px 60px rgba(0,0,0,0.35),0 2px 12px rgba(16,185,129,0.1),inset 0 1px 0 rgba(255,255,255,0.18) !important;
-    backdrop-filter:blur(28px) saturate(1.45) !important;
-    -webkit-backdrop-filter:blur(28px) saturate(1.45) !important;
+    border-radius:0 !important;
+    box-shadow:none !important;
+    backdrop-filter:blur(10px) !important;
+    -webkit-backdrop-filter:blur(10px) !important;
+    clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px)) !important;
+    -webkit-clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px)) !important;
   }
+  html.dark .card::before{
+    border-radius:0 !important;
+    clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px)) !important;
+    -webkit-clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px)) !important;
+    opacity:.25 !important;
+  }
+  html.dark .card-eyebrow,
+  html.dark .sec-badge{ color:#98FF98 !important; }
+  html.dark .sec-badge{
+    background:rgba(10,61,42,.35) !important;
+    border:1px solid rgba(152,255,152,.2) !important;
+    border-radius:0 !important;
+  }
+  html.dark .card-title{ color:#F4D874 !important; }
+  html.dark .card-sub{ color:rgba(152,255,152,.6) !important; }
+  html.dark .field-label{ color:rgba(212,175,55,.75) !important; }
+  html.dark .card input,
+  html.dark .card select,
   html.dark #login-card input,
   html.dark #login-card select,
-  html.dark .card#login-card input,
-  html.dark .card#login-card select{
+  html.dark #reg-card input,
+  html.dark #reg-card select,
+  html.dark body.glass-ui .card .input-wrap input,
+  html.dark body.glass-ui .card .input-wrap select{
     background:rgba(2,4,3,.6) !important;
     border:1px solid rgba(212,175,55,.3) !important;
     color:#D4AF37 !important;
+    border-radius:0 !important;
+    clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%) !important;
+    -webkit-clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%) !important;
   }
-  html.dark #login-card label,
-  html.dark #login-card .card-title,
-  html.dark #login-card .card-sub,
-  html.dark #login-card .field-label,
-  html.dark #login-card a{ color:#D4AF37 !important; }
-  html.dark #login-card .card-eyebrow,
-  html.dark #login-card .sec-badge{ color:#98FF98 !important; }
-  html.dark .ra-theme-fab{
+  html.dark .card input::placeholder,
+  html.dark #login-card input::placeholder,
+  html.dark #reg-card input::placeholder{ color:rgba(212,175,55,.3) !important; }
+  html.dark .card input:focus,
+  html.dark #login-card input:focus,
+  html.dark #reg-card input:focus{
+    border-color:#D4AF37 !important;
+    background:rgba(10,61,42,.25) !important;
+    box-shadow:0 0 20px rgba(212,175,55,.12), inset 0 0 10px rgba(152,255,152,.04) !important;
+  }
+  html.dark .field-icon{ color:rgba(152,255,152,.5) !important; }
+  html.dark .eye-btn{ color:rgba(212,175,55,.45) !important; }
+  html.dark .forgot{ color:rgba(152,255,152,.65) !important; }
+  html.dark .remember-label{ color:rgba(212,175,55,.7) !important; }
+  html.dark .btn-primary,
+  html.dark body.glass-ui .card .btn-primary{
+    background:#D4AF37 !important;
+    color:#020403 !important;
+    border:2px solid #D4AF37 !important;
+    border-radius:0 !important;
+    clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%) !important;
+    -webkit-clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%) !important;
+    box-shadow:none !important;
+  }
+  html.dark .btn-primary:hover{
+    background:#0A3D2A !important;
+    color:#98FF98 !important;
+    border-color:#98FF98 !important;
+  }
+  html.dark .form-divider{
+    background:linear-gradient(90deg,transparent,rgba(212,175,55,.35) 50%,transparent) !important;
+  }
+  html.dark .signup-nudge{ color:rgba(152,255,152,.55) !important; }
+  html.dark .signup-nudge a{ color:#D4AF37 !important; }
+  html.dark .page-footer{ color:rgba(152,255,152,.35) !important; }
+  html.dark .err-msg{
+    background:rgba(255,76,76,.12) !important;
+    border-color:rgba(255,76,76,.35) !important;
+    color:#FF4C4C !important;
+  }
+  html.dark .ra-theme-fab,
+  html.dark #raThemeToggle.ra-theme-fab{
     background:rgba(8,18,20,0.7) !important;
     border-color:rgba(212,175,55,0.35) !important;
     color:#F4D874 !important;
@@ -533,8 +622,8 @@
   }
 
 </style>
-    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790201000">
-  <script src="/static/js/ra-api.js?v=1790201000"></script>
+    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790230000">
+  <script src="/static/js/ra-api.js?v=1790230000"></script>
 </head>
 <body class="glass-ui">
 <button type="button" id="raThemeToggle" class="headerButton ra-theme-toggle ra-theme-fab" aria-label="Switch theme" title="Theme" style="position:fixed;top:max(12px,env(safe-area-inset-top));right:12px;z-index:9999;width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(16,185,129,0.35);background:rgba(8,18,20,0.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#ecfdf5;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.35);">
@@ -632,27 +721,188 @@
 
 
 
-
-<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 <script>
-(function(){
-  var KEY="ra-theme";
-  function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
-  function getTheme(){var t=stored();if(t==="light"||t==="dark")return t;return "light";}
-  function apply(theme,persist){
-    var root=document.documentElement, body=document.body;
-    if(theme==="light"){ root.classList.remove("dark"); root.classList.add("light"); if(body){ body.classList.remove("dark-mode"); } }
-    else { root.classList.add("dark"); root.classList.remove("light"); if(body){ body.classList.add("dark-mode"); } }
-    if(persist!==false){try{localStorage.setItem(KEY,theme);localStorage.setItem("FinappDarkmode", theme==="dark"?"1":"0");}catch(e){}}
-    var btn=document.getElementById("raThemeToggle");
-    if(btn){ var ic=btn.querySelector("ion-icon"); if(ic) ic.setAttribute("name", theme==="dark"?"sunny-outline":"moon-outline"); }
-  }
-  var btn=document.getElementById("raThemeToggle");
-  if(btn) btn.addEventListener("click", function(e){ e.preventDefault(); apply(getTheme()==="dark"?"light":"dark"); });
-  apply(getTheme());
-})();
-</script>
+/* ============ MATRIX RAIN ============ */
+const rainCanvas = document.getElementById('rain');
+const rctx = rainCanvas.getContext('2d');
+let cols, drops, fontSize = 16;
 
+function sizeRain(){
+  rainCanvas.width  = window.innerWidth;
+  rainCanvas.height = window.innerHeight;
+  cols  = Math.floor(rainCanvas.width / fontSize);
+  drops = new Array(cols).fill(0).map(() => Math.random() * -100);
+}
+sizeRain();
+window.addEventListener('resize', sizeRain);
+
+/* Theme-aware matrix trail */
+function rainTrail(){
+  var dark = document.documentElement.classList.contains('dark');
+  return dark ? 'rgba(2,4,3,0.12)' : 'rgba(232, 245, 240, 0.14)';
+}
+function rainGlyph(){
+  var dark = document.documentElement.classList.contains('dark');
+  if (dark) return Math.random() < 0.05 ? '#F4D874' : 'rgba(152,255,152,0.75)';
+  return Math.random() < 0.05 ? '#B8860B' : 'rgba(5,150,105,0.45)';
+}
+
+
+function drawRain(){
+  rctx.fillStyle = rainTrail();
+  rctx.fillRect(0, 0, rainCanvas.width, rainCanvas.height);
+  rctx.font = fontSize + 'px monospace';
+  for(let i = 0; i < cols; i++){
+    const char = Math.random() < 0.5 ? '0' : '1';
+    const x = i * fontSize, y = drops[i] * fontSize;
+    rctx.fillStyle = rainGlyph();
+    rctx.fillText(char, x, y);
+    if(y > rainCanvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  }
+  requestAnimationFrame(drawRain);
+}
+requestAnimationFrame(drawRain);
+
+/* ============ BURST ============ */
+const burstCanvas = document.getElementById('burst');
+const bctx = burstCanvas.getContext('2d');
+function sizeBurst(){
+  burstCanvas.width  = window.innerWidth;
+  burstCanvas.height = window.innerHeight;
+}
+sizeBurst();
+window.addEventListener('resize', sizeBurst);
+
+let particles = [];
+function spawnBurst(x, y){
+  for(let i = 0; i < 14; i++){
+    const angle = (Math.PI * 2 * i / 14) + Math.random() * 0.4;
+    const speed = 1.5 + Math.random() * 3;
+    particles.push({ x, y,
+      vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+      life: 1, char: Math.random() < 0.5 ? '0' : '1',
+      size: fontSize + Math.random() * 10
+    });
+  }
+}
+function drawBurst(){
+  bctx.clearRect(0, 0, burstCanvas.width, burstCanvas.height);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.life -= 0.018;
+    bctx.globalAlpha = Math.max(p.life, 0);
+    bctx.fillStyle = '#D4AF37';
+    bctx.shadowColor = '#98FF98'; bctx.shadowBlur = 12;
+    bctx.font = p.size + 'px monospace';
+    bctx.fillText(p.char, p.x, p.y);
+  });
+  bctx.globalAlpha = 1;
+  particles = particles.filter(p => p.life > 0);
+  requestAnimationFrame(drawBurst);
+}
+requestAnimationFrame(drawBurst);
+
+window.addEventListener('pointerdown', e => {
+  if(!e.target.closest('input, button, a, .remember-row')) spawnBurst(e.clientX, e.clientY);
+});
+
+/* ============ 3D TILT ============ */
+const wordmark  = document.getElementById('wordmark');
+const loginCard = document.getElementById('login-card');
+
+function applyTilt(el, x, y, str){
+  const r = el.getBoundingClientRect();
+  const rx = (x - r.left)  / r.width  - 0.5;
+  const ry = (y - r.top)   / r.height - 0.5;
+  el.style.transform = `rotateX(${(-ry * str).toFixed(2)}deg) rotateY(${(rx * str).toFixed(2)}deg) translateZ(6px)`;
+}
+function resetTilt(el){ el.style.transform = 'rotateX(0) rotateY(0) translateZ(0)'; }
+
+window.addEventListener('pointermove', e => {
+  applyTilt(wordmark,  e.clientX, e.clientY, 12);
+  applyTilt(loginCard, e.clientX, e.clientY, 4);
+});
+window.addEventListener('pointerleave', () => {
+  resetTilt(wordmark); resetTilt(loginCard);
+});
+
+/* ============ PASSWORD TOGGLE ============ */
+const pwInput = document.getElementById('password-input');
+const eyeBtn  = document.getElementById('eye-btn');
+eyeBtn.addEventListener('click', () => {
+  const show = pwInput.type === 'password';
+  pwInput.type = show ? 'text' : 'password';
+  eyeBtn.textContent = show ? '◎' : '◉';
+});
+
+/* ============ LOGIN LOGIC ============ */
+const API_BASE = (window.RA && RA.API_BASE) || ((location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'http://127.0.0.1:5987' : 'https://web-production-8f747.up.railway.app');
+
+// Redirect if already logged in
+(function() {
+  const token = localStorage.getItem('token');
+  if (token) {
+    window.location.href = 'dashboard.html';
+  }
+})();
+
+const loginForm = document.getElementById('login-form');
+const loginBtn  = document.getElementById('loginBtn');
+const errMsg    = document.getElementById('err-msg');
+
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  errMsg.classList.remove('show');
+
+  const email = document.getElementById('email').value.trim();
+  const password = pwInput.value;
+
+  if (!email || !password) {
+    errMsg.textContent = '⚠ All fields are required.';
+    errMsg.classList.add('show');
+    return;
+  }
+
+  loginBtn.classList.add('loading');
+  loginBtn.textContent = 'AUTHENTICATING...';
+
+  try {
+    const __api = (window.RA && RA.API_BASE) || ((location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'http://127.0.0.1:5987' : 'https://web-production-8f747.up.railway.app');
+    const res = await fetch(`${__api}/api/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Invalid credentials.');
+    }
+
+    // Save token and user info
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+
+    // Redirect to dashboard
+    window.location.href = 'dashboard.html';
+  } catch (err) {
+    errMsg.textContent = '⚠ ' + err.message;
+    errMsg.classList.add('show');
+    loginBtn.classList.remove('loading');
+    loginBtn.textContent = 'LOG IN';
+  }
+});
+
+/* ============ INTRO OVERLAY ============ */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('overlay').classList.add('hide');
+  }, 1500);
+});
+</script>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script src="/static/js/ra-theme.js?v=1790230000"></script>
 </body>
 
 </html>

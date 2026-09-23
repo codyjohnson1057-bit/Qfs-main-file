@@ -2,7 +2,7 @@
 <html lang="en" class="light">
 
 <head>
-        <script>(function(){try{var t=localStorage.getItem("ra-theme");var mode=(t==="light"||t==="dark")?t:"light";if(mode==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){document.documentElement.classList.add("light");}})();</script>
+        <script>(function(){try{var t=localStorage.getItem("ra-theme");var f=null;try{f=localStorage.getItem("FinappDarkmode");}catch(x){}var mode=(t==="light"||t==="dark")?t:(f==="1"?"dark":f==="0"?"light":"light");if(mode==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){document.documentElement.classList.add("light");}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Robinhood Alliance</title>
@@ -236,31 +236,86 @@
     .glitch-logo,.btn-primary::after,#overlay{animation:none;transition:none;}
   }
 
-  /* ---- DARK mode landing (prior matrix ink) ---- */
+  
+  /* ---- DARK = original robinhood-alliance.web.app matrix ink ---- */
+  html.dark{
+    --gold:#D4AF37;
+    --gold-bright:#F4D874;
+    --green-deep:#0A3D2A;
+    --green-mint:#98FF98;
+    --ink:#020403;
+    --panel:rgba(10,20,14,0.55);
+  }
   html.dark, html.dark body{
     background:#020403 !important;
+    background-image:none !important;
     color:#D4AF37 !important;
+    font-family:'Space Mono',monospace !important;
   }
+  html.dark body.glass-ui{
+    background:#020403 !important;
+    background-image:none !important;
+    color:#D4AF37 !important;
+    font-family:'Space Mono',monospace !important;
+  }
+  html.dark body.glass-ui::before{ display:none !important; content:none !important; }
   html.dark #vignette{
     background:radial-gradient(ellipse at center, rgba(2,4,3,0.15) 0%, rgba(2,4,3,0.65) 55%, rgba(2,4,3,0.92) 100%) !important;
   }
   html.dark #overlay{ background:#020403 !important; }
-  html.dark .glitch-logo,
-  html.dark .hero-title,
-  html.dark .brand-wordmark,
-  html.dark h1, html.dark h2{ color:#D4AF37 !important; text-shadow:0 0 28px rgba(212,175,55,.35); }
-  html.dark .hero-sub,
-  html.dark .brand-sub,
-  html.dark p{ color:#98FF98 !important; }
-  html.dark .cta, html.dark .btn, html.dark a.btn{
-    border-color:rgba(212,175,55,.45) !important;
+  html.dark .glitch-logo{
     color:#F4D874 !important;
-    background:rgba(10,61,42,.35) !important;
+    text-shadow:0 0 18px rgba(212,175,55,.6) !important;
   }
-  html.dark .ra-theme-fab{
+  html.dark .glitch-sub{ color:#98FF98 !important; opacity:.8; }
+  html.dark .eyebrow{ color:#98FF98 !important; opacity:.8; }
+  html.dark #wordmark{
+    color:#D4AF37 !important;
+    text-shadow:
+      0 0 40px rgba(212,175,55,.45),
+      0 0 80px rgba(152,255,152,.18) !important;
+  }
+  html.dark #tagline{
+    color:#98FF98 !important;
+    text-shadow:0 0 18px rgba(152,255,152,.5) !important;
+  }
+  html.dark .divider{
+    background:linear-gradient(90deg, transparent, #D4AF37 50%, transparent) !important;
+  }
+  html.dark .btn, html.dark a.btn{
+    border:2px solid #D4AF37 !important;
+    color:#D4AF37 !important;
+    background:rgba(10,61,42,.15) !important;
+    border-radius:0 !important;
+    box-shadow:none !important;
+    backdrop-filter:blur(2px) !important;
+    -webkit-backdrop-filter:blur(2px) !important;
+  }
+  html.dark .btn::before{ border-color:#98FF98 !important; }
+  html.dark .btn:hover{
+    color:#020403 !important;
+    background:#D4AF37 !important;
+    box-shadow:0 10px 30px rgba(212,175,55,.35), 0 0 40px rgba(152,255,152,.25) !important;
+  }
+  html.dark .btn.primary{
+    background:#D4AF37 !important;
+    color:#020403 !important;
+  }
+  html.dark .btn.primary:hover{
+    background:#0A3D2A !important;
+    color:#98FF98 !important;
+    border-color:#98FF98 !important;
+  }
+  html.dark .welcome{
+    color:#F4D874 !important;
+    text-shadow:0 0 24px rgba(212,175,55,.5) !important;
+  }
+  html.dark .ra-theme-fab,
+  html.dark #raThemeToggle.ra-theme-fab{
     background:rgba(8,18,20,0.7) !important;
     border-color:rgba(212,175,55,0.35) !important;
     color:#F4D874 !important;
+    box-shadow:0 4px 16px rgba(0,0,0,0.45) !important;
   }
 
 
@@ -272,7 +327,7 @@
   }
 
 </style>
-    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790201000">
+    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790230000">
 </head>
 <body class="glass-ui">
 <button type="button" id="raThemeToggle" class="headerButton ra-theme-toggle ra-theme-fab" aria-label="Switch theme" title="Theme" style="position:fixed;top:max(12px,env(safe-area-inset-top));right:12px;z-index:9999;width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(16,185,129,0.35);background:rgba(8,18,20,0.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#ecfdf5;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.35);">
@@ -322,10 +377,22 @@ function sizeRain(){
 sizeRain();
 window.addEventListener('resize', sizeRain);
 
+/* Theme-aware matrix trail */
+function rainTrail(){
+  var dark = document.documentElement.classList.contains('dark');
+  return dark ? 'rgba(2,4,3,0.12)' : 'rgba(232, 245, 240, 0.14)';
+}
+function rainGlyph(){
+  var dark = document.documentElement.classList.contains('dark');
+  if (dark) return Math.random() < 0.05 ? '#F4D874' : 'rgba(152,255,152,0.75)';
+  return Math.random() < 0.05 ? '#B8860B' : 'rgba(5,150,105,0.45)';
+}
+
+
 const glyphs = '01';
 
 function drawRain(){
-  rctx.fillStyle = 'rgba(232, 245, 240, 0.14)';
+  rctx.fillStyle = rainTrail();
   rctx.fillRect(0,0,rainCanvas.width, rainCanvas.height);
   rctx.font = fontSize + 'px monospace';
 
@@ -335,7 +402,7 @@ function drawRain(){
     const y = drops[i] * fontSize;
 
     // leading character brighter
-    rctx.fillStyle = Math.random() < 0.05 ? '#B8860B' : 'rgba(5,150,105,0.45)';
+    rctx.fillStyle = rainGlyph();
     rctx.fillText(char, x, y);
 
     if(y > rainCanvas.height && Math.random() > 0.975){
@@ -447,25 +514,7 @@ window.addEventListener('load', () => {
 </script>
 
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-<script>
-(function(){
-  var KEY="ra-theme";
-  function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
-  function getTheme(){var t=stored();if(t==="light"||t==="dark")return t;return "light";}
-  function apply(theme,persist){
-    var root=document.documentElement, body=document.body;
-    if(theme==="light"){ root.classList.remove("dark"); root.classList.add("light"); if(body){ body.classList.remove("dark-mode"); } }
-    else { root.classList.add("dark"); root.classList.remove("light"); if(body){ body.classList.add("dark-mode"); } }
-    if(persist!==false){try{localStorage.setItem(KEY,theme);localStorage.setItem("FinappDarkmode", theme==="dark"?"1":"0");}catch(e){}}
-    var btn=document.getElementById("raThemeToggle");
-    if(btn){ var ic=btn.querySelector("ion-icon"); if(ic) ic.setAttribute("name", theme==="dark"?"sunny-outline":"moon-outline"); }
-  }
-  var btn=document.getElementById("raThemeToggle");
-  if(btn) btn.addEventListener("click", function(e){ e.preventDefault(); apply(getTheme()==="dark"?"light":"dark"); });
-  apply(getTheme());
-})();
-</script>
-
+<script src="/static/js/ra-theme.js?v=1790230000"></script>
 </body>
 
 </html>

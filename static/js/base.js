@@ -527,6 +527,25 @@ function switchDarkModeCheck(value) {
         el.checked = value
     })
 }
+
+// Prefer shared ra-theme over legacy clock / default dark
+(function(){
+  try {
+    var rt = localStorage.getItem("ra-theme");
+    if (rt === "light") {
+      pageBody.classList.remove("dark-mode");
+      localStorage.setItem("FinappDarkmode", "0");
+      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.add("light");
+    } else if (rt === "dark") {
+      pageBody.classList.add("dark-mode");
+      localStorage.setItem("FinappDarkmode", "1");
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+    }
+  } catch (e) {}
+})();
+
 // if dark mode on
 if (checkDarkModeStatus === 1 || checkDarkModeStatus === "1" || pageBody.classList.contains('dark-mode')) {
     switchDarkModeCheck(true);
@@ -545,11 +564,17 @@ switchDarkMode.forEach(function(el) {
         if (darkmodeCheck === 1 || darkmodeCheck === "1" || bodyCheck) {
             pageBody.classList.remove("dark-mode");
             localStorage.setItem("FinappDarkmode", "0");
+            try { localStorage.setItem("ra-theme", "light"); } catch (e) {}
+            document.documentElement.classList.remove("dark");
+            document.documentElement.classList.add("light");
             switchDarkModeCheck(false);
         } else {
             pageBody.classList.add("dark-mode")
             switchDarkModeCheck(true);
             localStorage.setItem("FinappDarkmode", "1");
+            try { localStorage.setItem("ra-theme", "dark"); } catch (e) {}
+            document.documentElement.classList.add("dark");
+            document.documentElement.classList.remove("light");
         }
     })
 })

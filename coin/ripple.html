@@ -2,7 +2,7 @@
 <html lang="en" class="dark">
 
 <head>
-    <script>(function(){try{var t=localStorage.getItem("ra-theme");var mode;if(t==="light"||t==="dark"){mode=t;}else{if(t!=="auto"){try{localStorage.setItem("ra-theme","auto");}catch(x){}}var h=new Date().getHours();mode=(h>=6&&h<18)?"light":"dark";}if(mode==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){}})();</script>
+    <script>(function(){try{var t=localStorage.getItem("ra-theme");var f=null;try{f=localStorage.getItem("FinappDarkmode");}catch(x){}var mode=(t==="light"||t==="dark")?t:(f==="1"?"dark":f==="0"?"light":"light");if(mode==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){document.documentElement.classList.add("light");}})();</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#007bcf" />
@@ -537,85 +537,7 @@ const coinTxs = allTxs.filter(tx => {
     </script>
 
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-<script>
-(function(){
-  var KEY="ra-theme";
-  function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
-  function timeTheme(){var h=new Date().getHours();return (h>=6&&h<18)?"light":"dark";}
-  function getTheme(){var t=stored();if(t==="light"||t==="dark")return t;return timeTheme();}
-  function setIcon(theme){
-    var btn=document.getElementById("raThemeToggle");
-    if(!btn) return;
-    var icon=btn.querySelector("ion-icon");
-    var emoji=btn.querySelector(".ra-theme-emoji");
-    if(icon){
-      icon.setAttribute("name", theme==="dark"?"sunny-outline":"moon-outline");
-    }else if(emoji){
-      emoji.textContent=theme==="dark"?"☀":"☾";
-    }else{
-      btn.textContent=theme==="dark"?"☀":"☾";
-    }
-    btn.setAttribute("aria-label", theme==="dark"?"Switch to light mode":"Switch to dark mode");
-    btn.title=theme==="dark"?"Light mode":"Dark mode";
-  }
-  function apply(theme,persist){
-    var root=document.documentElement, body=document.body;
-    if(theme==="light"){
-      root.classList.remove("dark"); root.classList.add("light");
-      if(body) body.classList.remove("dark-mode");
-      try{localStorage.setItem("FinappDarkmode","0");}catch(e){}
-    }else{
-      theme="dark";
-      root.classList.add("dark"); root.classList.remove("light");
-      if(body) body.classList.add("dark-mode");
-      try{localStorage.setItem("FinappDarkmode","1");}catch(e){}
-    }
-    if(persist!==false){try{localStorage.setItem(KEY,theme);}catch(e){}}
-    setIcon(theme);
-    var sw=document.getElementById("darkmodeSwitch");
-    if(sw) sw.checked=(theme==="dark");
-  }
-  function toggle(e){if(e){e.preventDefault();e.stopPropagation();}apply(getTheme()==="dark"?"light":"dark",true);}
-  function ensureBtn(){
-    var btn=document.getElementById("raThemeToggle");
-    if(!btn){
-      btn=document.createElement("button");
-      btn.id="raThemeToggle"; btn.type="button";
-      btn.className="headerButton ra-theme-toggle ra-theme-fab";
-      btn.innerHTML='<span class="ra-theme-emoji">☀</span>';
-      (document.body||document.documentElement).appendChild(btn);
-    }else{
-      var header=btn.closest&&btn.closest(".appHeader");
-      var hidden=false;
-      if(header){
-        var st=(header.getAttribute("style")||"").replace(/\s/g,"").toLowerCase();
-        if(st.indexOf("display:none")!==-1) hidden=true;
-        try{if(window.getComputedStyle&&getComputedStyle(header).display==="none") hidden=true;}catch(e){}
-      }
-      if(!header||hidden){
-        btn.classList.add("ra-theme-fab");
-        if(btn.parentNode!==document.body) document.body.appendChild(btn);
-        if(!btn.querySelector("ion-icon") && !btn.querySelector(".ra-theme-emoji")){
-          btn.innerHTML='<span class="ra-theme-emoji">☀</span>';
-        }
-      }
-    }
-    if(!btn._raBound){btn._raBound=1;btn.addEventListener("click",toggle);}
-  }
-  function bindSwitch(){
-    var sw=document.getElementById("darkmodeSwitch");
-    if(!sw||sw._raBound) return;
-    sw._raBound=1;
-    sw.addEventListener("click",function(){
-      setTimeout(function(){
-        apply(document.body.classList.contains("dark-mode")?"dark":"light");
-      },0);
-    });
-  }
-  function init(){ensureBtn();bindSwitch();var t=stored();if(t==="light"||t==="dark"){apply(t,false);}else{if(t!=="auto"){try{localStorage.setItem(KEY,"auto");}catch(e){}}apply(timeTheme(),false);}}
-  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);
-  else init();
-})();
-</script>
+<script src="/static/js/ra-theme.js?v=1790230000"></script>
+
 </body>
 </html>

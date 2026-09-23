@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-    <script>(function(){try{var t=localStorage.getItem("ra-theme");var mode;if(t==="light"||t==="dark"){mode=t;}else{if(t!=="auto"){try{localStorage.setItem("ra-theme","auto");}catch(x){}}var h=new Date().getHours();mode=(h>=6&&h<18)?"light":"dark";}if(mode==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){}})();</script>
+    <script>(function(){try{var t=localStorage.getItem("ra-theme");var f=null;try{f=localStorage.getItem("FinappDarkmode");}catch(x){}var mode=(t==="light"||t==="dark")?t:(f==="1"?"dark":f==="0"?"light":"light");if(mode==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){document.documentElement.classList.add("light");}})();</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Robinhood Alliance - Vaults</title>
@@ -93,13 +93,13 @@
     (function(){
       var KEY="ra-theme";
       function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
-      function timeTheme(){var h=new Date().getHours();return (h>=6&&h<18)?"light":"dark";}
-      function getTheme(){var t=stored();if(t==="light"||t==="dark")return t;return timeTheme();}
+      function timeTheme(){return "light";}
+      function getTheme(){var t=stored();if(t==="light"||t==="dark")return t;try{var f=localStorage.getItem("FinappDarkmode");if(f==="1")return "dark";if(f==="0")return "light";}catch(e){}return "light";}
       function apply(theme,persist){
         var root=document.documentElement, body=document.body;
         if(theme==="light"){ root.classList.remove("dark"); root.classList.add("light"); if(body) body.classList.remove("dark-mode"); }
         else { root.classList.add("dark"); root.classList.remove("light"); if(body) body.classList.add("dark-mode"); }
-        if(persist!==false){try{localStorage.setItem(KEY,theme);}catch(e){}}
+        if(persist!==false){try{localStorage.setItem(KEY,theme);localStorage.setItem("FinappDarkmode",theme==="dark"?"1":"0");}catch(e){}}
         var btn=document.getElementById("raThemeToggle");
         if(btn){ var ic=btn.querySelector("ion-icon"); if(ic) ic.setAttribute("name", theme==="dark"?"sunny-outline":"moon-outline"); }
       }
