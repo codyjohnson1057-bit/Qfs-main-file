@@ -74,6 +74,106 @@
     return h;
   }
 
+  // ---- short sessionStorage cache for hot Neon reads ----
+  var CACHE_TTL_MS = 20000; // 20s — balances feel snappy without stale money
+  var SS_USER = 'ra_ss_user';
+  var SS_WALLETS = 'ra_ss_wallets';
+  var _inflightUser = null;
+  var _inflightWallets = null;
+
+  function _ssGet(key) {
+    try {
+      var raw = sessionStorage.getItem(key);
+      if (!raw) return null;
+      var obj = JSON.parse(raw);
+      if (!obj || obj.t == null) return null;
+      if (Date.now() - Number(obj.t) > CACHE_TTL_MS) return null;
+      return obj.data;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function _ssSet(key, data) {
+    try {
+      sessionStorage.setItem(key, JSON.stringify({ t: Date.now(), data: data }));
+    } catch (e) {}
+  }
+
+  function invalidateApiCache() {
+    try {
+      sessionStorage.removeItem(SS_USER);
+      sessionStorage.removeItem(SS_WALLETS);
+    } catch (e) {}
+    _inflightUser = null;
+    _inflightWallets = null;
+  }
+
+  /**
+   * Cached GET /api/user (20s TTL). Pass { bust: true } after mutations.
+   */
+  async function fetchUser(opts) {
+    opts = opts || {};
+    if (!opts.bust) {
+      var cached = _ssGet(SS_USER);
+      if (cached != null) {
+        return { ok: true, status: 200, data: cached, notDeployed: false, error: null, cached: true, response: null };
+      }
+      if (_inflightUser) return _inflightUser;
+    } else {
+      invalidateApiCache();
+    }
+    _inflightUser = api('/api/user').then(function (r) {
+      if (r.ok) _ssSet(SS_USER, r.data);
+      return r;
+    }).finally(function () {
+      _inflightUser = null;
+    });
+    return _inflightUser;
+  }
+
+  /**
+   * Cached GET /api/wallets (20s TTL). Dedupes concurrent callers (dashboard + coin).
+   */
+  async function fetchWallets(opts) {
+    opts = opts || {};
+    if (!opts.bust) {
+      var cached = _ssGet(SS_WALLETS);
+      if (cached != null) {
+        return { ok: true, status: 200, data: cached, notDeployed: false, error: null, cached: true, response: null };
+      }
+      if (_inflightWallets) return _inflightWallets;
+    } else {
+      try { sessionStorage.removeItem(SS_WALLETS); } catch (e) {}
+      _inflightWallets = null;
+    }
+    _inflightWallets = api('/api/wallets').then(function (r) {
+      if (r.ok) _ssSet(SS_WALLETS, r.data);
+      return r;
+    }).finally(function () {
+      _inflightWallets = null;
+    });
+    return _inflightWallets;
+  }
+
+  /** Map display symbol / slug → wallet currency key (lowercase). */
+  var SYMBOL_TO_WALLET = {
+    btc: 'btc', bitcoin: 'btc',
+    eth: 'eth', ethereum: 'eth',
+    usdt: 'usdt', tether: 'usdt',
+    trx: 'tron', tron: 'tron',
+    bnb: 'bnb', binancecoin: 'bnb',
+    xrp: 'xrp', ripple: 'xrp',
+    xlm: 'xlm', stellar: 'xlm', stellar_lumens: 'xlm',
+    qfs: 'qfs', quantumfinancialsystem: 'qfs'
+  };
+
+  function walletKeyFor(symbolOrSlug) {
+    var s = String(symbolOrSlug || '').trim().toLowerCase();
+    if (SYMBOL_TO_WALLET[s]) return SYMBOL_TO_WALLET[s];
+    return s;
+  }
+
   /**
    * api(path, opts)
    * @param {string} path  e.g. '/api/cards' or 'api/cards'
@@ -93,8 +193,12 @@
     if (init.body != null && typeof init.body === 'object' && !(init.body instanceof FormData)) {
       init.body = JSON.stringify(init.body);
     }
+    var method = String(init.method || 'GET').toUpperCase();
     try {
       var res = await fetch(url, init);
+      if (method !== 'GET' && method !== 'HEAD') {
+        invalidateApiCache();
+      }
       var data = null;
       var text = '';
       try {
@@ -329,8 +433,8 @@
     }
   }
 
-  async function getWalletMap() {
-    var r = await api('/api/wallets');
+  async function getWalletMap(opts) {
+    var r = await fetchWallets(opts || {});
     var map = {};
     if (r.ok) {
       var list = Array.isArray(r.data) ? r.data : (r.data && r.data.wallets) || [];
@@ -339,7 +443,7 @@
         map[String(w.currency).toLowerCase()] = Number(w.balance || 0);
       });
     }
-    return { ok: r.ok, notDeployed: r.notDeployed, error: r.error, map: map };
+    return { ok: r.ok, notDeployed: r.notDeployed, error: r.error, map: map, cached: !!r.cached };
   }
 
   /**
@@ -409,20 +513,20 @@
    */
   async function refreshSharedBalance(opts) {
     opts = opts || {};
-    var w = await getWalletMap();
     var prices = opts.prices;
-    if (!prices) {
-      try {
-        prices = await fetchAssetPrices();
-      } catch (e) {
-        prices = {};
-      }
-    }
+    var wPromise = getWalletMap(opts.bust ? { bust: true } : {});
+    var vaultPromise = opts.skipVaults ? Promise.resolve({ ok: false, locked: 0, vaults: [] }) : getVaultLockedUsd();
+    var pricePromise = prices
+      ? Promise.resolve(prices)
+      : fetchAssetPrices().catch(function () { return {}; });
+    var triple = await Promise.all([wPromise, vaultPromise, pricePromise]);
+    var w = triple[0];
+    var vaults = triple[1];
+    prices = triple[2] || {};
     prices = prices || {};
     prices.qfs = 1;
     prices.usdt = 1;
     var portfolio = await computePortfolioUsd(w.map, prices);
-    var vaults = await getVaultLockedUsd();
     var locked = Number(vaults.locked || 0);
     // Vaults are funded by debiting wallets, so portfolio is wallets-only cash.
     // Available = wallet portfolio; vaultLocked is separate savings (not subtracted twice).
@@ -505,5 +609,11 @@
     balanceStripHtml: balanceStripHtml,
     mountBalanceStrip: mountBalanceStrip,
     BALANCE_KEY: BALANCE_KEY,
+    CACHE_TTL_MS: CACHE_TTL_MS,
+    invalidateApiCache: invalidateApiCache,
+    fetchUser: fetchUser,
+    fetchWallets: fetchWallets,
+    walletKeyFor: walletKeyFor,
+    SYMBOL_TO_WALLET: SYMBOL_TO_WALLET,
   };
 })(typeof window !== 'undefined' ? window : this);

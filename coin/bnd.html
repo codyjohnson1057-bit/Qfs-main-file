@@ -42,6 +42,7 @@
     <link href="/panel/assets/css/toastr.min.css" rel="stylesheet" type="text/css">
     <link href="/panel/assets/css/icons.min.css" rel="stylesheet" type="text/css">
     <script src="/static/js/jquery-3.6.0.min.js"></script>
+<script src="/static/js/ra-api.js?v=1790582000"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
@@ -305,7 +306,7 @@
         }
 
         // ---- CONFIG ----
-        const API_BASE = 'https://web-production-8f747.up.railway.app';
+        const API_BASE = (window.RA && RA.API_BASE) || ((location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'http://127.0.0.1:5987' : '${API_BASE}');
 
         // ---- COIN DETECTION ----
         const pageTitle = document.title;
@@ -352,6 +353,15 @@
             return localStorage.getItem('token');
         }
 
+        function walletCurrencyKey() {
+            if (window.RA && typeof RA.walletKeyFor === 'function') {
+                return RA.walletKeyFor(coinSymbol) || RA.walletKeyFor(coinId);
+            }
+            var s = String(coinSymbol || '').toLowerCase();
+            if (s === 'trx') return 'tron';
+            return s;
+        }
+
         (function checkAuth() {
             const token = getToken();
             if (!token) {
@@ -359,33 +369,37 @@
                 return;
             }
 
-            fetch(`https://web-production-8f747.up.railway.app/api/user`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
-            .then(res => {
-                if (!res.ok) throw new Error('Session expired');
-                return res.json();
-            })
-            .then(user => {
-                // Keep preferred currency in sync with backend
-                if (user.preferred_currency) {
-                    localStorage.setItem('preferred_currency', user.preferred_currency);
+            (async function () {
+                try {
+                    var userRes;
+                    if (window.RA && typeof RA.fetchUser === 'function') {
+                        userRes = await RA.fetchUser();
+                        if (!userRes.ok) throw new Error(userRes.error || 'Session expired');
+                        var user = userRes.data || {};
+                    } else {
+                        var res = await fetch(`${API_BASE}/api/user`, {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (!res.ok) throw new Error('Session expired');
+                        user = await res.json();
+                    }
+                    if (user.preferred_currency) {
+                        localStorage.setItem('preferred_currency', user.preferred_currency);
+                    }
+                    localStorage.setItem('user', JSON.stringify({
+                        id: user.id,
+                        fullName: user.full_name || user.fullName,
+                        email: user.email,
+                        role: user.role
+                    }));
+                    loadCoinData();
+                } catch (err) {
+                    console.error('Auth error:', err);
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = '/login.html';
                 }
-                // Also keep user object updated
-                localStorage.setItem('user', JSON.stringify({
-                    id: user.id,
-                    fullName: user.full_name || user.fullName,
-                    email: user.email,
-                    role: user.role
-                }));
-                loadCoinData();
-            })
-            .catch(err => {
-                console.error('Auth error:', err);
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-                window.location.href = '/login.html';
-            });
+            })();
         })();
 
         // ---- LOAD COIN DATA ----
@@ -393,17 +407,34 @@
             try {
                 const token = getToken();
 
-                // 1. Fetch wallets
-                const walletRes = await fetch(`https://web-production-8f747.up.railway.app/api/wallets`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (!walletRes.ok) throw new Error('Failed to fetch wallets');
-                const wallets = await walletRes.json();
+                
+                // 1. Wallets (session cache via RA) + transactions in parallel
+                let wallets = [];
+                let allTxs = [];
+                if (window.RA && typeof RA.fetchWallets === 'function') {
+                    const [wRes, txRes] = await Promise.all([
+                        RA.fetchWallets(),
+                        RA.api('/api/transactions')
+                    ]);
+                    if (!wRes.ok) throw new Error(wRes.error || 'Failed to fetch wallets');
+                    wallets = Array.isArray(wRes.data) ? wRes.data : ((wRes.data && wRes.data.wallets) || []);
+                    if (txRes.ok) {
+                        allTxs = Array.isArray(txRes.data) ? txRes.data : ((txRes.data && txRes.data.transactions) || []);
+                    }
+                } else {
+                    const walletRes = await fetch(`${API_BASE}/api/wallets`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (!walletRes.ok) throw new Error('Failed to fetch wallets');
+                    wallets = await walletRes.json();
+                    const txRes = await fetch(`${API_BASE}/api/transactions`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (txRes.ok) allTxs = await txRes.json();
+                }
 
-                const wallet = wallets.find(w => {
-                    const c = (w.currency || '').toLowerCase();
-                    return c === coinSymbol.toLowerCase() || c === 'bnd';
-                });
+                const wKey = walletCurrencyKey();
+                const wallet = wallets.find(w => String(w.currency || '').toLowerCase() === wKey);
                 const balance = wallet ? Number(wallet.balance) : 0;
 
                 // 2. Fetch live USD price (Yahoo chart API for ETF/stock; static fallback)
@@ -424,19 +455,19 @@
                 if (!priceUSD) priceUSD = 73; // static approx fallback
 
                 // 3. Update UI (uses preferred currency)
+                if (wKey === 'qfs' || String(coinSymbol).toUpperCase() === 'QFS') priceUSD = 1;
+                if (wKey === 'usdt' || String(coinSymbol).toUpperCase() === 'USDT') priceUSD = 1;
                 document.getElementById('coinBalance').innerText = formatCrypto(balance);
                 document.getElementById('coinUSD').innerText = formatMoney(balance * priceUSD);
+                if (window.RA && typeof RA.refreshSharedBalance === 'function') {
+                    RA.refreshSharedBalance().catch(function(){});
+                }
+                // 4. Transactions already loaded in parallel above
 
-                // 4. Fetch transactions
-                const txRes = await fetch(`https://web-production-8f747.up.railway.app/api/transactions`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
+const coinTxs = allTxs.filter(tx => {
+                    const c = String(tx.currency || '').toLowerCase();
+                    return c === wKey || c === String(coinSymbol).toLowerCase();
                 });
-                if (!txRes.ok) throw new Error('Failed to fetch transactions');
-                const allTxs = await txRes.json();
-
-                const coinTxs = allTxs.filter(tx =>
-                    ['BND','BND'].includes((tx.currency || '').toUpperCase())
-                );
 
                 // 5. Render transactions
                 const tbody = document.getElementById('transactionTableBody');
@@ -507,38 +538,6 @@
                             : '-';
                        
 
-                        tbody.innerHTML += `
-                            <tr>
-                                <td><span class="${color}">${sign}</span></td>
-                                <td>${formatCrypto(amount)} ${coinSymbol}</td>
-                                <td>${category}</td>
-                                <td>${statusBadge}</td>
-                                <td style="white-space:nowrap;font-size:0.85rem;">${dateStr}</td>
-                            </tr>
-                        `;
-                    });
-                }
-            } catch (err) {
-                console.error('Error loading coin data:', err);
-                if (typeof notify !== 'undefined') {
-                    notify('error', 'Failed to load data. Please refresh.');
-                } else if (typeof Swal !== 'undefined') {
-                    Swal.fire('Error', 'Failed to load data. Please refresh.', 'error');
-                } else {
-                    alert('Failed to load data. Please refresh.');
-                }
-            }
-        }
-
-        tbody.innerHTML += `
-                            <tr>
-                                <td><span class="${color}" style="font-weight:600;">${sign}</span></td>
-                                <td class="${color}">${formatCrypto(amount)} ${coinSymbol}</td>
-                                <td>${category}</td>
-                                <td>${statusBadge}</td>
-                                <td style="white-space:nowrap;font-size:0.85rem;">${dateStr}</td>
-                            </tr>
-                        `;
 
         // Fallback notify
 

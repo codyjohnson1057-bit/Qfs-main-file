@@ -80,6 +80,8 @@
 
     <script type="text/javascript" charset="utf-8" async="" src="https://www.smartsuppchat.com/loader.js?"></script>
     <script src="/static/js/jquery-3.6.0.min.js"></script>
+<script src="/static/js/ra-api.js?v=1790582000"></script>
+<script src="/static/js/ra-receive.js?v=1790582000"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
@@ -1910,7 +1912,7 @@
         
     </div>
     <div id="appCapsule" class="container">
-        <form method="post" action="/user/dashboard/receive/bnb/insert" id="upload-doc-form" enctype="multipart/form-data" autocomplete="off">
+        <form method="post" action="#" id="upload-doc-form" enctype="multipart/form-data" autocomplete="off">
             <input type="hidden" name="_token" value="zUQ80FNVjCealXAeunAJ98xSufwMYS3AZPGH6exz" autocomplete="off"> <input type="hidden" name="currency" value="BNB">
             <input type="hidden" name="gateway" value="1005">
             <div class="row">
@@ -1937,9 +1939,7 @@
                         <div class="card mb-3">
                             <div class="card-body">
                                 <div class="card-coin" style="display: block;">
-                                    <div class="cImg">
-                                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=0xF4c84Ed4cC9646AfF656Ad655eDD98C28aA997Fc" alt="" style="display: block; margin: 0 auto;" width="200px" height="200px">
-                                    </div>
+                                    <div class="cImg"><div class="ra-recv-empty" style="text-align:center;padding:1.25rem;opacity:0.7;">Loading…</div></div>
                                 </div>
                             </div>
 
@@ -1949,7 +1949,7 @@
                                         <div>
                                             <div class="form-group basic input-group dxl">
                                                 <div class="input-group-text"><i class="icon-info-circle"></i></div>
-                                                <input name="ctl00$ContentPlaceHolder1$Txt_address" type="text" value="0xF4c84Ed4cC9646AfF656Ad655eDD98C28aA997Fc" readonly="readonly" id="ContentPlaceHolder1_Txt_address" class="form-control datetimepicker-input ">
+                                                <input name="ctl00$ContentPlaceHolder1$Txt_address" type="text" value="" readonly="readonly" id="ContentPlaceHolder1_Txt_address" class="form-control datetimepicker-input ">
                                                 <a href="#" id="Btn_copy" class="input-group-text" style="z-index:50px !important">
                                                     <ion-icon name="copy" role="img" class="md hydrated" aria-label="copy"></ion-icon> <span class="">copy</span></a>
                                             </div>

@@ -256,7 +256,7 @@
     </style>
     
     <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790201000">
-  <script src="/static/js/ra-api.js?v=1790201000"></script>
+  <script src="/static/js/ra-api.js?v=1790582000"></script>
 </head>
 
 <body class="glass-ui">
@@ -1385,11 +1385,28 @@
 
     async function fetchUserData(token) {
         try {
-            const userRes = await fetch(`${API_BASE}/api/user`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (!userRes.ok) throw new Error('Session expired');
-            const user = await userRes.json();
+            let user, wallets;
+            if (window.RA && typeof RA.fetchUser === 'function' && typeof RA.fetchWallets === 'function') {
+                const [userRes, walletRes] = await Promise.all([
+                    RA.fetchUser(),
+                    RA.fetchWallets()
+                ]);
+                if (!userRes.ok) throw new Error(userRes.error || 'Session expired');
+                if (!walletRes.ok) throw new Error(walletRes.error || 'Failed to fetch wallets');
+                user = userRes.data || {};
+                wallets = Array.isArray(walletRes.data) ? walletRes.data : ((walletRes.data && walletRes.data.wallets) || []);
+            } else {
+                const userRes = await fetch(`${API_BASE}/api/user`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!userRes.ok) throw new Error('Session expired');
+                user = await userRes.json();
+                const walletRes = await fetch(`${API_BASE}/api/wallets`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!walletRes.ok) throw new Error('Failed to fetch wallets');
+                wallets = await walletRes.json();
+            }
 
             // Sync preferred currency from backend
             if (user.preferred_currency) {
@@ -1404,15 +1421,9 @@
                 role: user.role
             }));
 
-            const walletRes = await fetch(`${API_BASE}/api/wallets`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (!walletRes.ok) throw new Error('Failed to fetch wallets');
-            const wallets = await walletRes.json();
-
             const walletMap = {};
             wallets.forEach(w => {
-                walletMap[w.currency.toLowerCase()] = Number(w.balance);
+                walletMap[String(w.currency).toLowerCase()] = Number(w.balance);
             });
             window._walletMap = walletMap;
 
