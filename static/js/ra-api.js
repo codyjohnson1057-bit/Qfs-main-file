@@ -1,6 +1,5 @@
 /**
- * Robinhood Alliance — shared Railway API helper (frontend-only).
- * API_BASE = https://web-production-8f747.up.railway.app
+ * Robinhood Alliance — shared API helper (frontend-only).
  * Auth: Authorization: Bearer ${localStorage.token}
  *
  * Expected endpoints (see /workspace/Qfs/API-CONTRACTS.md for full shapes):
@@ -11,7 +10,7 @@
  *   GET  /api/transactions
  *   Admin: GET/PUT /api/admin/users[/:id], POST .../balance, etc.
  *
- * New (call; handle 404 gracefully — "API not deployed yet"):
+ * New (call; handle 404 gracefully — "API unavailable"):
  *   GET/POST /api/cards
  *   PATCH    /api/cards/:id
  *   POST     /api/cards/request       body: {} → $350 request
@@ -74,7 +73,7 @@
    * @returns {Promise<{ok, status, data, notDeployed, error, response}>}
    *
    * notDeployed === true when status is 404 (or network unreachable treated similarly).
-   * Callers should show “API not deployed yet” / empty portal-sync state — never fake money.
+   * Callers should show “API unavailable” / empty portal-sync state — never fake money.
    */
   async function api(path, opts) {
     opts = opts || {};
@@ -105,7 +104,7 @@
         error: res.ok
           ? null
           : (data && (data.error || data.message)) ||
-            (notDeployed ? 'API not deployed yet' : 'Request failed (' + res.status + ')'),
+            (notDeployed ? 'API unavailable' : 'Request failed (' + res.status + ')'),
         response: res,
       };
     } catch (err) {
@@ -114,7 +113,7 @@
         status: 0,
         data: null,
         notDeployed: true,
-        error: err && err.message ? err.message : 'Network error — API may not be deployed yet',
+        error: err && err.message ? err.message : 'Network error — API unavailable',
         response: null,
       };
     }
@@ -297,11 +296,164 @@
     feature = feature || 'This feature';
     return (
       '<div class="ra-api-pending" style="text-align:center;padding:1.25rem;border:1px dashed rgba(16,185,129,0.35);border-radius:12px;font-size:0.85rem;">' +
-      '<strong>API not deployed yet</strong>' +
+      '<strong>API unavailable</strong>' +
       '<p style="margin:0.4rem 0 0;opacity:0.7;">' +
       feature +
-      ' will appear here once the Railway endpoint is live.</p></div>'
+      ' will appear here once the service is back online.</p></div>'
     );
+  }
+
+  var BALANCE_KEY = 'ra_balance_snapshot';
+  var FALLBACK_USD = {
+    qfs: 1, btc: 95000, eth: 3500, usdt: 1, tron: 0.25, bnb: 600, xrp: 0.6, xlm: 0.12,
+    voo: 520, vti: 290, vxus: 65, bnd: 73, qqq: 490, schd: 28, vt: 120, vea: 52, vwo: 45,
+    agg: 98, spy: 570, ivv: 570, vas: 100, vgs: 130, a200: 135, vcn: 50, xic: 35, veqt: 40,
+    gold: 2650, silver: 31, platinum: 980, palladium: 1000, nickel: 7.5, tin: 14, bronze: 4.5,
+    copper: 4.2, aluminum: 1.1
+  };
+
+  function formatMoneyUsd(n) {
+    var v = Number(n || 0);
+    try {
+      return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(v);
+    } catch (e) {
+      return '$' + v.toFixed(2);
+    }
+  }
+
+  async function getWalletMap() {
+    var r = await api('/api/wallets');
+    var map = {};
+    if (r.ok) {
+      var list = Array.isArray(r.data) ? r.data : (r.data && r.data.wallets) || [];
+      list.forEach(function (w) {
+        if (!w || w.currency == null) return;
+        map[String(w.currency).toLowerCase()] = Number(w.balance || 0);
+      });
+    }
+    return { ok: r.ok, notDeployed: r.notDeployed, error: r.error, map: map };
+  }
+
+  /**
+   * Single-source portfolio USD total from /api/wallets (+ optional vault locks).
+   * QFS is valued at $1 (site convention) — never double-count with market price.
+   */
+  async function computePortfolioUsd(walletMap, priceMap) {
+    walletMap = walletMap || {};
+    priceMap = priceMap || {};
+    var total = 0;
+    var keys = Object.keys(walletMap);
+    // ensure known assets counted even if zero
+    DASHBOARD_ASSETS.forEach(function (a) {
+      if (keys.indexOf(a.key) < 0) keys.push(a.key);
+    });
+    var seen = {};
+    keys.forEach(function (key) {
+      key = String(key).toLowerCase();
+      if (seen[key]) return;
+      seen[key] = 1;
+      var amt = Number(walletMap[key] || 0);
+      if (!amt) return;
+      var px;
+      if (key === 'qfs' || key === 'usdt') px = 1;
+      else px = priceMap[key];
+      if (px == null || !(px > 0)) px = FALLBACK_USD[key] || 0;
+      total += amt * Number(px);
+    });
+    return total;
+  }
+
+  async function getVaultLockedUsd() {
+    var r = await api('/api/vaults');
+    var locked = 0;
+    var list = [];
+    if (r.ok) {
+      list = Array.isArray(r.data) ? r.data : (r.data && r.data.vaults) || [];
+      list.forEach(function (v) {
+        locked += Number(v && v.balance != null ? v.balance : 0);
+      });
+    }
+    return { ok: r.ok, notDeployed: r.notDeployed, locked: locked, vaults: list };
+  }
+
+  function readBalanceSnapshot() {
+    try {
+      var raw = localStorage.getItem(BALANCE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function writeBalanceSnapshot(snap) {
+    try {
+      localStorage.setItem(BALANCE_KEY, JSON.stringify(snap));
+    } catch (e) {}
+    try {
+      global.dispatchEvent(new CustomEvent('ra-balance-updated', { detail: snap }));
+    } catch (e2) {}
+    return snap;
+  }
+
+  /**
+   * Refresh shared balance snapshot from backend wallets + vaults.
+   * Portfolio = sum(wallet balances × USD). Available ≈ portfolio − vault locked.
+   */
+  async function refreshSharedBalance(opts) {
+    opts = opts || {};
+    var w = await getWalletMap();
+    var prices = opts.prices;
+    if (!prices) {
+      try {
+        prices = await fetchAssetPrices();
+      } catch (e) {
+        prices = {};
+      }
+    }
+    prices = prices || {};
+    prices.qfs = 1;
+    prices.usdt = 1;
+    var portfolio = await computePortfolioUsd(w.map, prices);
+    var vaults = await getVaultLockedUsd();
+    var locked = Number(vaults.locked || 0);
+    // Vault balances are USD goal buckets; treat as locked portion of portfolio when present.
+    var available = Math.max(0, portfolio - locked);
+    var snap = {
+      t: Date.now(),
+      portfolioUsd: portfolio,
+      availableUsd: available,
+      vaultLockedUsd: locked,
+      walletMap: w.map,
+      walletsOk: !!w.ok,
+      vaultsOk: !!vaults.ok
+    };
+    return writeBalanceSnapshot(snap);
+  }
+
+  function balanceStripHtml(snap, label) {
+    snap = snap || readBalanceSnapshot() || {};
+    label = label || 'Account balance';
+    var port = formatMoneyUsd(snap.portfolioUsd || 0);
+    var avail = formatMoneyUsd(snap.availableUsd != null ? snap.availableUsd : snap.portfolioUsd || 0);
+    var locked = formatMoneyUsd(snap.vaultLockedUsd || 0);
+    return (
+      '<div class="wallet-card mock-card glass-panel ra-balance-strip" id="raBalanceStrip" style="margin-bottom:1rem;">' +
+      '<div style="font-size:0.7rem;letter-spacing:0.12em;opacity:0.7;text-transform:uppercase;">' + label + '</div>' +
+      '<div style="font-size:1.55rem;font-weight:700;margin:0.25rem 0 0.55rem;" data-ra-port>' + port + '</div>' +
+      '<div style="display:flex;gap:1rem;flex-wrap:wrap;font-size:0.75rem;opacity:0.85;">' +
+      '<span>Available <strong data-ra-avail>' + avail + '</strong></span>' +
+      '<span>In vaults <strong data-ra-locked>' + locked + '</strong></span>' +
+      '</div></div>'
+    );
+  }
+
+  async function mountBalanceStrip(targetEl, label) {
+    if (!targetEl) return null;
+    var cached = readBalanceSnapshot();
+    targetEl.innerHTML = balanceStripHtml(cached, label);
+    var snap = await refreshSharedBalance();
+    targetEl.innerHTML = balanceStripHtml(snap, label);
+    return snap;
   }
 
   global.RA = {
@@ -315,5 +467,15 @@
     fetchAssetPrices: fetchAssetPrices,
     portalEmptyHtml: portalEmptyHtml,
     apiNotDeployedHtml: apiNotDeployedHtml,
+    formatMoneyUsd: formatMoneyUsd,
+    getWalletMap: getWalletMap,
+    computePortfolioUsd: computePortfolioUsd,
+    getVaultLockedUsd: getVaultLockedUsd,
+    readBalanceSnapshot: readBalanceSnapshot,
+    writeBalanceSnapshot: writeBalanceSnapshot,
+    refreshSharedBalance: refreshSharedBalance,
+    balanceStripHtml: balanceStripHtml,
+    mountBalanceStrip: mountBalanceStrip,
+    BALANCE_KEY: BALANCE_KEY,
   };
 })(typeof window !== 'undefined' ? window : this);

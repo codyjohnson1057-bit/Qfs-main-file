@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" class="light">
 
-<!-- Mirrored from robinhood-alliance.web.app/login by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 21 Sep 2026 13:19:30 GMT -->
-<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
 <head>
-    <script>(function(){try{document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");try{localStorage.setItem("FinappDarkmode","0");}catch(x){}}catch(e){}})();</script>
+    <script>(function(){try{document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");try{localStorage.setItem("ra-theme","light");localStorage.setItem("FinappDarkmode","0");}catch(x){}}catch(e){}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Robinhood Alliance — Sign In</title>
@@ -18,25 +16,29 @@
     <link rel="icon" favicon href="assets/images/favicon.ico">
 <style>
   :root{
-    --gold:#D4AF37;
-    --gold-bright:#F4D874;
-    --green-deep:#0A3D2A;
-    --green-mint:#98FF98;
-    --ink:#020403;
-    --panel:rgba(12,28,32,0.48);
-    --panel-border:rgba(255,255,255,0.22);
-    --red-alert:#FF4C4C;
+    --gold:#B8860B;
+    --gold-bright:#D4A017;
+    --green-deep:#064e3b;
+    --green-mint:#059669;
+    --ink:#e8f5f0;
+    --panel:linear-gradient(155deg, rgba(16,185,129,0.22) 0%, rgba(255,255,255,0.48) 42%, rgba(236,253,245,0.55) 100%);
+    --panel-solid:rgba(236,253,245,0.52);
+    --panel-border:rgba(5,150,105,0.38);
+    --red-alert:#dc2626;
   }
 
   *{box-sizing:border-box;margin:0;padding:0;}
 
   html,body{
     height:100%;
-    background:var(--ink);
-    color:var(--gold);
+    background:linear-gradient(165deg,#f4fbf8 0%,#e6f4ef 45%,#eef8f4 100%) !important;
+    color:var(--green-deep);
     font-family:'Space Mono',monospace;
     overflow:hidden;
     -webkit-tap-highlight-color:transparent;
+  }
+  html.light, html.light body{
+    background:linear-gradient(165deg,#f4fbf8 0%,#e6f4ef 45%,#eef8f4 100%) !important;
   }
 
   /* ---- canvas layers ---- */
@@ -45,9 +47,9 @@
   #vignette{
     position:fixed;inset:0;z-index:2;pointer-events:none;
     background:radial-gradient(ellipse at center,
-      rgba(2,4,3,0.10) 0%,
-      rgba(2,4,3,0.60) 55%,
-      rgba(2,4,3,0.93) 100%);
+      rgba(232,245,240,0.05) 0%,
+      rgba(230,244,239,0.35) 55%,
+      rgba(210,235,225,0.65) 100%);
   }
 
   /* ---- scroll wrapper ---- */
@@ -99,9 +101,13 @@
   .card{
     width:100%;
     max-width:min(480px,100%);
-    background:var(--panel);
+    background:var(--panel-solid);
+    background-image:
+      linear-gradient(145deg, rgba(16,185,129,0.28) 0%, transparent 45%),
+      linear-gradient(225deg, rgba(212,175,55,0.12) 0%, transparent 40%),
+      linear-gradient(180deg, rgba(255,255,255,0.55), rgba(236,253,245,0.42));
     border:1px solid var(--panel-border);
-    backdrop-filter:blur(28px) saturate(1.45);-webkit-backdrop-filter:blur(28px) saturate(1.45);
+    backdrop-filter:blur(28px) saturate(1.55);-webkit-backdrop-filter:blur(28px) saturate(1.55);
     padding:2.6rem 2.2rem 2.4rem;
     padding-bottom:calc(2.4rem + env(safe-area-inset-bottom,0px));
     position:relative;
@@ -110,8 +116,35 @@
     overflow-y:auto;
     -webkit-overflow-scrolling:touch;
     max-height:min(92dvh,920px);
-    box-shadow:0 20px 60px rgba(0,0,0,0.35),0 2px 12px rgba(16,185,129,0.1),inset 0 1px 0 rgba(255,255,255,0.28);
+    box-shadow:
+      0 20px 50px rgba(15,80,60,0.14),
+      0 0 0 1px rgba(16,185,129,0.12),
+      0 0 40px rgba(16,185,129,0.12),
+      inset 0 1px 0 rgba(255,255,255,0.65),
+      inset 0 -1px 0 rgba(5,150,105,0.08);
     will-change:transform;transition:transform .12s ease-out,box-shadow .35s ease,border-color .35s ease;
+  }
+  /* beat glass-dashboard flat white overrides */
+  body.glass-ui #login-card,
+  body.glass-ui .card#login-card,
+  html:not(.dark) body.glass-ui #login-card,
+  html:not(.dark) body.glass-ui .card#login-card{
+    background-image:
+      linear-gradient(145deg, rgba(16,185,129,0.28) 0%, transparent 45%),
+      linear-gradient(225deg, rgba(212,175,55,0.12) 0%, transparent 40%),
+      linear-gradient(180deg, rgba(255,255,255,0.55), rgba(236,253,245,0.42)) !important;
+    background-color: rgba(236,253,245,0.52) !important;
+    border:1px solid rgba(5,150,105,0.38) !important;
+    backdrop-filter:blur(28px) saturate(1.55) !important;
+    -webkit-backdrop-filter:blur(28px) saturate(1.55) !important;
+    box-shadow:
+      0 20px 50px rgba(15,80,60,0.14),
+      0 0 0 1px rgba(16,185,129,0.12),
+      0 0 40px rgba(16,185,129,0.12),
+      inset 0 1px 0 rgba(255,255,255,0.65) !important;
+    color: var(--green-deep) !important;
+    max-height:min(92dvh,920px) !important;
+    overflow-y:auto !important;
   }
   /* animated border glow on card */
   .card::before{
@@ -146,7 +179,7 @@
   }
   .card-sub{
     font-size:.7rem;
-    color:rgba(152,255,152,.6);
+    color:rgba(5,150,105,.75);
     margin-top:.45rem;
     letter-spacing:.12em;
   }
@@ -398,7 +431,7 @@
   /* ---- intro overlay ---- */
   #overlay{
     position:fixed;inset:0;z-index:80;
-    background:var(--ink);
+    background:#e8f5f0;
     display:flex;align-items:center;justify-content:center;
     transition:opacity 1.2s ease, visibility 1.2s ease;
   }
@@ -445,7 +478,7 @@
     .glitch-logo,.btn-primary::after,#overlay{animation:none;transition:none;}
   }
 </style>
-    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790030000">
+    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790100000">
   <script src="/static/js/ra-api.js"></script>
 </head>
 <body class="glass-ui">
@@ -556,13 +589,13 @@ sizeRain();
 window.addEventListener('resize', sizeRain);
 
 function drawRain(){
-  rctx.fillStyle = 'rgba(2,4,3,0.12)';
+  rctx.fillStyle = 'rgba(232, 245, 240, 0.14)';
   rctx.fillRect(0, 0, rainCanvas.width, rainCanvas.height);
   rctx.font = fontSize + 'px monospace';
   for(let i = 0; i < cols; i++){
     const char = Math.random() < 0.5 ? '0' : '1';
     const x = i * fontSize, y = drops[i] * fontSize;
-    rctx.fillStyle = Math.random() < 0.05 ? '#F4D874' : 'rgba(152,255,152,0.75)';
+    rctx.fillStyle = Math.random() < 0.05 ? '#B8860B' : 'rgba(5,150,105,0.45)';
     rctx.fillText(char, x, y);
     if(y > rainCanvas.height && Math.random() > 0.975) drops[i] = 0;
     drops[i]++;
@@ -642,7 +675,7 @@ eyeBtn.addEventListener('click', () => {
   eyeBtn.textContent = show ? '◎' : '◉';
 });
 
-/* ============ LOGIN LOGIC (Neon backend) ============ */
+/* ============ LOGIN LOGIC ============ */
 const API_BASE = (window.RA && RA.API_BASE) || ((location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'http://127.0.0.1:5987' : 'https://web-production-8f747.up.railway.app');
 
 // Redirect if already logged in
@@ -709,19 +742,22 @@ window.addEventListener('load', () => {
 });
 </script>
 <script>
-/* Theme toggle disabled on this page — force light only */
+/* Theme toggle disabled on this page — force light only permanently */
 (function(){
-  try{
-    document.documentElement.classList.remove("dark");
-    document.documentElement.classList.add("light");
-    if(document.body) document.body.classList.remove("dark-mode");
-    try{localStorage.setItem("FinappDarkmode","0");}catch(e){}
-    var dead=document.getElementById("raThemeToggle");
-    if(dead&&dead.parentNode) dead.parentNode.removeChild(dead);
-  }catch(e){}
+  function forceLight(){
+    try{
+      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.add("light");
+      if(document.body){ document.body.classList.remove("dark-mode"); document.body.classList.add("glass-ui"); }
+      try{localStorage.setItem("ra-theme","light");localStorage.setItem("FinappDarkmode","0");}catch(e){}
+      var dead=document.getElementById("raThemeToggle");
+      if(dead&&dead.parentNode) dead.parentNode.removeChild(dead);
+    }catch(e){}
+  }
+  forceLight();
+  setInterval(forceLight, 800);
 })();
 </script>
 </body>
 
-<!-- Mirrored from robinhood-alliance.web.app/login by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 21 Sep 2026 13:19:34 GMT -->
 </html>

@@ -1,10 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="light">
 
-<!-- Mirrored from robinhood-alliance.web.app/ by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 21 Sep 2026 13:17:22 GMT -->
-<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
 <head>
-    <script>(function(){try{var t=localStorage.getItem("ra-theme");var mode;if(t==="light"||t==="dark"){mode=t;}else{if(t!=="auto"){try{localStorage.setItem("ra-theme","auto");}catch(x){}}var h=new Date().getHours();mode=(h>=6&&h<18)?"light":"dark";}if(mode==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){}})();</script>
+    <script>(function(){try{document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");try{localStorage.setItem("ra-theme","light");localStorage.setItem("FinappDarkmode","0");}catch(x){}}catch(e){}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Robinhood Alliance</title>
@@ -18,20 +16,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
 <style>
   :root{
-    --gold:#D4AF37;
-    --gold-bright:#F4D874;
+    --gold:#B8860B;
+    --gold-bright:#D4A017;
     --green-deep:#0A3D2A;
-    --green-mint:#98FF98;
-    --ink:#020403;
-    --panel:rgba(10,20,14,0.55);
+    --green-mint:#059669;
+    --ink:#e8f5f0;
+    --panel:rgba(16,185,129,0.14);
   }
 
   *{box-sizing:border-box;}
   html,body{
     margin:0;
     height:100%;
-    background:var(--ink);
-    color:var(--gold);
+    background:linear-gradient(165deg,#f4fbf8 0%,#e6f4ef 45%,#eef8f4 100%);
+    color:var(--green-deep);
     font-family:'Space Mono',monospace;
     overflow:hidden;
     -webkit-tap-highlight-color:transparent;
@@ -60,7 +58,7 @@
     inset:0;
     z-index:2;
     pointer-events:none;
-    background:radial-gradient(ellipse at center, rgba(2,4,3,0.15) 0%, rgba(2,4,3,0.65) 55%, rgba(2,4,3,0.92) 100%);
+    background:radial-gradient(ellipse at center, rgba(232,245,240,0.15) 0%, rgba(230,244,239,0.45) 55%, rgba(220,240,230,0.75) 100%);
   }
 
   /* ---------- intro overlay ---------- */
@@ -68,7 +66,7 @@
     position:fixed;
     inset:0;
     z-index:50;
-    background:var(--ink);
+    background:#e8f5f0;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -82,13 +80,13 @@
     font-family:'Orbitron',sans-serif;font-weight:900;
     font-size:clamp(1.3rem,5vw,2.5rem);
     letter-spacing:.35em;color:var(--gold-bright);
-    text-shadow:0 0 18px rgba(212,175,55,.6);
+    text-shadow:0 0 18px rgba(212,175,55,.35);
     animation:flicker 2.6s infinite;text-align:center;
   }
   .glitch-sub{
     margin-top:.9rem;text-align:center;
     letter-spacing:.45em;font-size:.62rem;
-    color:var(--green-mint);opacity:.8;
+    color:var(--green-mint);opacity:.85;
   }
   @keyframes flicker{
     0%,19%,21%,23%,80%,100%{opacity:1;}
@@ -128,11 +126,9 @@
     will-change:transform;
     transition:transform .12s ease-out;
     text-shadow:
-      0 1px 0 var(--green-deep),
-      0 2px 0 var(--green-deep),
-      0 3px 0 var(--green-deep),
-      0 8px 24px rgba(0,0,0,.6),
-      0 0 40px rgba(212,175,55,.25);
+      0 1px 0 rgba(10,61,42,.15),
+      0 8px 24px rgba(15,80,60,.12),
+      0 0 40px rgba(212,175,55,.2);
   }
 
   #tagline{
@@ -156,10 +152,17 @@
   /* ---------- buttons ---------- */
   .btn-row{
     display:flex;
-    gap:1.25rem;
-    flex-wrap:wrap;
-    justify-content:center;
+    flex-direction:column;
+    align-items:center;
+    gap:0.95rem;
+    width:100%;
+    max-width:320px;
+    margin:0 auto;
     perspective:800px;
+  }
+  .btn-row .btn{
+    width:100%;
+    text-align:center;
   }
 
   .btn{
@@ -173,11 +176,14 @@
     text-decoration:none;
     border:2px solid var(--gold);
     color:var(--gold);
-    background:rgba(10,61,42,.15);
+    background:linear-gradient(145deg,rgba(16,185,129,0.16),rgba(255,255,255,0.45));
     transform-style:preserve-3d;
     will-change:transform;
     transition:transform .15s ease-out, background .3s ease, color .3s ease, box-shadow .3s ease;
-    backdrop-filter:blur(2px);
+    backdrop-filter:blur(12px) saturate(1.3);
+    -webkit-backdrop-filter:blur(12px) saturate(1.3);
+    box-shadow:0 8px 28px rgba(15,80,60,0.1), inset 0 1px 0 rgba(255,255,255,0.55);
+    border-radius:14px;
   }
   .btn::before{
     content:'';
@@ -222,7 +228,7 @@
   @media(max-width:520px){
     #stage{padding:4.5vh 1.1rem 5.5vh;}
     .btn{padding:1rem 2.1rem;font-size:.9rem;letter-spacing:.2em;}
-    .btn-row{gap:0.9rem;}
+    .btn-row{gap:0.85rem;max-width:280px;}
     .welcome{margin-top:2.4rem;letter-spacing:.28em;}
     .divider{margin:2rem 0 1.9rem;}
   }
@@ -230,7 +236,7 @@
     .glitch-logo,.btn-primary::after,#overlay{animation:none;transition:none;}
   }
 </style>
-    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790030000">
+    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790100000">
 </head>
 <body class="glass-ui">
 
@@ -279,7 +285,7 @@ window.addEventListener('resize', sizeRain);
 const glyphs = '01';
 
 function drawRain(){
-  rctx.fillStyle = 'rgba(2,4,3,0.12)';
+  rctx.fillStyle = 'rgba(232, 245, 240, 0.14)';
   rctx.fillRect(0,0,rainCanvas.width, rainCanvas.height);
   rctx.font = fontSize + 'px monospace';
 
@@ -289,7 +295,7 @@ function drawRain(){
     const y = drops[i] * fontSize;
 
     // leading character brighter
-    rctx.fillStyle = Math.random() < 0.05 ? '#F4D874' : 'rgba(152,255,152,0.75)';
+    rctx.fillStyle = Math.random() < 0.05 ? '#B8860B' : 'rgba(5,150,105,0.45)';
     rctx.fillText(char, x, y);
 
     if(y > rainCanvas.height && Math.random() > 0.975){
@@ -400,86 +406,18 @@ window.addEventListener('load', () => {
 });
 </script>
 <script>
+/* Light-only landing — no dark/auto theme, no theme FAB */
 (function(){
-  var KEY="ra-theme";
-  function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
-  function timeTheme(){var h=new Date().getHours();return (h>=6&&h<18)?"light":"dark";}
-  function getTheme(){var t=stored();if(t==="light"||t==="dark")return t;return timeTheme();}
-  function setIcon(theme){
-    var btn=document.getElementById("raThemeToggle");
-    if(!btn) return;
-    var icon=btn.querySelector("ion-icon");
-    var emoji=btn.querySelector(".ra-theme-emoji");
-    if(icon){
-      icon.setAttribute("name", theme==="dark"?"sunny-outline":"moon-outline");
-    }else if(emoji){
-      emoji.textContent=theme==="dark"?"☀":"☾";
-    }else{
-      btn.textContent=theme==="dark"?"☀":"☾";
-    }
-    btn.setAttribute("aria-label", theme==="dark"?"Switch to light mode":"Switch to dark mode");
-    btn.title=theme==="dark"?"Light mode":"Dark mode";
-  }
-  function apply(theme,persist){
-    var root=document.documentElement, body=document.body;
-    if(theme==="light"){
-      root.classList.remove("dark"); root.classList.add("light");
-      if(body) body.classList.remove("dark-mode");
-      try{localStorage.setItem("FinappDarkmode","0");}catch(e){}
-    }else{
-      theme="dark";
-      root.classList.add("dark"); root.classList.remove("light");
-      if(body) body.classList.add("dark-mode");
-      try{localStorage.setItem("FinappDarkmode","1");}catch(e){}
-    }
-    if(persist!==false){try{localStorage.setItem(KEY,theme);}catch(e){}}
-    setIcon(theme);
-    var sw=document.getElementById("darkmodeSwitch");
-    if(sw) sw.checked=(theme==="dark");
-  }
-  function toggle(e){if(e){e.preventDefault();e.stopPropagation();}apply(getTheme()==="dark"?"light":"dark",true);}
-  function ensureBtn(){
-    var btn=document.getElementById("raThemeToggle");
-    if(!btn){
-      btn=document.createElement("button");
-      btn.id="raThemeToggle"; btn.type="button";
-      btn.className="headerButton ra-theme-toggle ra-theme-fab";
-      btn.innerHTML='<span class="ra-theme-emoji">☀</span>';
-      (document.body||document.documentElement).appendChild(btn);
-    }else{
-      var header=btn.closest&&btn.closest(".appHeader");
-      var hidden=false;
-      if(header){
-        var st=(header.getAttribute("style")||"").replace(/\s/g,"").toLowerCase();
-        if(st.indexOf("display:none")!==-1) hidden=true;
-        try{if(window.getComputedStyle&&getComputedStyle(header).display==="none") hidden=true;}catch(e){}
-      }
-      if(!header||hidden){
-        btn.classList.add("ra-theme-fab");
-        if(btn.parentNode!==document.body) document.body.appendChild(btn);
-        if(!btn.querySelector("ion-icon") && !btn.querySelector(".ra-theme-emoji")){
-          btn.innerHTML='<span class="ra-theme-emoji">☀</span>';
-        }
-      }
-    }
-    if(!btn._raBound){btn._raBound=1;btn.addEventListener("click",toggle);}
-  }
-  function bindSwitch(){
-    var sw=document.getElementById("darkmodeSwitch");
-    if(!sw||sw._raBound) return;
-    sw._raBound=1;
-    sw.addEventListener("click",function(){
-      setTimeout(function(){
-        apply(document.body.classList.contains("dark-mode")?"dark":"light");
-      },0);
-    });
-  }
-  function init(){ensureBtn();bindSwitch();var t=stored();if(t==="light"||t==="dark"){apply(t,false);}else{if(t!=="auto"){try{localStorage.setItem(KEY,"auto");}catch(e){}}apply(timeTheme(),false);}}
-  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);
-  else init();
+  try{
+    document.documentElement.classList.remove("dark");
+    document.documentElement.classList.add("light");
+    if(document.body) document.body.classList.remove("dark-mode");
+    try{localStorage.setItem("ra-theme","light");localStorage.setItem("FinappDarkmode","0");}catch(e){}
+    var dead=document.getElementById("raThemeToggle");
+    if(dead&&dead.parentNode) dead.parentNode.removeChild(dead);
+  }catch(e){}
 })();
 </script>
 </body>
 
-<!-- Mirrored from robinhood-alliance.web.app/ by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 21 Sep 2026 13:17:23 GMT -->
 </html>

@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/font-awesome.css">
     <link rel="stylesheet" href="/static/css/App_Global.css">
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790040000">
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790100000">
     <script src="/static/js/jquery-3.6.0.min.js"></script>
     <script src="/static/js/ra-api.js"></script>
     <style>
@@ -37,9 +37,10 @@
     <div id="appCapsule" class="container" style="padding-bottom: 100px;">
         <div class="section mt-2 mb-2">
             <h2 class="title" style="font-size:1.25rem;">Vaults</h2>
-            <p class="text-muted" style="font-size:0.85rem;opacity:0.75;">Goal buckets synced via Railway — no mock balances.</p>
+            <p class="text-muted" style="font-size:0.85rem;opacity:0.75;">Goal buckets synced to your account — no mock balances.</p>
         </div>
 
+        <div id="raBalanceMount"></div>
         <div id="vaultsList"></div>
         <div id="vaultsApiNote"></div>
 
@@ -98,6 +99,9 @@
       apply(getTheme());
 
       document.getElementById('vaultHistory').innerHTML = RA.portalEmptyHtml('History syncs from portal');
+      if (window.RA && RA.mountBalanceStrip) {
+        RA.mountBalanceStrip(document.getElementById('raBalanceMount'), 'Portfolio (synced)');
+      }
 
       var apiMissing = false;
 
@@ -189,7 +193,7 @@
         }
         btn.disabled = false;
         if (r.notDeployed) {
-          msg.textContent = 'API not deployed yet — vaults endpoint is not live on Railway.';
+          msg.textContent = 'API unavailable — vaults could not be saved right now.';
           return;
         }
         if (!r.ok) {
@@ -197,6 +201,7 @@
           return;
         }
         msg.textContent = editId ? 'Vault updated.' : 'Vault created.';
+        if (window.RA && RA.refreshSharedBalance) { RA.refreshSharedBalance().then(function(s){ var m=document.getElementById('raBalanceMount'); if(m) m.innerHTML = RA.balanceStripHtml(s, 'Portfolio (synced)'); }); }
         document.getElementById('vaultForm').reset();
         document.getElementById('vaultEditId').value = '';
         document.getElementById('vaultFormTitle').textContent = 'New vault';

@@ -251,7 +251,7 @@
         }
     </style>
     
-    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790030000">
+    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790100000">
   <script src="/static/js/ra-api.js"></script>
 </head>
 
@@ -1597,6 +1597,8 @@
             };
 
             Object.keys(coinMap).forEach(key => {
+                // QFS is valued at $1 site-wide — skip market price here to avoid double-count
+                if (key === 'qfs') return;
                 const amount = Number(walletMap[key] || 0);
                 const price = prices[coinMap[key]] ? prices[coinMap[key]].usd : 0;
                 const valueUSD = amount * price;
@@ -1609,7 +1611,7 @@
             totalUSD += usdtAmt;
             setUsdRow('usdt', usdtAmt);
 
-            // qfs ≈ $1 (display override consistent with existing UX)
+            // qfs ≈ $1 (single count — matches cards/vaults/payments shared balance)
             const qfsAmt = Number(walletMap.qfs || 0);
             totalUSD += qfsAmt;
             setUsdRow('qfs', qfsAmt);
@@ -1635,9 +1637,37 @@
                 updateTicker(slug, mp);
             }
 
-            // Main balance
+            // Main balance (single source — also published for vaults/cards/payments)
             const mainBal = document.getElementById('db-main-balance');
             if (mainBal) mainBal.innerText = formatMoney(totalUSD);
+
+            try {
+              if (window.RA && typeof RA.getVaultLockedUsd === 'function') {
+                RA.getVaultLockedUsd().then(function(v){
+                  var locked = Number(v && v.locked || 0);
+                  var snap = {
+                    t: Date.now(),
+                    portfolioUsd: totalUSD,
+                    availableUsd: Math.max(0, totalUSD - locked),
+                    vaultLockedUsd: locked,
+                    walletMap: walletMap || window._walletMap || {},
+                    walletsOk: true,
+                    vaultsOk: !!(v && v.ok)
+                  };
+                  RA.writeBalanceSnapshot(snap);
+                }).catch(function(){
+                  RA.writeBalanceSnapshot({
+                    t: Date.now(),
+                    portfolioUsd: totalUSD,
+                    availableUsd: totalUSD,
+                    vaultLockedUsd: 0,
+                    walletMap: walletMap || window._walletMap || {},
+                    walletsOk: true,
+                    vaultsOk: false
+                  });
+                });
+              }
+            } catch (e) {}
 
             sortAssetsByUsd();
 

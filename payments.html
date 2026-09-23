@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/font-awesome.css">
     <link rel="stylesheet" href="/static/css/App_Global.css">
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790040000">
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790100000">
     <script src="/static/js/jquery-3.6.0.min.js"></script>
     <script src="/static/js/ra-api.js"></script>
     <style>
@@ -74,6 +74,8 @@
             <h2 class="title" style="font-size:1.25rem;">Payments</h2>
             <p class="text-muted" style="font-size:0.85rem;opacity:0.75;">ACH &amp; wire — contact support with your unique code to complete.</p>
         </div>
+
+        <div id="raBalanceMount"></div>
 
         <div class="wallet-card mock-card glass-panel">
             <h3 style="font-size:1rem;margin-bottom:0.75rem;">Move money</h3>
@@ -157,6 +159,10 @@
       if(btn) btn.addEventListener("click", function(e){ e.preventDefault(); apply(getTheme()==="dark"?"light":"dark"); });
       apply(getTheme());
 
+      if (window.RA && RA.mountBalanceStrip) {
+        RA.mountBalanceStrip(document.getElementById('raBalanceMount'), 'Portfolio (synced)');
+      }
+
       var payType = 'ach';
       function setType(t) {
         payType = t;
@@ -238,13 +244,14 @@
         document.getElementById('payCodeDisplay').textContent = displayCode;
         var msg = document.getElementById('payResultMsg');
         if (r.notDeployed) {
-          msg.textContent = 'API not deployed yet — your code was generated locally. Contact support to complete this ' + payType.toUpperCase() + ' when the payments API goes live.';
+          msg.textContent = 'API unavailable — your code was generated locally. Contact support to complete this ' + payType.toUpperCase() + '.';
         } else if (!r.ok) {
           msg.textContent = (r.error || 'Request failed') + ' — still share this code with support if needed.';
         } else {
           msg.textContent = 'Contact support to complete this ' + payType.toUpperCase() + '/wire. Share the unique code above with support staff. Status: ' + ((r.data && r.data.status) || 'pending_support') + '.';
         }
         resEl.classList.remove('hidden');
+        if (window.RA && RA.refreshSharedBalance) { RA.refreshSharedBalance().then(function(s){ var m=document.getElementById('raBalanceMount'); if(m) m.innerHTML = RA.balanceStripHtml(s, 'Portfolio (synced)'); }); }
         loadHistory();
       });
 

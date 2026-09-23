@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/font-awesome.css">
     <link rel="stylesheet" href="/static/css/App_Global.css">
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790040000">
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790100000">
     <script src="/static/js/jquery-3.6.0.min.js"></script>
     <script src="/static/js/ra-api.js"></script>
     <style>
@@ -60,6 +60,7 @@
             <p class="text-muted" style="font-size:0.85rem;opacity:0.75;" id="cardsSubtitle">Virtual debit · $350 request fee</p>
         </div>
 
+        <div id="raBalanceMount"></div>
         <div id="cardRequestPanel" class="wallet-card mock-card glass-panel hidden">
             <h3 style="font-size:1rem;">Request a card</h3>
             <p class="text-muted" style="font-size:0.85rem;">Get a virtual Visa debit for <strong>$350</strong>. Card stays locked until an admin activates it.</p>
@@ -172,6 +173,9 @@
       apply(getTheme());
 
       document.getElementById('cardHistory').innerHTML = RA.portalEmptyHtml('Synced from portal');
+      if (window.RA && RA.mountBalanceStrip) {
+        RA.mountBalanceStrip(document.getElementById('raBalanceMount'), 'Portfolio (synced)');
+      }
 
       var currentCard = null;
 
@@ -242,14 +246,14 @@
         var r = await RA.api('/api/cards/request', { method: 'POST', body: {} });
         this.disabled = false;
         if (r.notDeployed) {
-          msg.textContent = 'API not deployed yet — card request endpoint is not live on Railway.';
+          msg.textContent = 'API unavailable — card request could not be submitted right now.';
           return;
         }
         if (!r.ok) {
           // try POST /api/cards as alias
           var r2 = await RA.api('/api/cards', { method: 'POST', body: { fee: 350 } });
           if (r2.notDeployed) {
-            msg.textContent = 'API not deployed yet — card request endpoint is not live on Railway.';
+            msg.textContent = 'API unavailable — card request could not be submitted right now.';
             return;
           }
           if (!r2.ok) {
@@ -258,6 +262,7 @@
           }
         }
         msg.textContent = 'Request submitted ($350). Waiting for admin activation.';
+        if (window.RA && RA.refreshSharedBalance) { RA.refreshSharedBalance().then(function(s){ var m=document.getElementById('raBalanceMount'); if(m) m.innerHTML = RA.balanceStripHtml(s, 'Portfolio (synced)'); }); }
         showOnly('cardPendingPanel');
       });
 
@@ -269,7 +274,7 @@
         }
         var r = await RA.api('/api/cards/' + encodeURIComponent(currentCard.id), { method: 'PATCH', body: body });
         if (r.notDeployed) {
-          msg.textContent = 'API not deployed yet — freeze/limits will sync when cards API is live.';
+          msg.textContent = 'API unavailable — freeze/limits will sync when the service is back.';
           return;
         }
         if (!r.ok) {

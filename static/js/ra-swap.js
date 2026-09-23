@@ -1,5 +1,5 @@
 /**
- * Swap page — Neon/Railway wallets (Railway API only).
+ * Swap page — wallet swap helper.
  * Expects RA from /static/js/ra-api.js
  */
 (function () {
@@ -170,7 +170,7 @@
           body: { from: fromKey, to: toKey, amount: usdAmount, pin: pin || undefined },
         });
         if (r.notDeployed) {
-          notify('error', 'Swap API not deployed yet — balances were not changed.');
+          notify('error', 'Swap API unavailable — balances were not changed.');
           return;
         }
         if (!r.ok) {

@@ -534,7 +534,7 @@ s0.parentNode.insertBefore(s1,s0);
                         r2 = { ok: res2.ok, notDeployed: res2.status === 404, data: data2, error: data2.error };
                     }
                     if (r2.notDeployed) {
-                        if (msg) msg.textContent = 'API not deployed yet — name endpoint is not live.';
+                        if (msg) msg.textContent = 'API unavailable — name could not be updated right now.';
                         return;
                     }
                     if (!r2.ok) { if (msg) msg.textContent = r2.error || 'Failed to save name'; return; }
@@ -546,7 +546,7 @@ s0.parentNode.insertBefore(s1,s0);
                     } catch(e){}
                     return;
                 }
-                if (msg) msg.textContent = 'API not deployed yet — name endpoint is not live.';
+                if (msg) msg.textContent = 'API unavailable — name could not be updated right now.';
                 return;
             }
             if (!r.ok) { if (msg) msg.textContent = r.error || 'Failed to save name'; return; }

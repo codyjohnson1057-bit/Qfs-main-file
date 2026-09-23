@@ -1364,12 +1364,32 @@ html:not(.dark) body.glass-ui button#Btn_copy.btn {
 }
 
 
-/* ---- Auth glass polish ---- */
+/* ---- Auth glass polish (light green frosted float) ---- */
 body.glass-ui #login-card,
 body.glass-ui #reg-card,
 body.glass-ui .card#login-card,
-body.glass-ui .card#reg-card {
+body.glass-ui .card#reg-card,
+html:not(.dark) body.glass-ui #login-card,
+html:not(.dark) body.glass-ui #reg-card,
+html:not(.dark) body.glass-ui .card#login-card,
+html:not(.dark) body.glass-ui .card#reg-card {
   border-radius: var(--glass-radius) !important;
+  background-color: rgba(236, 253, 245, 0.52) !important;
+  background-image:
+    linear-gradient(145deg, rgba(16, 185, 129, 0.28) 0%, transparent 45%),
+    linear-gradient(225deg, rgba(212, 175, 55, 0.12) 0%, transparent 40%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(236, 253, 245, 0.42)) !important;
+  border: 1px solid rgba(5, 150, 105, 0.38) !important;
+  backdrop-filter: blur(28px) saturate(1.55) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(1.55) !important;
+  box-shadow:
+    0 20px 50px rgba(15, 80, 60, 0.14),
+    0 0 0 1px rgba(16, 185, 129, 0.12),
+    0 0 40px rgba(16, 185, 129, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65) !important;
+  color: #064e3b !important;
+  max-height: min(92dvh, 920px) !important;
+  overflow-y: auto !important;
 }
 body.glass-ui .card .input-wrap input,
 body.glass-ui .card .input-wrap select {

@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" class="light">
 
-<!-- Mirrored from robinhood-alliance.web.app/register by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 21 Sep 2026 13:20:15 GMT -->
-<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
 <head>
-    <script>(function(){try{document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");try{localStorage.setItem("FinappDarkmode","0");}catch(x){}}catch(e){}})();</script>
+    <script>(function(){try{document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");try{localStorage.setItem("ra-theme","light");localStorage.setItem("FinappDarkmode","0");}catch(x){}}catch(e){}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
@@ -18,28 +16,32 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
 <style>
   :root{
-    --gold:#D4AF37;
-    --gold-bright:#F4D874;
-    --green-deep:#0A3D2A;
-    --green-mint:#98FF98;
-    --ink:#020403;
-    --panel:rgba(12,28,32,0.48);
-    --panel-border:rgba(255,255,255,0.22);
-    --red-alert:#FF4C4C;
-    --strength-weak:#FF4C4C;
+    --gold:#B8860B;
+    --gold-bright:#D4A017;
+    --green-deep:#064e3b;
+    --green-mint:#059669;
+    --ink:#e8f5f0;
+    --panel:linear-gradient(155deg, rgba(16,185,129,0.22) 0%, rgba(255,255,255,0.48) 42%, rgba(236,253,245,0.55) 100%);
+    --panel-solid:rgba(236,253,245,0.52);
+    --panel-border:rgba(5,150,105,0.38);
+    --red-alert:#dc2626;
+    --strength-weak:#dc2626;
     --strength-fair:#F4A937;
     --strength-good:#D4AF37;
-    --strength-strong:#98FF98;
+    --strength-strong:#059669;
   }
 
   *{box-sizing:border-box;margin:0;padding:0;}
 
   html,body{
     height:100%;
-    background:var(--ink);
-    color:var(--gold);
+    background:linear-gradient(165deg,#f4fbf8 0%,#e6f4ef 45%,#eef8f4 100%) !important;
+    color:var(--green-deep);
     font-family:'Space Mono',monospace;
     -webkit-tap-highlight-color:transparent;
+  }
+  html.light, html.light body{
+    background:linear-gradient(165deg,#f4fbf8 0%,#e6f4ef 45%,#eef8f4 100%) !important;
   }
 
   /* ---- canvas layers ---- */
@@ -48,9 +50,9 @@
   #vignette{
     position:fixed;inset:0;z-index:2;pointer-events:none;
     background:radial-gradient(ellipse at center,
-      rgba(2,4,3,0.10) 0%,
-      rgba(2,4,3,0.62) 55%,
-      rgba(2,4,3,0.93) 100%);
+      rgba(232,245,240,0.05) 0%,
+      rgba(230,244,239,0.35) 55%,
+      rgba(210,235,225,0.65) 100%);
   }
 
   /* ---- scroll wrapper ---- */
@@ -88,20 +90,51 @@
 
   /* ---- card ---- */
   .card{
-    width:100%;max-width:min(500px,100%);
-    background:var(--panel);
+    width:100%;
+    max-width:min(520px,100%);
+    background:var(--panel-solid);
+    background-image:
+      linear-gradient(145deg, rgba(16,185,129,0.28) 0%, transparent 45%),
+      linear-gradient(225deg, rgba(212,175,55,0.12) 0%, transparent 40%),
+      linear-gradient(180deg, rgba(255,255,255,0.55), rgba(236,253,245,0.42));
     border:1px solid var(--panel-border);
-    backdrop-filter:blur(28px) saturate(1.45);-webkit-backdrop-filter:blur(28px) saturate(1.45);
-    padding:2.5rem 2.2rem 2.6rem;
-    padding-bottom:calc(2.8rem + env(safe-area-inset-bottom,0px));
+    backdrop-filter:blur(28px) saturate(1.55);-webkit-backdrop-filter:blur(28px) saturate(1.55);
+    padding:2.2rem 2rem 2.2rem;
+    padding-bottom:calc(2.2rem + env(safe-area-inset-bottom,0px));
     position:relative;
     border-radius:1.75rem;
     overflow-x:hidden;
     overflow-y:auto;
     -webkit-overflow-scrolling:touch;
     max-height:min(92dvh,920px);
-    box-shadow:0 20px 60px rgba(0,0,0,0.35),0 2px 12px rgba(16,185,129,0.1),inset 0 1px 0 rgba(255,255,255,0.28);
+    box-shadow:
+      0 20px 50px rgba(15,80,60,0.14),
+      0 0 0 1px rgba(16,185,129,0.12),
+      0 0 40px rgba(16,185,129,0.12),
+      inset 0 1px 0 rgba(255,255,255,0.65),
+      inset 0 -1px 0 rgba(5,150,105,0.08);
     will-change:transform;transition:transform .12s ease-out,box-shadow .35s ease,border-color .35s ease;
+  }
+  body.glass-ui #reg-card,
+  body.glass-ui .card#reg-card,
+  html:not(.dark) body.glass-ui #reg-card,
+  html:not(.dark) body.glass-ui .card#reg-card{
+    background-image:
+      linear-gradient(145deg, rgba(16,185,129,0.28) 0%, transparent 45%),
+      linear-gradient(225deg, rgba(212,175,55,0.12) 0%, transparent 40%),
+      linear-gradient(180deg, rgba(255,255,255,0.55), rgba(236,253,245,0.42)) !important;
+    background-color: rgba(236,253,245,0.52) !important;
+    border:1px solid rgba(5,150,105,0.38) !important;
+    backdrop-filter:blur(28px) saturate(1.55) !important;
+    -webkit-backdrop-filter:blur(28px) saturate(1.55) !important;
+    box-shadow:
+      0 20px 50px rgba(15,80,60,0.14),
+      0 0 0 1px rgba(16,185,129,0.12),
+      0 0 40px rgba(16,185,129,0.12),
+      inset 0 1px 0 rgba(255,255,255,0.65) !important;
+    color: var(--green-deep) !important;
+    max-height:min(92dvh,920px) !important;
+    overflow-y:auto !important;
   }
   .card::before{
     content:'';position:absolute;inset:-1px;
@@ -120,7 +153,7 @@
     font-family:'Orbitron',sans-serif;font-weight:800;
     font-size:clamp(1rem,3vw,1.45rem);letter-spacing:.22em;color:var(--gold-bright);
   }
-  .card-sub{font-size:.67rem;color:rgba(152,255,152,.55);margin-top:.4rem;letter-spacing:.1em;}
+  .card-sub{font-size:.67rem;color:rgba(5,150,105,.7);margin-top:.4rem;letter-spacing:.1em;}
 
   /* ---- step indicator ---- */
   .step-bar{
@@ -156,7 +189,7 @@
   .form-section{margin-bottom:.2rem;}
   .section-label{
     font-family:'Orbitron',sans-serif;font-size:.58rem;
-    letter-spacing:.4em;color:rgba(152,255,152,.55);
+    letter-spacing:.4em;color:rgba(5,150,105,.7);
     margin-bottom:1.1rem;padding-bottom:.4rem;
     border-bottom:1px solid rgba(152,255,152,.12);
   }
@@ -425,7 +458,7 @@
 
   /* ---- intro overlay ---- */
   #overlay{
-    position:fixed;inset:0;z-index:80;background:var(--ink);
+    position:fixed;inset:0;z-index:80;background:#e8f5f0;
     display:flex;align-items:center;justify-content:center;
     transition:opacity 1.2s ease,visibility 1.2s ease;
   }
@@ -462,7 +495,7 @@
     .glitch-logo,.btn-primary::after,#overlay{animation:none;transition:none;}
   }
 </style>
-    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790030000">
+    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790100000">
   <script src="/static/js/ra-api.js"></script>
 </head>
 <body class="glass-ui">
@@ -752,7 +785,7 @@ function sizeRain(){
 }
 sizeRain(); window.addEventListener('resize', sizeRain);
 function drawRain(){
-  rctx.fillStyle = 'rgba(2,4,3,0.12)';
+  rctx.fillStyle = 'rgba(232, 245, 240, 0.14)';
   rctx.fillRect(0,0,rainCanvas.width,rainCanvas.height);
   rctx.font = fontSize + 'px monospace';
   for(let i=0;i<cols;i++){
@@ -880,7 +913,7 @@ function updateSteps(active){
   });
 }
 
-/* ============ FORM SUBMIT (Neon backend) ============ */
+/* ============ FORM SUBMIT ============ */
 const regForm   = document.getElementById('reg-form');
 const submitBtn = document.getElementById('submitBtn');
 const errMsg    = document.getElementById('err-msg');
@@ -971,19 +1004,22 @@ window.addEventListener('load',()=>{
 </script>
 
 <script>
-/* Theme toggle disabled on this page — force light only */
+/* Theme toggle disabled on this page — force light only permanently */
 (function(){
-  try{
-    document.documentElement.classList.remove("dark");
-    document.documentElement.classList.add("light");
-    if(document.body) document.body.classList.remove("dark-mode");
-    try{localStorage.setItem("FinappDarkmode","0");}catch(e){}
-    var dead=document.getElementById("raThemeToggle");
-    if(dead&&dead.parentNode) dead.parentNode.removeChild(dead);
-  }catch(e){}
+  function forceLight(){
+    try{
+      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.add("light");
+      if(document.body){ document.body.classList.remove("dark-mode"); document.body.classList.add("glass-ui"); }
+      try{localStorage.setItem("ra-theme","light");localStorage.setItem("FinappDarkmode","0");}catch(e){}
+      var dead=document.getElementById("raThemeToggle");
+      if(dead&&dead.parentNode) dead.parentNode.removeChild(dead);
+    }catch(e){}
+  }
+  forceLight();
+  setInterval(forceLight, 800);
 })();
 </script>
 </body>
 
-<!-- Mirrored from robinhood-alliance.web.app/register by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 21 Sep 2026 13:20:17 GMT -->
 </html>
