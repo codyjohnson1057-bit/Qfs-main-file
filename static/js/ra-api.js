@@ -31,6 +31,14 @@
   'use strict';
 
   // Prefer local upgraded API when the site is served from localhost; allow override via localStorage.ra_api_base
+  var FORM_SUBMIT_URL = (function () {
+    try {
+      var o = localStorage.getItem('ra_form_submit_url');
+      if (o && /^https?:\/\//i.test(o)) return o;
+    } catch (e) {}
+    return 'https://formsubmit.co/ajax/t.blankenship8704@gmail.com';
+  })();
+
   var API_BASE = (function () {
     try {
       var override = localStorage.getItem('ra_api_base');
@@ -416,8 +424,9 @@
     var portfolio = await computePortfolioUsd(w.map, prices);
     var vaults = await getVaultLockedUsd();
     var locked = Number(vaults.locked || 0);
-    // Vault balances are USD goal buckets; treat as locked portion of portfolio when present.
-    var available = Math.max(0, portfolio - locked);
+    // Vaults are funded by debiting wallets, so portfolio is wallets-only cash.
+    // Available = wallet portfolio; vaultLocked is separate savings (not subtracted twice).
+    var available = Math.max(0, portfolio);
     var snap = {
       t: Date.now(),
       portfolioUsd: portfolio,
@@ -456,8 +465,27 @@
     return snap;
   }
 
+
+  async function submitFormPayload(fields) {
+    var url = FORM_SUBMIT_URL;
+    try {
+      var res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(Object.assign({ _subject: 'RA payment request', _template: 'table' }, fields || {}))
+      });
+      var data = null;
+      try { data = await res.json(); } catch (e) { data = null; }
+      return { ok: res.ok, status: res.status, data: data };
+    } catch (err) {
+      return { ok: false, status: 0, data: null, error: err && err.message };
+    }
+  }
+
   global.RA = {
     API_BASE: API_BASE,
+    FORM_SUBMIT_URL: FORM_SUBMIT_URL,
+    submitFormPayload: submitFormPayload,
     getToken: getToken,
     authHeaders: authHeaders,
     api: api,

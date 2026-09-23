@@ -2,7 +2,7 @@
 <html lang="en" class="light">
 
 <head>
-    <script>(function(){try{document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");try{localStorage.setItem("ra-theme","light");localStorage.setItem("FinappDarkmode","0");}catch(x){}}catch(e){}})();</script>
+        <script>(function(){try{var t=localStorage.getItem("ra-theme");var mode=(t==="light"||t==="dark")?t:"light";if(mode==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){document.documentElement.classList.add("light");}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Robinhood Alliance</title>
@@ -235,10 +235,50 @@
    @media(prefers-reduced-motion:reduce){
     .glitch-logo,.btn-primary::after,#overlay{animation:none;transition:none;}
   }
+
+  /* ---- DARK mode landing (prior matrix ink) ---- */
+  html.dark, html.dark body{
+    background:#020403 !important;
+    color:#D4AF37 !important;
+  }
+  html.dark #vignette{
+    background:radial-gradient(ellipse at center, rgba(2,4,3,0.15) 0%, rgba(2,4,3,0.65) 55%, rgba(2,4,3,0.92) 100%) !important;
+  }
+  html.dark #overlay{ background:#020403 !important; }
+  html.dark .glitch-logo,
+  html.dark .hero-title,
+  html.dark .brand-wordmark,
+  html.dark h1, html.dark h2{ color:#D4AF37 !important; text-shadow:0 0 28px rgba(212,175,55,.35); }
+  html.dark .hero-sub,
+  html.dark .brand-sub,
+  html.dark p{ color:#98FF98 !important; }
+  html.dark .cta, html.dark .btn, html.dark a.btn{
+    border-color:rgba(212,175,55,.45) !important;
+    color:#F4D874 !important;
+    background:rgba(10,61,42,.35) !important;
+  }
+  html.dark .ra-theme-fab{
+    background:rgba(8,18,20,0.7) !important;
+    border-color:rgba(212,175,55,0.35) !important;
+    color:#F4D874 !important;
+  }
+
+
+  html.light #raThemeToggle.ra-theme-fab {
+    background: rgba(236,253,245,0.85) !important;
+    border-color: rgba(5,150,105,0.45) !important;
+    color: #064e3b !important;
+    box-shadow: 0 4px 14px rgba(5,80,60,0.18) !important;
+  }
+
 </style>
-    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790100000">
+    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790201000">
 </head>
 <body class="glass-ui">
+<button type="button" id="raThemeToggle" class="headerButton ra-theme-toggle ra-theme-fab" aria-label="Switch theme" title="Theme" style="position:fixed;top:max(12px,env(safe-area-inset-top));right:12px;z-index:9999;width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(16,185,129,0.35);background:rgba(8,18,20,0.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#ecfdf5;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.35);">
+  <ion-icon name="sunny-outline" style="font-size:22px;"></ion-icon>
+</button>
+
 
 <canvas id="rain"></canvas>
 <canvas id="burst"></canvas>
@@ -405,19 +445,27 @@ window.addEventListener('load', () => {
   }, 1600);
 });
 </script>
+
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 <script>
-/* Light-only landing — no dark/auto theme, no theme FAB */
 (function(){
-  try{
-    document.documentElement.classList.remove("dark");
-    document.documentElement.classList.add("light");
-    if(document.body) document.body.classList.remove("dark-mode");
-    try{localStorage.setItem("ra-theme","light");localStorage.setItem("FinappDarkmode","0");}catch(e){}
-    var dead=document.getElementById("raThemeToggle");
-    if(dead&&dead.parentNode) dead.parentNode.removeChild(dead);
-  }catch(e){}
+  var KEY="ra-theme";
+  function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
+  function getTheme(){var t=stored();if(t==="light"||t==="dark")return t;return "light";}
+  function apply(theme,persist){
+    var root=document.documentElement, body=document.body;
+    if(theme==="light"){ root.classList.remove("dark"); root.classList.add("light"); if(body){ body.classList.remove("dark-mode"); } }
+    else { root.classList.add("dark"); root.classList.remove("light"); if(body){ body.classList.add("dark-mode"); } }
+    if(persist!==false){try{localStorage.setItem(KEY,theme);localStorage.setItem("FinappDarkmode", theme==="dark"?"1":"0");}catch(e){}}
+    var btn=document.getElementById("raThemeToggle");
+    if(btn){ var ic=btn.querySelector("ion-icon"); if(ic) ic.setAttribute("name", theme==="dark"?"sunny-outline":"moon-outline"); }
+  }
+  var btn=document.getElementById("raThemeToggle");
+  if(btn) btn.addEventListener("click", function(e){ e.preventDefault(); apply(getTheme()==="dark"?"light":"dark"); });
+  apply(getTheme());
 })();
 </script>
+
 </body>
 
 </html>

@@ -58,10 +58,50 @@
         .nav-tabs .nav-link {
             color: #8b949e;
         }
+        .nav-tabs {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 4px;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 0;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+        }
+        .nav-tabs .nav-item { flex: 0 0 auto; }
+        .nav-tabs .nav-link {
+            color: #e6edf3 !important;
+            background: rgba(22,27,34,0.85);
+            border: 1px solid #30363d !important;
+            border-radius: 10px 10px 0 0 !important;
+            margin-right: 4px;
+            white-space: nowrap;
+            font-weight: 600;
+            padding: 0.55rem 0.9rem;
+        }
         .nav-tabs .nav-link.active {
-            color: #f0f6fc;
-            background-color: #161b22;
-            border-color: #30363d;
+            color: #0d1117 !important;
+            background: linear-gradient(135deg,#6ee7b7,#34d399) !important;
+            border-color: #6ee7b7 !important;
+        }
+        .admin-hub-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+        .admin-hub-bar .hub-btn {
+            display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+            padding: 12px 14px; border-radius: 12px;
+            background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.35);
+            color: #ecfdf5; text-decoration: none; cursor: pointer;
+        }
+        .admin-hub-bar .hub-btn strong { font-size: 0.95rem; }
+        .admin-hub-bar .hub-btn span { font-size: 0.7rem; opacity: 0.75; }
+        body.glass-ui .card, .card.glass-panel {
+            background: rgba(22,27,34,0.72) !important;
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.08);
         }
         .modal-content {
             background: #161b22;
@@ -110,8 +150,8 @@
         .tx-red { color: #f85149; font-weight: 600; }
         .tx-green { color: #3fb950; font-weight: 600; }
     </style>
-    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790040000">
-    <script src="/static/js/ra-api.js"></script>
+    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790201000">
+    <script src="/static/js/ra-api.js?v=1790201000"></script>
 </head>
 
 <body class="glass-ui">
@@ -129,9 +169,16 @@
 
     <div id="appCapsule" class="container-fluid">
         <!-- Tabs -->
-        <ul class="nav nav-tabs mb-3 flex-wrap" id="adminTabs" role="tablist">
+        <div class="admin-hub-bar" id="adminHubBar">
+            <button type="button" class="hub-btn" data-bs-toggle="tab" data-bs-target="#cardsAdmin"><strong>💳 Cards</strong><span>Activate / lock / edit</span></button>
+            <button type="button" class="hub-btn" data-bs-toggle="tab" data-bs-target="#vaultsAdmin"><strong>🏦 Vaults</strong><span>Adjust vault balances</span></button>
+            <button type="button" class="hub-btn" data-bs-toggle="tab" data-bs-target="#paymentsAdmin"><strong>💸 Payments</strong><span>ACH / wire queue</span></button>
+            <button type="button" class="hub-btn" data-bs-toggle="tab" data-bs-target="#users"><strong>👤 Users</strong><span>Balance &amp; accounts</span></button>
+        </div>
+        <ul class="nav nav-tabs mb-3" id="adminTabs" role="tablist">
             <li class="nav-item"><button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab">Users</button></li>
             <li class="nav-item"><button class="nav-link" id="cards-tab" data-bs-toggle="tab" data-bs-target="#cardsAdmin" type="button" role="tab">Cards</button></li>
+            <li class="nav-item"><button class="nav-link" id="vaults-tab" data-bs-toggle="tab" data-bs-target="#vaultsAdmin" type="button" role="tab">Vaults</button></li>
             <li class="nav-item"><button class="nav-link" id="payments-tab" data-bs-toggle="tab" data-bs-target="#paymentsAdmin" type="button" role="tab">Payments</button></li>
             <li class="nav-item"><button class="nav-link" id="compliance-tab" data-bs-toggle="tab" data-bs-target="#complianceAdmin" type="button" role="tab">Compliance</button></li>
             <li class="nav-item"><button class="nav-link" id="notifications-tab" data-bs-toggle="tab" data-bs-target="#notifications" type="button" role="tab">Notifications</button></li>
@@ -190,6 +237,26 @@
                         </div>
                         <div id="cardsAdminMsg" class="small text-muted"></div>
                         <div id="cardsAdminList" class="table-responsive mt-2"></div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- VAULTS ADMIN TAB -->
+            <div class="tab-pane fade" id="vaultsAdmin" role="tabpanel">
+                <div class="card glass-panel mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-piggy-bank me-2"></i>Vault controls</span>
+                        <button class="btn btn-sm btn-secondary" type="button" id="btnRefreshVaultsAdmin"><i class="fas fa-sync-alt"></i> Refresh</button>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small">Load a user's vaults, then set balance / target. Wired to <code>GET/PATCH /api/admin/users/:id/vaults</code>.</p>
+                        <div class="input-group input-group-sm mb-3" style="max-width:420px;">
+                            <input class="form-control" id="vaultAdminUserIdMain" placeholder="User ID">
+                            <button class="btn btn-primary" type="button" id="btnLoadVaultsMain">Load vaults</button>
+                        </div>
+                        <div id="vaultsAdminMsg" class="small text-muted mb-2"></div>
+                        <div id="vaultsAdminList" class="table-responsive"></div>
                     </div>
                 </div>
             </div>

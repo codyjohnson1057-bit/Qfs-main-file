@@ -168,7 +168,7 @@ body.glass-ui .notif-dropdown {
   backdrop-filter: blur(24px) saturate(1.4);
   -webkit-backdrop-filter: blur(24px) saturate(1.4);
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55) !important;
-  overflow: hidden;
+  overflow-y: auto;
   margin-top: 8px;
 }
 
@@ -1227,7 +1227,6 @@ body.glass-ui .transactions .item,
 body.glass-ui .card-coin,
 body.glass-ui .listview.inset,
 body.glass-ui .modal-content,
-body.glass-ui .notif-dropdown,
 body.glass-ui .action-sheet .modal-content,
 body.glass-ui .bottom-sheet .modal-content {
   background: rgba(12, 28, 32, 0.34) !important;
@@ -1397,4 +1396,74 @@ body.glass-ui .card .input-wrap select {
 }
 body.glass-ui .card .btn-primary {
   border-radius: var(--glass-radius-sm) !important;
+}
+
+
+/* ---- Notification panel: fully visible + scrollable (mobile/desktop) ---- */
+body.glass-ui .appHeader,
+body.glass-ui .appHeader .left,
+body.glass-ui .appHeader .right {
+  overflow: visible !important;
+}
+body.glass-ui .appHeader {
+  /* keep bar height but do not clip the dropdown */
+  height: 56px !important;
+  overflow: visible !important;
+}
+body.glass-ui .notif-dropdown,
+body.glass-ui #notifDropdown.notif-dropdown {
+  display: none;
+  position: absolute !important;
+  right: 0 !important;
+  top: calc(100% + 6px) !important;
+  left: auto !important;
+  width: min(360px, calc(100vw - 24px)) !important;
+  min-width: min(320px, calc(100vw - 24px)) !important;
+  max-height: min(70vh, 420px) !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  z-index: 5000 !important;
+  margin-top: 0 !important;
+  overscroll-behavior: contain;
+}
+body.glass-ui .notif-dropdown.show,
+body.glass-ui #notifDropdown.notif-dropdown.show {
+  display: block !important;
+}
+@media (max-width: 480px) {
+  body.glass-ui .notif-dropdown,
+  body.glass-ui #notifDropdown.notif-dropdown {
+    position: fixed !important;
+    top: calc(56px + env(safe-area-inset-top, 0px) + 8px) !important;
+    right: 8px !important;
+    left: 8px !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-height: min(65vh, 380px) !important;
+  }
+}
+
+
+/* Auth cards — dark mode matrix glass (keep light green float above) */
+html.dark body.glass-ui #login-card,
+html.dark body.glass-ui #reg-card,
+html.dark body.glass-ui .card#login-card,
+html.dark body.glass-ui .card#reg-card {
+  background-color: rgba(12, 28, 32, 0.48) !important;
+  background-image:
+    linear-gradient(145deg, rgba(16, 185, 129, 0.18) 0%, transparent 45%),
+    linear-gradient(180deg, rgba(2, 4, 3, 0.55), rgba(10, 28, 24, 0.42)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  color: #D4AF37 !important;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(16, 185, 129, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+}
+html.light body.glass-ui > #raThemeToggle.ra-theme-fab,
+html.light body.glass-ui button#raThemeToggle.ra-theme-fab {
+  background: rgba(236, 253, 245, 0.72) !important;
+  border-color: rgba(5, 150, 105, 0.4) !important;
+  color: #064e3b !important;
 }

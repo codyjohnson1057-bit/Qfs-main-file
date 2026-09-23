@@ -103,18 +103,22 @@
             min-width: 18px;
             text-align: center;
         }
+        .appHeader, .appHeader .left, .appHeader .right { overflow: visible !important; }
         .notif-dropdown {
             display: none;
             position: absolute;
             right: 0;
-            top: 100%;
+            top: calc(100% + 6px);
             background: #161b22;
             border: 1px solid #30363d;
             border-radius: 6px;
-            min-width: 320px;
-            max-height: 400px;
+            min-width: min(320px, calc(100vw - 24px));
+            width: min(360px, calc(100vw - 24px));
+            max-height: min(70vh, 420px);
+            overflow-x: hidden;
             overflow-y: auto;
-            z-index: 1000;
+            -webkit-overflow-scrolling: touch;
+            z-index: 5000;
             box-shadow: 0 8px 24px rgba(0,0,0,0.5);
         }
         .notif-dropdown .notif-item {
@@ -251,8 +255,8 @@
         }
     </style>
     
-    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790100000">
-  <script src="/static/js/ra-api.js"></script>
+    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790201000">
+  <script src="/static/js/ra-api.js?v=1790201000"></script>
 </head>
 
 <body class="glass-ui">

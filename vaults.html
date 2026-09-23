@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/font-awesome.css">
     <link rel="stylesheet" href="/static/css/App_Global.css">
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790100000">
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790201000">
     <script src="/static/js/jquery-3.6.0.min.js"></script>
-    <script src="/static/js/ra-api.js"></script>
+    <script src="/static/js/ra-api.js?v=1790201000"></script>
     <style>
       .mock-card { border-radius: 1.25rem; padding: 1.25rem; margin-bottom: 1rem; }
       .pill { display:inline-block; padding: 0.2rem 0.55rem; border-radius: 999px; font-size: 0.7rem; background: rgba(16,185,129,0.18); color: #6ee7b7; }
@@ -41,23 +41,31 @@
         </div>
 
         <div id="raBalanceMount"></div>
-        <div id="vaultsList"></div>
         <div id="vaultsApiNote"></div>
+
+        <div class="wallet-card mock-card glass-panel">
+            <h3 style="font-size:1rem;">Invest in a vault</h3>
+            <p class="text-muted" style="font-size:0.8rem;opacity:0.75;margin-bottom:0.75rem;">Pick a goal, enter an amount — debited from your main wallet balance.</p>
+            <label class="text-muted" style="font-size:0.75rem;">Vault</label>
+            <select class="form-control mb-2" id="investVaultSelect">
+              <option value="">— Select or create below —</option>
+            </select>
+            <label class="text-muted" style="font-size:0.75rem;">Amount (USD)</label>
+            <input class="form-control mb-2" id="investAmount" type="number" min="1" step="0.01" placeholder="Amount to invest" required>
+            <button class="btn-glass" type="button" id="btnInvestVault">Invest now</button>
+            <p id="investMsg" class="text-muted mt-2" style="font-size:0.8rem;"></p>
+        </div>
+
+        <div id="vaultsList"></div>
 
         <div class="wallet-card mock-card glass-panel">
             <h3 style="font-size:1rem;" id="vaultFormTitle">New vault</h3>
             <form id="vaultForm">
               <input type="hidden" id="vaultEditId" value="">
-              <input class="form-control mb-2" id="vaultName" placeholder="Goal name" required>
+              <input class="form-control mb-2" id="vaultName" placeholder="Goal name (e.g. Emergency)" required>
               <input class="form-control mb-2" id="vaultTarget" type="number" min="1" step="0.01" placeholder="Target amount" required>
-              <label style="font-size:0.75rem;opacity:0.7;display:flex;align-items:center;gap:8px;margin-bottom:0.75rem;">
-                <input type="checkbox" id="vaultAutosave"> Autosave
-              </label>
-              <input class="form-control mb-2" id="vaultAutosaveAmt" type="number" min="0" step="0.01" placeholder="Autosave amount / paycheck">
-              <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                <button class="btn-glass" type="submit" id="vaultSubmit">Create vault</button>
-                <button class="btn-glass ghost hidden" type="button" id="vaultCancelEdit">Cancel edit</button>
-              </div>
+              <button class="btn-glass" type="submit" id="vaultSubmit">Create vault</button>
+              <button class="btn-glass ghost hidden" type="button" id="vaultCancelEdit">Cancel</button>
             </form>
             <p id="vaultMsg" class="text-muted mt-2" style="font-size:0.8rem;"></p>
         </div>
@@ -66,6 +74,7 @@
             <h3 class="title" style="font-size:1rem;">History</h3>
             <div class="wallet-card mock-card" id="vaultHistory"></div>
         </div>
+
     </div>
 
     <div class="appBottomMenu">
@@ -109,6 +118,43 @@
         return '$' + Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
       }
 
+      var vaultCache = [];
+
+      function fillVaultSelect() {
+        var sel = document.getElementById('investVaultSelect');
+        if (!sel) return;
+        var cur = sel.value;
+        sel.innerHTML = '<option value="">— Select vault —</option>' +
+          vaultCache.map(function(v){
+            return '<option value="'+v.id+'">'+(v.name||'Vault')+' · '+money(v.balance)+' / '+money(v.target||0)+'</option>';
+          }).join('');
+        if (cur) sel.value = cur;
+      }
+
+      document.getElementById('btnInvestVault').addEventListener('click', async function(){
+        var msg = document.getElementById('investMsg');
+        msg.textContent = '';
+        var id = document.getElementById('investVaultSelect').value;
+        var amount = parseFloat(document.getElementById('investAmount').value);
+        if (!id) { msg.textContent = 'Select a vault first (or create one below).'; return; }
+        if (!(amount > 0)) { msg.textContent = 'Enter a valid amount.'; return; }
+        this.disabled = true;
+        var r = await RA.api('/api/vaults/' + encodeURIComponent(id) + '/deposit', { method: 'POST', body: { amount: amount } });
+        this.disabled = false;
+        if (r.notDeployed) { msg.textContent = 'API unavailable — deposit could not be completed.'; return; }
+        if (!r.ok) { msg.textContent = r.error || 'Insufficient funds or deposit failed'; return; }
+        msg.textContent = 'Invested ' + money(amount) + ' into vault.';
+        document.getElementById('investAmount').value = '';
+        if (window.RA && RA.refreshSharedBalance) {
+          RA.refreshSharedBalance().then(function(s){
+            var m=document.getElementById('raBalanceMount');
+            if(m) m.innerHTML = RA.balanceStripHtml(s, 'Portfolio (synced)');
+          });
+        }
+        loadVaults();
+      });
+
+
       function renderVault(v) {
         var bal = Number(v.balance || 0);
         var tgt = Number(v.target || 0) || 1;
@@ -121,7 +167,9 @@
           '<div class="progress"><span style="width:' + pct + '%"></span></div>' +
           '<div class="text-muted mt-1" style="font-size:0.75rem;">' + money(bal) + ' of ' + money(tgt) +
           (v.autosave_amount ? ' · $' + Number(v.autosave_amount) + ' / paycheck' : '') + '</div>' +
-          '<button class="btn-glass ghost mt-2" type="button" data-edit="' + (v.id || '') + '">Edit</button>' +
+          '<div style="display:flex;gap:8px;margin-top:0.65rem;flex-wrap:wrap;">' +
+          '<button class="btn-glass" type="button" data-invest="' + (v.id || '') + '">Invest</button>' +
+          '<button class="btn-glass ghost" type="button" data-edit="' + (v.id || '') + '">Edit</button></div>' +
           '</div>';
       }
 
@@ -142,11 +190,19 @@
           return;
         }
         var list = Array.isArray(r.data) ? r.data : (r.data && r.data.vaults) || [];
+        vaultCache = list;
+        fillVaultSelect();
         if (!list.length) {
           listEl.innerHTML = '<p class="text-muted" style="font-size:0.85rem;opacity:0.7;">No vaults yet — create one below.</p>';
           return;
         }
         listEl.innerHTML = list.map(renderVault).join('');
+        listEl.querySelectorAll('[data-invest]').forEach(function(b){
+          b.addEventListener('click', function(){
+            document.getElementById('investVaultSelect').value = b.getAttribute('data-invest');
+            document.getElementById('investAmount').focus();
+          });
+        });
         listEl.querySelectorAll('[data-edit]').forEach(function(b){
           b.addEventListener('click', function(){
             var id = b.getAttribute('data-edit');
@@ -155,8 +211,6 @@
             document.getElementById('vaultEditId').value = v.id;
             document.getElementById('vaultName').value = v.name || '';
             document.getElementById('vaultTarget').value = v.target || '';
-            document.getElementById('vaultAutosave').checked = !!v.autosave;
-            document.getElementById('vaultAutosaveAmt').value = v.autosave_amount || '';
             document.getElementById('vaultFormTitle').textContent = 'Edit vault';
             document.getElementById('vaultSubmit').textContent = 'Save changes';
             document.getElementById('vaultCancelEdit').classList.remove('hidden');
@@ -178,9 +232,7 @@
         msg.textContent = '';
         var body = {
           name: document.getElementById('vaultName').value.trim(),
-          target: parseFloat(document.getElementById('vaultTarget').value),
-          autosave: document.getElementById('vaultAutosave').checked,
-          autosave_amount: parseFloat(document.getElementById('vaultAutosaveAmt').value) || 0
+          target: parseFloat(document.getElementById('vaultTarget').value)
         };
         var editId = document.getElementById('vaultEditId').value;
         var btn = document.getElementById('vaultSubmit');

@@ -148,8 +148,8 @@ s0.parentNode.insertBefore(s1,s0);
             padding: 16px 12px 8px;
         }
     </style>
-    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790040000">
-    <script src="/static/js/ra-api.js"></script>
+    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790201000">
+    <script src="/static/js/ra-api.js?v=1790201000"></script>
 </head>
 
 <body class="glass-ui">
@@ -180,8 +180,10 @@ s0.parentNode.insertBefore(s1,s0);
             if (mobileEl) mobileEl.value = user.phone || '';
             if (emailEl) emailEl.value = user.email || '';
 
-            const nameEl = document.getElementById('fullNameInput');
-            if (nameEl) nameEl.value = user.full_name || user.fullName || '';
+            const nameDisp = document.getElementById('fullNameDisplay');
+            if (nameDisp) nameDisp.textContent = user.full_name || user.fullName || '—';
+            const emailDisp = document.getElementById('emailDisplay');
+            if (emailDisp) emailDisp.textContent = user.email || '—';
             window._raUser = user;
 
             // Profile image (Base64 or URL)
@@ -490,83 +492,6 @@ s0.parentNode.insertBefore(s1,s0);
         });
     }
 
-    
-    async function handleNameSave() {
-        const input = document.getElementById('fullNameInput');
-        const msg = document.getElementById('nameSaveMsg');
-        const btn = document.getElementById('saveNameBtn');
-        if (!input) return;
-        const full_name = (input.value || '').trim();
-        if (!full_name) {
-            if (msg) msg.textContent = 'Enter a name.';
-            return;
-        }
-        if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
-        if (msg) msg.textContent = '';
-        try {
-            let r;
-            if (window.RA && RA.api) {
-                r = await RA.api('/api/user/name', { method: 'POST', body: { full_name } });
-            } else {
-                const res = await fetch(`${API_BASE}/api/user/name`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
-                    body: JSON.stringify({ full_name })
-                });
-                const data = await res.json().catch(() => ({}));
-                r = { ok: res.ok, notDeployed: res.status === 404, data, error: data.error || data.message };
-            }
-            if (r.notDeployed) {
-                // admin self-edit fallback
-                const u = window._raUser || {};
-                const role = (u.role || (JSON.parse(localStorage.getItem('user')||'{}').role) || '').toLowerCase();
-                if (role === 'admin' && u.id) {
-                    let r2;
-                    if (window.RA && RA.api) {
-                        r2 = await RA.api('/api/admin/users/' + u.id, { method: 'PUT', body: { full_name } });
-                    } else {
-                        const res2 = await fetch(`${API_BASE}/api/admin/users/' + u.id, {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
-                            body: JSON.stringify({ full_name })
-                        });
-                        const data2 = await res2.json().catch(() => ({}));
-                        r2 = { ok: res2.ok, notDeployed: res2.status === 404, data: data2, error: data2.error };
-                    }
-                    if (r2.notDeployed) {
-                        if (msg) msg.textContent = 'API unavailable — name could not be updated right now.';
-                        return;
-                    }
-                    if (!r2.ok) { if (msg) msg.textContent = r2.error || 'Failed to save name'; return; }
-                    if (msg) msg.textContent = 'Name saved (admin fallback).';
-                    try {
-                        const stored = JSON.parse(localStorage.getItem('user')||'{}');
-                        stored.fullName = full_name; stored.full_name = full_name;
-                        localStorage.setItem('user', JSON.stringify(stored));
-                    } catch(e){}
-                    return;
-                }
-                if (msg) msg.textContent = 'API unavailable — name could not be updated right now.';
-                return;
-            }
-            if (!r.ok) { if (msg) msg.textContent = r.error || 'Failed to save name'; return; }
-            if (msg) msg.textContent = 'Name saved.';
-            try {
-                const stored = JSON.parse(localStorage.getItem('user')||'{}');
-                stored.fullName = full_name; stored.full_name = full_name;
-                localStorage.setItem('user', JSON.stringify(stored));
-            } catch(e){}
-        } catch (err) {
-            if (msg) msg.textContent = err.message || 'Failed to save name';
-        } finally {
-            if (btn) { btn.disabled = false; btn.textContent = 'Save'; }
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function(){
-        document.getElementById('saveNameBtn')?.addEventListener('click', handleNameSave);
-    });
-
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('currencyModal')?.addEventListener('show.bs.modal', renderCurrencyList);
     });
@@ -598,14 +523,15 @@ s0.parentNode.insertBefore(s1,s0);
                 <button type="submit" class="save-btn" id="savePhotoBtn">Save Profile Photo</button>
             </form>
 
-            <!-- Full name (API) -->
-            <div class="wallet-card mock-card glass-panel" id="nameEditCard" style="margin:0.75rem 12px 1rem;padding:1rem;border-radius:1.25rem;">
+            <!-- Full name (read-only from API / Neon) -->
+            <div class="wallet-card mock-card glass-panel" id="nameViewCard" style="margin:0.75rem 12px 1rem;padding:1rem;border-radius:1.25rem;">
               <label class="text-muted" style="font-size:0.75rem;display:block;margin-bottom:0.35rem;">Name</label>
-              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-                <input type="text" id="fullNameInput" class="form-control" placeholder="Full name" style="flex:1;min-width:160px;">
-                <button type="button" class="btn btn-primary" id="saveNameBtn" style="border-radius:20px;padding:8px 18px;">Save</button>
+              <div id="fullNameDisplay" style="font-size:1.05rem;font-weight:600;">—</div>
+              <p class="text-muted" style="font-size:0.7rem;margin:0.4rem 0 0;">Managed by admin — not editable here.</p>
+              <div style="margin-top:0.75rem;">
+                <label class="text-muted" style="font-size:0.75rem;display:block;margin-bottom:0.2rem;">Email</label>
+                <div id="emailDisplay" style="font-size:0.9rem;">—</div>
               </div>
-              <p id="nameSaveMsg" class="text-muted" style="font-size:0.75rem;margin:0.4rem 0 0;"></p>
             </div>
 
             <div class="listview-title mt-1">Theme</div>
