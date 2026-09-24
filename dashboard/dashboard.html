@@ -2144,17 +2144,15 @@
       var inTypes = {receive:1,deposit:1,swap:1,vault_withdraw:1,card_fee_refund:1,admin_adjust:1};
       var filtered = rows.filter(function(tx){
         var typ = String(tx.type||'').toLowerCase();
-        var isSender = String(tx.sender_id) === String(uid);
-        var isReceiver = String(tx.receiver_id) === String(uid);
-        if (kind === 'expenses') return isSender && !!outTypes[typ] && !(isReceiver && isSender);
-        return isReceiver && !!inTypes[typ] && !(isReceiver && isSender && typ !== 'admin_adjust');
-      });
-      // refine self-both: keep admin_adjust by direction already
-      filtered = filtered.filter(function(tx){
-        var isSender = String(tx.sender_id) === String(uid);
-        var isReceiver = String(tx.receiver_id) === String(uid);
-        if (isSender && isReceiver) return false;
-        return true;
+        var isSender = tx.sender_id != null && String(tx.sender_id) === String(uid);
+        var isReceiver = tx.receiver_id != null && String(tx.receiver_id) === String(uid);
+        var selfLedger = isSender && isReceiver;
+        if (kind === 'expenses') {
+          if (selfLedger) return ['vault_deposit','card_fee','payment','send','withdrawal'].indexOf(typ) >= 0;
+          return isSender && !!outTypes[typ];
+        }
+        if (selfLedger) return ['vault_withdraw','card_fee_refund','receive','deposit'].indexOf(typ) >= 0;
+        return isReceiver && !!inTypes[typ];
       });
       if (!filtered.length) {
         list.innerHTML = '<p class="text-muted" style="font-size:0.8rem;margin:0;">No ' + title.toLowerCase() + ' yet.</p>';
