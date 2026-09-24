@@ -1,5 +1,5 @@
-/* Shared auth pages (index / login / register) — linked LAST.
-   Dark = solid ink black original look. Light = page inline light styles. */
+/* Shared auth pages (index / login / register / logout) — linked LAST.
+   Dark = solid ink black original look. Light = full float glass + dark readable text. */
 
 /* Theme FAB — always above intro overlay */
 #raThemeToggle.ra-theme-fab,
@@ -28,7 +28,7 @@
   pointer-events: none;
 }
 #raThemeToggle ion-icon {
-  display: none !important; /* emoji is the visible affordance */
+  display: none !important;
 }
 
 html.dark #raThemeToggle.ra-theme-fab {
@@ -43,7 +43,7 @@ html.light #raThemeToggle.ra-theme-fab,
 html:not(.dark) #raThemeToggle.ra-theme-fab {
   background: rgba(236, 253, 245, 0.95) !important;
   border: 1px solid rgba(5, 150, 105, 0.45) !important;
-  color: #064e3b !important;
+  color: #013220 !important;
   box-shadow: 0 4px 14px rgba(5, 80, 60, 0.18) !important;
 }
 
@@ -123,7 +123,9 @@ html.dark .btn-primary {
   box-shadow: none !important;
 }
 
-/* ---- LIGHT: full float glass card (no glass-ui required); reset dark clip-path ---- */
+/* ---- LIGHT: full float glass card — MUST match/exceed dark box size; kill tilt shrink ----
+   Prior fix set max-width 480 which SHRANK register (520). Use 560 and force transform:none
+   so pointermove tilt cannot visually shrink the float after theme swap. */
 html.light .card,
 html.light #login-card,
 html.light #reg-card,
@@ -137,19 +139,25 @@ html:not(.dark) #reg-card,
 html:not(.dark) #logout-card,
 html:not(.dark) .card#login-card,
 html:not(.dark) .card#reg-card,
-html:not(.dark) .card#logout-card {
+html:not(.dark) .card#logout-card,
+html.light [id$="-card"],
+html:not(.dark) [id$="-card"] {
   width: 100% !important;
-  max-width: min(480px, 100%) !important;
+  max-width: min(560px, 94vw) !important;
+  min-width: min(280px, 100%) !important;
   padding: 2.6rem 2.2rem 2.4rem !important;
   padding-bottom: calc(2.4rem + env(safe-area-inset-bottom, 0px)) !important;
   border-radius: 1.75rem !important;
   clip-path: none !important;
   -webkit-clip-path: none !important;
-  background-color: rgba(236, 253, 245, 0.52) !important;
+  transform: none !important;
+  scale: 1 !important;
+  zoom: 1 !important;
+  background-color: rgba(236, 253, 245, 0.72) !important;
   background-image:
     linear-gradient(145deg, rgba(16, 185, 129, 0.28) 0%, transparent 45%),
     linear-gradient(225deg, rgba(212, 175, 55, 0.12) 0%, transparent 40%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(236, 253, 245, 0.42)) !important;
+    linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(236, 253, 245, 0.5)) !important;
   border: 1px solid rgba(5, 150, 105, 0.38) !important;
   backdrop-filter: blur(28px) saturate(1.55) !important;
   -webkit-backdrop-filter: blur(28px) saturate(1.55) !important;
@@ -158,17 +166,21 @@ html:not(.dark) .card#logout-card {
     0 0 0 1px rgba(16, 185, 129, 0.12),
     0 0 40px rgba(16, 185, 129, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.65) !important;
-  color: #064e3b !important;
-  max-height: min(92dvh, 920px) !important;
-  overflow-y: auto !important;
+  color: #013220 !important;
+  max-height: none !important;
+  overflow-y: visible !important;
   overflow-x: hidden !important;
 }
 html.light .card::before,
-html:not(.dark) .card::before {
+html:not(.dark) .card::before,
+html.light #login-card::before,
+html.light #reg-card::before,
+html.light #logout-card::before {
   border-radius: 1.8rem !important;
   clip-path: none !important;
   -webkit-clip-path: none !important;
   opacity: 0.25 !important;
+  transform: none !important;
 }
 html.light .card input,
 html.light .card select,
@@ -181,9 +193,10 @@ html:not(.dark) .card select {
   border-radius: 0.95rem !important;
   clip-path: none !important;
   -webkit-clip-path: none !important;
-  background: rgba(255, 255, 255, 0.72) !important;
-  border: 1px solid rgba(5, 150, 105, 0.28) !important;
-  color: #064e3b !important;
+  transform: none !important;
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid rgba(5, 150, 105, 0.35) !important;
+  color: #012018 !important;
   backdrop-filter: blur(8px) !important;
   -webkit-backdrop-filter: blur(8px) !important;
 }
@@ -192,4 +205,152 @@ html:not(.dark) .btn-primary {
   border-radius: 1.15rem !important;
   clip-path: none !important;
   -webkit-clip-path: none !important;
+  transform: none !important;
+}
+
+/* Index landing float targets (wordmark / buttons) — no shrink on theme swap */
+html.light #wordmark,
+html.light .brand-wordmark,
+html.light .btn-row,
+html.light .btn,
+html:not(.dark) #wordmark,
+html:not(.dark) .brand-wordmark,
+html:not(.dark) .btn-row,
+html:not(.dark) .btn {
+  transform: none !important;
+}
+
+/* ---- LIGHT TEXT: ~70% darker RGB (×0.3), same hues — auth pages ----
+   Defaults were dark-theme gold/mint (#D4AF37, #98FF98) = unreadable on mint glass. */
+html.light,
+html.light body,
+html:not(.dark),
+html:not(.dark) body {
+  color: #013220 !important; /* #064e3b × ~0.3 family */
+}
+
+html.light .brand-wordmark,
+html.light #wordmark,
+html.light .glitch-logo,
+html:not(.dark) .brand-wordmark,
+html:not(.dark) #wordmark,
+html:not(.dark) .glitch-logo {
+  color: #3f340a !important; /* gold #D4AF37 × 0.3 */
+  text-shadow: 0 0 18px rgba(63, 52, 10, 0.25) !important;
+}
+
+html.light .brand-sub,
+html.light .glitch-sub,
+html:not(.dark) .brand-sub,
+html:not(.dark) .glitch-sub {
+  color: #012d1f !important; /* emerald */
+  text-shadow: none !important;
+}
+
+html.light .card-eyebrow,
+html.light .sec-badge,
+html.light .sec-badge strong,
+html:not(.dark) .card-eyebrow,
+html:not(.dark) .sec-badge,
+html:not(.dark) .sec-badge strong {
+  color: #012d1f !important; /* mint family darkened */
+}
+
+html.light .sec-badge {
+  background: rgba(236, 253, 245, 0.85) !important;
+  border-color: rgba(1, 45, 31, 0.25) !important;
+}
+
+html.light .card-title,
+html.light .card-sub,
+html:not(.dark) .card-title,
+html:not(.dark) .card-sub {
+  color: #012018 !important;
+}
+
+html.light .card-title {
+  color: #361903 !important; /* gold-bright darkened */
+}
+
+html.light .field-label,
+html.light .remember-label,
+html.light .step-label,
+html.light .field-hint,
+html.light label,
+html:not(.dark) .field-label,
+html:not(.dark) .remember-label,
+html:not(.dark) .step-label,
+html:not(.dark) label {
+  color: #3f340a !important; /* gold labels → dark brown-gold */
+  opacity: 1 !important;
+}
+
+html.light .forgot,
+html.light .forgot:hover,
+html.light a:not(.btn):not(.btn-primary),
+html.light .form-footer,
+html.light .form-footer a,
+html.light .alt-link,
+html.light .login-link,
+html.light .register-link,
+html:not(.dark) .forgot,
+html:not(.dark) a:not(.btn):not(.btn-primary),
+html:not(.dark) .form-footer a {
+  color: #012018 !important;
+}
+
+html.light .card input,
+html.light .card select,
+html.light .card textarea,
+html.light input,
+html.light select,
+html.light textarea,
+html:not(.dark) .card input,
+html:not(.dark) .card select,
+html:not(.dark) input,
+html:not(.dark) select,
+html:not(.dark) textarea {
+  color: #012018 !important;
+}
+
+html.light input::placeholder,
+html.light textarea::placeholder,
+html:not(.dark) input::placeholder,
+html:not(.dark) textarea::placeholder {
+  color: rgba(1, 32, 24, 0.45) !important;
+}
+
+html.light .input-wrap .field-icon,
+html.light .eye-btn,
+html:not(.dark) .input-wrap .field-icon,
+html:not(.dark) .eye-btn {
+  color: rgba(63, 52, 10, 0.7) !important;
+}
+
+html.light .step-num,
+html.light .step-title,
+html.light .progress-label,
+html:not(.dark) .step-num,
+html:not(.dark) .step-title {
+  color: #012018 !important;
+}
+
+html.light .error-box,
+html.light .alert,
+html.light #error-msg,
+html:not(.dark) .error-box,
+html:not(.dark) #error-msg {
+  color: #7f1d1d !important;
+}
+
+/* Index CTAs keep gold fill but darker label when outlined */
+html.light .btn,
+html:not(.dark) .btn {
+  color: inherit;
+}
+html.light .btn-ghost,
+html.light .btn-outline,
+html:not(.dark) .btn-ghost {
+  color: #012018 !important;
+  border-color: rgba(1, 45, 31, 0.45) !important;
 }

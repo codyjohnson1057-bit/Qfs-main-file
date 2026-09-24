@@ -39,6 +39,24 @@
     btn.title = theme === "dark" ? "Light mode" : "Dark mode";
   }
 
+  function clearTiltTransforms() {
+    try {
+      ["login-card", "reg-card", "logout-card", "wordmark"].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el && el.style) {
+          el.style.transform = "none";
+          el.style.removeProperty("transform");
+        }
+      });
+      document.querySelectorAll(".card, .btn, .btn-row, .brand-wordmark").forEach(function (el) {
+        if (el && el.style && el.style.transform) {
+          el.style.transform = "none";
+          el.style.removeProperty("transform");
+        }
+      });
+    } catch (e) {}
+  }
+
   function apply(theme, persist) {
     if (theme !== "light" && theme !== "dark") theme = "light";
     var root = document.documentElement;
@@ -52,6 +70,7 @@
       root.classList.remove("light");
       if (body) body.classList.add("dark-mode");
     }
+    try { root.setAttribute("data-ra-theme", theme); } catch (e) {}
     if (persist !== false) {
       try {
         localStorage.setItem(KEY, theme);
@@ -63,13 +82,16 @@
     setIcon(theme);
     var sw = document.getElementById("darkmodeSwitch");
     if (sw) sw.checked = theme === "dark";
-    /* Clear 3D tilt inline transforms so light/dark swap never leaves a shrunk card */
-    try {
-      ["login-card", "reg-card", "logout-card", "wordmark"].forEach(function (id) {
-        var el = document.getElementById(id);
-        if (el && el.style) el.style.transform = "";
-      });
-    } catch (e) {}
+    /* Always clear 3D tilt so light float never inherits a shrunk projection */
+    clearTiltTransforms();
+    /* Light: kill transforms again next frames (pointermove may re-apply same tick) */
+    if (theme === "light") {
+      try {
+        requestAnimationFrame(clearTiltTransforms);
+        setTimeout(clearTiltTransforms, 50);
+        setTimeout(clearTiltTransforms, 200);
+      } catch (e) {}
+    }
     try {
       global.dispatchEvent(new CustomEvent("ra-theme-change", { detail: { theme: theme } }));
     } catch (e) {}
@@ -163,7 +185,9 @@
     apply: apply,
     toggle: toggle,
     init: init,
-    ensureBtn: ensureBtn
+    ensureBtn: ensureBtn,
+    clearTilt: clearTiltTransforms,
+    isLight: function () { return getTheme() === "light"; }
   };
 
   if (document.readyState === "loading") {
@@ -172,7 +196,6 @@
     init();
   }
 
-  /* Keep theme synonymous across tabs / bfcache navigations (landing → register) */
   try {
     global.addEventListener("storage", function (e) {
       if (!e) return;

@@ -57,7 +57,7 @@
   .pulse{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--green-mint);box-shadow:0 0 12px rgba(152,255,152,.7);margin-top:1.4rem;animation:pulse 1s ease-in-out infinite;}
   @keyframes pulse{0%,100%{opacity:.35;transform:scale(.85);}50%{opacity:1;transform:scale(1.1);}}
 </style>
-<link rel="stylesheet" href="static/css/ra-auth.css?v=1790245600">
+<link rel="stylesheet" href="static/css/ra-auth.css?v=1790301000">
 </head>
 <body>
 <button type="button" id="raThemeToggle" class="headerButton ra-theme-toggle ra-theme-fab" aria-label="Switch theme" title="Theme" style="position:fixed;top:max(12px,env(safe-area-inset-top));right:12px;z-index:10001;width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(212,175,55,0.45);background:rgba(2,4,3,0.92);color:#F4D874;cursor:pointer;pointer-events:auto;box-shadow:0 4px 16px rgba(0,0,0,0.55);font-size:20px;line-height:1;">
@@ -129,7 +129,7 @@ addEventListener('pointerdown',e=>spawnBurst(e.clientX,e.clientY));
 
 const wordmark=document.getElementById('wordmark');
 const card=document.getElementById('logout-card');
-function applyTilt(el,x,y,str){const r=el.getBoundingClientRect();const rx=(x-r.left)/r.width-0.5;const ry=(y-r.top)/r.height-0.5;el.style.transform=`rotateX(${(-ry*str).toFixed(2)}deg) rotateY(${(rx*str).toFixed(2)}deg) translateZ(6px)`;}
+function applyTilt(el,x,y,str){if(document.documentElement.classList.contains('light')||!document.documentElement.classList.contains('dark')){if(el&&el.style)el.style.transform='';return;}const r=el.getBoundingClientRect();const rx=(x-r.left)/r.width-0.5;const ry=(y-r.top)/r.height-0.5;el.style.transform=`rotateX(${(-ry*str).toFixed(2)}deg) rotateY(${(rx*str).toFixed(2)}deg) translateZ(6px)`;}
 function resetTilt(el){el.style.transform='';}
 addEventListener('pointermove',e=>{applyTilt(wordmark,e.clientX,e.clientY,12);applyTilt(card,e.clientX,e.clientY,4);});
 addEventListener('pointerleave',()=>{resetTilt(wordmark);resetTilt(card);});
@@ -137,6 +137,6 @@ window.addEventListener('ra-theme-change',function(){resetTilt(wordmark);resetTi
 
 setTimeout(function(){window.location.replace('login.html');},1800);
 </script>
-<script src="/static/js/ra-theme.js?v=1790245600"></script>
+<script src="/static/js/ra-theme.js?v=1790301000"></script>
 </body>
 </html>

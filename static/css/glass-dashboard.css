@@ -811,23 +811,23 @@ body.glass-ui .iziToast {
 html:not(.dark) body.glass-ui {
   --glass-bg-deep: #e8f5f0;
   --glass-bg-mid: #f3faf7;
-  --glass-emerald: #059669;
+  --glass-emerald: #012d1f;
   --glass-emerald-soft: rgba(16, 185, 129, 0.12);
-  --glass-teal: #0d9488;
-  --glass-gold: #b45309;
+  --glass-teal: #042c29;
+  --glass-gold: #361903;
   --glass-gold-soft: rgba(212, 175, 55, 0.12);
   --glass-panel: rgba(255, 255, 255, 0.42);
   --glass-panel-strong: rgba(255, 255, 255, 0.62);
   --glass-border: rgba(16, 185, 129, 0.18);
   --glass-border-bright: rgba(5, 150, 105, 0.32);
-  --glass-text: #0f2922;
-  --glass-muted: #4a6b62;
-  --glass-danger: #dc2626;
-  --glass-success: #059669;
+  --glass-text: #050d0a;
+  --glass-muted: #16201d;
+  --glass-danger: #7f1d1d;
+  --glass-success: #012d1f;
   --glass-shadow: 0 8px 28px rgba(15, 80, 60, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.55);
-  --AppColor: #059669;
+  --AppColor: #012d1f;
   --oColor: rgba(5, 150, 105, 0.28);
-  --d_Color: #047857;
+  --d_Color: #011a14;
 }
 
 html:not(.dark) body.glass-ui {
@@ -877,7 +877,7 @@ html:not(.dark) body.glass-ui .headerButton:focus,
 html:not(.dark) body.glass-ui .ra-theme-toggle:hover {
   background: var(--glass-emerald-soft);
   border-color: var(--glass-border-bright);
-  color: #047857 !important;
+  color: #012018 !important;
 }
 
 html:not(.dark) body.glass-ui .notif-badge {
@@ -1481,4 +1481,215 @@ html.light body.glass-ui button#raThemeToggle.ra-theme-fab {
   background: rgba(236, 253, 245, 0.72) !important;
   border-color: rgba(5, 150, 105, 0.4) !important;
   color: #064e3b !important;
+}
+
+/* ==========================================================================
+   LIGHT MODE TEXT — ~70% darker RGB (×0.3), same hues. Linked cascade end.
+   Fixes unreadably pale mint/gold (#6ee7b7, #a7f3d0) on light glass.
+   Does NOT alter dark-mode colors.
+   ========================================================================== */
+html.light body.glass-ui,
+html:not(.dark) body.glass-ui {
+  --glass-text: #050d0a;          /* was #0f2922 → ×~0.3 */
+  --glass-muted: #16201d;         /* was #4a6b62 */
+  --glass-emerald: #012d1f;       /* was #059669 */
+  --glass-teal: #042c29;          /* was #0d9488 */
+  --glass-gold: #361903;          /* was #b45309 */
+  --glass-success: #012d1f;
+  --AppColor: #012d1f;
+  --d_Color: #011a14;
+  color: #050d0a !important;
+}
+
+html.light body.glass-ui,
+html.light body.glass-ui *:not(script):not(style):not(ion-icon),
+html:not(.dark) body.glass-ui,
+html:not(.dark) body.glass-ui *:not(script):not(style):not(ion-icon) {
+  /* inheritance baseline — specific overrides below beat this where needed */
+}
+
+html.light body.glass-ui .brand-title,
+html.light body.glass-ui .pageTitle,
+html.light body.glass-ui .pageTitle .brand-title,
+html.light body.glass-ui h1,
+html.light body.glass-ui h2,
+html.light body.glass-ui h3,
+html.light body.glass-ui h4,
+html.light body.glass-ui h5,
+html.light body.glass-ui h6,
+html.light body.glass-ui p,
+html.light body.glass-ui span,
+html.light body.glass-ui label,
+html.light body.glass-ui strong,
+html.light body.glass-ui small,
+html.light body.glass-ui li,
+html.light body.glass-ui td,
+html.light body.glass-ui th,
+html.light body.glass-ui a,
+html.light body.glass-ui .text-muted,
+html.light body.glass-ui .listview-title,
+html.light body.glass-ui .section-heading .title,
+html.light body.glass-ui .section .title,
+html.light body.glass-ui .wallet-card .balance .title,
+html.light body.glass-ui .wallet-card .balance .total,
+html.light body.glass-ui .wallet-card .balance .total #db-main-balance,
+html.light body.glass-ui .wallet-card .copytxt,
+html.light body.glass-ui #db-wallet-id,
+html.light body.glass-ui .stat-box .title,
+html.light body.glass-ui .stat-box .value,
+html.light body.glass-ui .transactions .item .detail strong,
+html.light body.glass-ui .transactions .item .detail,
+html.light body.glass-ui .transactions .item .price,
+html.light body.glass-ui .card-coin .detail strong,
+html.light body.glass-ui .card-coin .price,
+html.light body.glass-ui .listview .item,
+html.light body.glass-ui .listview .item .in,
+html.light body.glass-ui .listview .item .text,
+html.light body.glass-ui .modal-title,
+html.light body.glass-ui .modal-body,
+html.light body.glass-ui .modal-body p,
+html.light body.glass-ui .form-label,
+html.light body.glass-ui .form-control,
+html.light body.glass-ui .form-select,
+html.light body.glass-ui .headerButton,
+html.light body.glass-ui .appBottomMenu .item,
+html.light body.glass-ui .appBottomMenu .item strong,
+html.light body.glass-ui .notif-dropdown,
+html.light body.glass-ui .notif-dropdown .notif-preview,
+html.light body.glass-ui .notif-dropdown .notif-time,
+html.light body.glass-ui .notif-dropdown .notif-empty,
+html:not(.dark) body.glass-ui .brand-title,
+html:not(.dark) body.glass-ui .pageTitle,
+html:not(.dark) body.glass-ui h1,
+html:not(.dark) body.glass-ui h2,
+html:not(.dark) body.glass-ui h3,
+html:not(.dark) body.glass-ui h4,
+html:not(.dark) body.glass-ui p,
+html:not(.dark) body.glass-ui span,
+html:not(.dark) body.glass-ui label,
+html:not(.dark) body.glass-ui strong,
+html:not(.dark) body.glass-ui small,
+html:not(.dark) body.glass-ui li,
+html:not(.dark) body.glass-ui td,
+html:not(.dark) body.glass-ui th,
+html:not(.dark) body.glass-ui a,
+html:not(.dark) body.glass-ui .text-muted,
+html:not(.dark) body.glass-ui .listview-title,
+html:not(.dark) body.glass-ui .section-heading .title,
+html:not(.dark) body.glass-ui .wallet-card .balance .title,
+html:not(.dark) body.glass-ui .wallet-card .balance .total,
+html:not(.dark) body.glass-ui .wallet-card .balance .total #db-main-balance,
+html:not(.dark) body.glass-ui .stat-box .title,
+html:not(.dark) body.glass-ui .stat-box .value,
+html:not(.dark) body.glass-ui .transactions .item .detail strong,
+html:not(.dark) body.glass-ui .transactions .item .price,
+html:not(.dark) body.glass-ui .card-coin .detail strong,
+html:not(.dark) body.glass-ui .card-coin .price,
+html:not(.dark) body.glass-ui .listview .item,
+html:not(.dark) body.glass-ui .modal-title,
+html:not(.dark) body.glass-ui .modal-body,
+html:not(.dark) body.glass-ui .form-label,
+html:not(.dark) body.glass-ui .form-control,
+html:not(.dark) body.glass-ui .headerButton,
+html:not(.dark) body.glass-ui .appBottomMenu .item,
+html:not(.dark) body.glass-ui .appBottomMenu .item strong,
+html:not(.dark) body.glass-ui .notif-dropdown .notif-preview,
+html:not(.dark) body.glass-ui .notif-dropdown .notif-time {
+  color: #050d0a !important;
+  -webkit-text-fill-color: #050d0a !important;
+}
+
+/* Muted secondary text still darker than before */
+html.light body.glass-ui .text-muted,
+html.light body.glass-ui .wallet-card .balance .title,
+html.light body.glass-ui .stat-box .title,
+html.light body.glass-ui .listview-title,
+html.light body.glass-ui .notif-dropdown .notif-preview,
+html.light body.glass-ui .notif-dropdown .notif-time,
+html.light body.glass-ui .appBottomMenu .item,
+html:not(.dark) body.glass-ui .text-muted,
+html:not(.dark) body.glass-ui .wallet-card .balance .title,
+html:not(.dark) body.glass-ui .stat-box .title,
+html:not(.dark) body.glass-ui .listview-title,
+html:not(.dark) body.glass-ui .appBottomMenu .item {
+  color: #16201d !important;
+  -webkit-text-fill-color: #16201d !important;
+  opacity: 1 !important;
+}
+
+/* Kill pale mint/gold accents used as body text in light */
+html.light body.glass-ui .text-primary,
+html.light body.glass-ui .transactions .item .price.text-primary,
+html.light body.glass-ui .card-coin .price.text-primary,
+html.light body.glass-ui [id^="db-"][id$="-usd"],
+html.light body.glass-ui .appBottomMenu .item:hover,
+html.light body.glass-ui .appBottomMenu .item.active,
+html.light body.glass-ui .appBottomMenu .item:hover ion-icon,
+html.light body.glass-ui .appBottomMenu .item.active ion-icon,
+html.light body.glass-ui .appBottomMenu .item.active strong,
+html.light body.glass-ui .wallet-card .wallet-footer .item .icon-wrapper,
+html.light body.glass-ui .wallet-card .wallet-footer .item strong,
+html.light body.glass-ui .wallet-card .wallet-footer .item .coin-name,
+html:not(.dark) body.glass-ui .text-primary,
+html:not(.dark) body.glass-ui .transactions .item .price.text-primary,
+html:not(.dark) body.glass-ui .card-coin .price.text-primary,
+html:not(.dark) body.glass-ui [id^="db-"][id$="-usd"],
+html:not(.dark) body.glass-ui .appBottomMenu .item:hover,
+html:not(.dark) body.glass-ui .appBottomMenu .item.active,
+html:not(.dark) body.glass-ui .appBottomMenu .item:hover ion-icon,
+html:not(.dark) body.glass-ui .appBottomMenu .item.active ion-icon,
+html:not(.dark) body.glass-ui .appBottomMenu .item.active strong,
+html:not(.dark) body.glass-ui .wallet-card .wallet-footer .item .icon-wrapper,
+html:not(.dark) body.glass-ui .wallet-card .wallet-footer .item strong,
+html:not(.dark) body.glass-ui .wallet-card .wallet-footer .item .coin-name {
+  color: #012d1f !important; /* emerald ×0.3 family */
+  -webkit-text-fill-color: #012d1f !important;
+}
+
+/* Gradient brand title → solid dark so fill stays readable */
+html.light body.glass-ui .brand-title,
+html.light body.glass-ui .pageTitle .brand-title,
+html:not(.dark) body.glass-ui .brand-title,
+html:not(.dark) body.glass-ui .pageTitle .brand-title {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: #012018 !important;
+  color: #012018 !important;
+}
+
+/* Keep danger/success recognizable but darker */
+html.light body.glass-ui .text-success,
+html:not(.dark) body.glass-ui .text-success { color: #012d1f !important; }
+html.light body.glass-ui .text-danger,
+html:not(.dark) body.glass-ui .text-danger { color: #7f1d1d !important; }
+
+/* Form controls */
+html.light body.glass-ui .form-control,
+html.light body.glass-ui .form-select,
+html.light body.glass-ui input,
+html.light body.glass-ui select,
+html.light body.glass-ui textarea,
+html:not(.dark) body.glass-ui .form-control,
+html:not(.dark) body.glass-ui .form-select,
+html:not(.dark) body.glass-ui input,
+html:not(.dark) body.glass-ui select,
+html:not(.dark) body.glass-ui textarea {
+  color: #050d0a !important;
+  -webkit-text-fill-color: #050d0a !important;
+}
+html.light body.glass-ui input::placeholder,
+html:not(.dark) body.glass-ui input::placeholder {
+  color: rgba(5, 13, 10, 0.45) !important;
+  -webkit-text-fill-color: rgba(5, 13, 10, 0.45) !important;
+}
+
+/* Buttons: keep filled contrast; outline/ghost text dark */
+html.light body.glass-ui .btn-outline-primary,
+html.light body.glass-ui .btn-outline-secondary,
+html.light body.glass-ui .btn-link,
+html:not(.dark) body.glass-ui .btn-outline-primary,
+html:not(.dark) body.glass-ui .btn-outline-secondary,
+html:not(.dark) body.glass-ui .btn-link {
+  color: #012018 !important;
 }
