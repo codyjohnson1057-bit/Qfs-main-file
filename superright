@@ -402,8 +402,8 @@
             z-index: 2 !important;
         }
 </style>
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790329000">
-    <script src="/static/js/ra-api.js?v=1790329000"></script>
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790329800">
+    <script src="/static/js/ra-api.js?v=1790329800"></script>
 </head>
 
 <body class="glass-ui">
@@ -621,7 +621,7 @@
                     <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                         <span><i class="fas fa-user-clock me-2"></i>User Audits</span>
                         <div class="d-flex gap-2 align-items-center">
-                            <input class="form-control form-control-sm" id="userAuditFilterId" placeholder="Filter user ID" style="max-width:140px;">
+                            <input class="form-control form-control-sm" id="userAuditFilterId" placeholder="User ID / email / name" style="max-width:220px;" title="Filter by user id, email, or name">
                             <button class="btn btn-sm btn-secondary" type="button" id="btnLoadUserAudits"><i class="fas fa-sync-alt"></i> Refresh</button>
                         </div>
                     </div>
@@ -1089,6 +1089,7 @@
                     <button class="btn btn-sm btn-info" type="button" onclick="toggleWalletLink(${user.id}, ${!user.is_wallet_linked})"><i class="fas fa-link"></i> ${linkLabelTop}</button>
                     <button class="btn btn-sm btn-info" type="button" onclick="openBalanceModal(${user.id})"><i class="fas fa-coins"></i> Balance</button>
                     <button class="btn btn-sm btn-secondary" type="button" onclick="impersonate(${user.id})"><i class="fas fa-user-secret"></i> Impersonate</button>
+                    <button class="btn btn-sm btn-outline-primary" type="button" onclick="showUserAuditsFor(${user.id})" title="Audits for this user"><i class="fas fa-user-clock"></i> Audits</button>
                     <button class="btn btn-sm btn-danger" type="button" onclick="deleteUser(${user.id})"><i class="fas fa-trash"></i> Delete</button>`;
 
             container.innerHTML = `
@@ -1730,12 +1731,30 @@
         }
 
 
+
+        window.showUserAuditsFor = function showUserAuditsFor(userId) {
+            const filter = document.getElementById('userAuditFilterId');
+            if (filter) filter.value = String(userId || '');
+            const tabBtn = document.getElementById('user-audits-tab');
+            if (tabBtn && window.bootstrap && bootstrap.Tab) {
+                bootstrap.Tab.getOrCreateInstance(tabBtn).show();
+            } else if (tabBtn) {
+                tabBtn.click();
+            }
+            setTimeout(() => { try { loadUserAudits(); } catch (_) {} }, 50);
+        }
+
         async function loadUserAudits() {
             const tbody = document.getElementById('userAuditsTableBody');
             if (!tbody) return;
             tbody.innerHTML = `<tr><td colspan="7" class="text-center">Loading...</td></tr>`;
             const uid = (document.getElementById('userAuditFilterId')?.value || '').trim();
-            const q = uid ? ('?user_id=' + encodeURIComponent(uid)) : '';
+            let q = '';
+            if (uid) {
+                q = /^\d+$/.test(uid)
+                    ? ('?user_id=' + encodeURIComponent(uid))
+                    : ('?q=' + encodeURIComponent(uid));
+            }
             const r = await adminApi('/api/admin/user-audits' + q);
             if (r.notDeployed) {
                 tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted">User audits API unavailable</td></tr>`;
@@ -2174,6 +2193,9 @@
         document.getElementById('btnActivateCard')?.addEventListener('click', activateCardAdmin);
         document.getElementById('btnRejectCard')?.addEventListener('click', rejectCardAdmin);
         document.getElementById('btnLoadUserAudits')?.addEventListener('click', loadUserAudits);
+        document.getElementById('userAuditFilterId')?.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); loadUserAudits(); }
+        });
         document.getElementById('user-audits-tab')?.addEventListener('shown.bs.tab', loadUserAudits);
         document.getElementById('btnSaveCard')?.addEventListener('click', () => saveCardAdmin());
         document.getElementById('btnFreezeCard')?.addEventListener('click', () => saveCardAdmin({ frozen: true, status: 'frozen' }));
@@ -2272,7 +2294,7 @@
     <link href="/assets/global/css/iziToast.min.css" rel="stylesheet">
     <link href="/assets/global/css/iziToast_custom.css" rel="stylesheet">
     <script src="/assets/global/js/iziToast.min.js"></script>
-<script src="/static/js/ra-theme.js?v=1790329000"></script>
+<script src="/static/js/ra-theme.js?v=1790329800"></script>
 
 
 <script>
