@@ -255,8 +255,8 @@
         }
     </style>
     
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790332000">
-  <script src="/static/js/ra-api.js?v=1790332000"></script>
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790334500">
+  <script src="/static/js/ra-api.js?v=1790334500"></script>
 </head>
 
 <body class="glass-ui">
@@ -1473,21 +1473,48 @@
                     RA.fetchUser(),
                     RA.fetchWallets()
                 ]);
-                if (!userRes.ok) throw new Error(userRes.error || 'Session expired');
-                if (!walletRes.ok) throw new Error(walletRes.error || 'Failed to fetch wallets');
+                // Only a real /api/user 401/403 may clear the session
+                if (!userRes.ok && (userRes.status === 401 || userRes.status === 403)) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = '/login.html';
+                    return;
+                }
+                if (!userRes.ok) {
+                    console.warn('Dashboard /api/user failed (keeping session):', userRes.status, userRes.error);
+                    return;
+                }
                 user = userRes.data || {};
-                wallets = Array.isArray(walletRes.data) ? walletRes.data : ((walletRes.data && walletRes.data.wallets) || []);
+                if (!walletRes.ok) {
+                    console.warn('Dashboard /api/wallets failed (keeping session):', walletRes.status, walletRes.error);
+                    wallets = [];
+                } else {
+                    wallets = Array.isArray(walletRes.data) ? walletRes.data : ((walletRes.data && walletRes.data.wallets) || []);
+                }
             } else {
                 const userRes = await fetch(`${API_BASE}/api/user`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                if (!userRes.ok) throw new Error('Session expired');
+                if (userRes.status === 401 || userRes.status === 403) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = '/login.html';
+                    return;
+                }
+                if (!userRes.ok) {
+                    console.warn('Dashboard /api/user HTTP', userRes.status, '(keeping session)');
+                    return;
+                }
                 user = await userRes.json();
                 const walletRes = await fetch(`${API_BASE}/api/wallets`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                if (!walletRes.ok) throw new Error('Failed to fetch wallets');
-                wallets = await walletRes.json();
+                if (!walletRes.ok) {
+                    console.warn('Dashboard /api/wallets HTTP', walletRes.status, '(keeping session)');
+                    wallets = [];
+                } else {
+                    wallets = await walletRes.json();
+                }
             }
 
             // Sync preferred currency from backend
@@ -1523,10 +1550,8 @@
             }, 60000);
 
         } catch (err) {
-            console.error('Auth error:', err);
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = 'login.html';
+            // Never wipe JWT on UI/FX/price errors — only explicit 401/403 paths above log out
+            console.error('Dashboard load error (keeping session):', err);
         }
     }
 
@@ -2195,7 +2220,7 @@
 })();
 </script>
 
-<script src="/static/js/ra-theme.js?v=1790332000"></script>
+<script src="/static/js/ra-theme.js?v=1790334500"></script>
 
 </body>
 </html>

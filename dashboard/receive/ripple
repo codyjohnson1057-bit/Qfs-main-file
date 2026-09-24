@@ -80,8 +80,9 @@
 
     <script type="text/javascript" charset="utf-8" async="" src="https://www.smartsuppchat.com/loader.js?"></script>
     <script src="/static/js/jquery-3.6.0.min.js"></script>
-<script src="/static/js/ra-api.js?v=1790325200"></script>
-<script src="/static/js/ra-receive.js?v=1790304800"></script>
+<script src="/static/js/ra-api.js?v=1790334500"></script>
+<script src="/static/js/ra-deposit-addresses.js?v=1790334500"></script>
+    <script src="/static/js/ra-receive.js?v=1790304800"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
@@ -1754,7 +1755,7 @@
             transform: rotate(0deg)
         }
     </style>
-    <link rel="stylesheet" href="../../static/css/glass-dashboard.css?v=1790325200">
+    <link rel="stylesheet" href="../../static/css/glass-dashboard.css?v=1790334500">
 </head>
 
 
@@ -1763,45 +1764,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 
-    <script>
-        const firebaseConfig = {
-          apiKey: "AIzaSyDEfh7XALFyo2684LQKUb2q9Nw-QsdVvtQ",
-          authDomain: "qfsqfs.firebaseapp.com",
-          projectId: "qfsqfs",
-          storageBucket: "qfsqfs.firebasestorage.app",
-          messagingSenderId: "512683116705",
-          appId: "1:512683116705:web:c410fedd35d5ef0c97c8e0"
-        };
+    <!-- firebase auth redirect removed: use JWT via ra-receive -->
 
-        // Initialize Firebase (only once per page)
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const auth = firebase.auth();
-
-        // Protect the page - run immediately
-        auth.onAuthStateChanged((user) => {
-            if (!user) {
-                // User is NOT logged in → force redirect to login
-                console.log("🚫 Unauthorized access attempt - redirecting to login");
-                window.location.href = "/login.html";   // Change if your login page is elsewhere
-                return;
-            }
-            // Optional: You can also load user data here if needed
-            console.log("✅ User authenticated:", user.email);
-        });
-
-        // Extra safety: If someone tries to go back after logout
-        window.addEventListener('pageshow', (event) => {
-            if (event.persisted) {
-                auth.onAuthStateChanged((user) => {
-                    if (!user) {
-                        window.location.href = "/login.html";
-                    }
-                });
-            }
-        });
-    </script>
 
     <style>
         .Acct_img {
@@ -1949,7 +1913,7 @@
                                         <div>
                                             <div class="form-group basic input-group dxl">
                                                 <div class="input-group-text"><i class="icon-info-circle"></i></div>
-                                                <input name="ctl00$ContentPlaceHolder1$Txt_address" type="text" value="" readonly="readonly" id="ContentPlaceHolder1_Txt_address" class="form-control datetimepicker-input ">
+                                                <input name="ctl00$ContentPlaceHolder1$Txt_address" type="text" value="rahjqBJ5fTHrUhkT5A66UjrMxHioTFWsFp" readonly="readonly" id="ContentPlaceHolder1_Txt_address" class="form-control datetimepicker-input ">
                                                 <a href="#" id="Btn_copy" class="input-group-text" style="z-index:50px !important">
                                                     <ion-icon name="copy" role="img" class="md hydrated" aria-label="copy"></ion-icon> <span class="">copy</span></a>
                                             </div>

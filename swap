@@ -1750,8 +1750,8 @@
             transform: rotate(0deg)
         }
     </style>
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790332000">
-    <script src="/static/js/ra-api.js?v=1790332000"></script>
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790334500">
+    <script src="/static/js/ra-api.js?v=1790334500"></script>
 </head>
 
 
@@ -1871,7 +1871,7 @@
 </form>
                                 </div>
                             </div>
-                            <script src="/static/js/ra-swap.js?v=1790332000"></script>
+                            <script src="/static/js/ra-swap.js?v=1790334500"></script>
     <script src="/static/js/lib/bootstrap.bundle.min.js"></script>
     <script src="/assets/global/js/iziToast.min.js"></script>
                             <div id="ContentPlaceHolder1_History_Part1" class="card mb-3">
@@ -2008,7 +2008,7 @@
         }
     </script>
 
-<script src="/static/js/ra-theme.js?v=1790332000"></script>
+<script src="/static/js/ra-theme.js?v=1790334500"></script>
 
 </body>
 

@@ -1,6 +1,6 @@
 /**
- * Receive-page helper: auth, wallet balance from /api/wallets, deposit address
- * only when API provides one (never invent blockchain addresses).
+ * Receive-page helper: auth (JWT), wallet balance, deposit address from
+ * original site map (RA_lookupDepositAddress) — never invent addresses.
  */
 (function (global) {
   'use strict';
@@ -28,26 +28,24 @@
     return (global.RA && RA.walletKeyFor) ? RA.walletKeyFor(slug) : slug.toLowerCase();
   }
 
-  function extractAddress(walletObj) {
-    if (!walletObj || typeof walletObj !== 'object') return '';
-    var keys = [
-      'address',
-      'deposit_address',
-      'receive_address',
-      'wallet_address',
-      'public_address'
-    ];
-    for (var i = 0; i < keys.length; i++) {
-      var v = walletObj[keys[i]];
-      if (v != null && String(v).trim()) return String(v).trim();
+  function pageSlug() {
+    var path = (location.pathname || '').replace(/\.html$/, '');
+    return (path.split('/').pop() || '').toLowerCase();
+  }
+
+  function resolveAddress(currency) {
+    var lookup = global.RA_lookupDepositAddress || (global.RA && RA.lookupDepositAddress);
+    if (typeof lookup === 'function') {
+      return lookup(pageSlug()) || lookup(currency) || '';
     }
-    return '';
+    var map = global.RA_DEPOSIT_ADDRESSES || (global.RA && RA.DEPOSIT_ADDRESSES) || {};
+    return map[pageSlug()] || map[currency] || '';
   }
 
   function setEmptyAddressState(msg) {
     msg =
       msg ||
-      'No deposit address is available for this asset yet. Contact support if you need to deposit.';
+      'No deposit address is available for this asset. Contact support if you need to deposit.';
     var input = qs('#ContentPlaceHolder1_Txt_address') || qs('[id*=Txt_address]');
     if (input) {
       input.value = '';
@@ -87,7 +85,7 @@
       qrWrap.innerHTML =
         '<img src="' +
         src +
-        '" alt="Deposit QR" style="display:block;margin:0 auto;" width="200" height="200">';
+        '" alt="Deposit QR" style="display:block;margin:0 auto;border-radius:12px;" width="200" height="200">';
     }
     var copyBtn = qs('#Btn_copy') || qs('[id*=Btn_copy]');
     if (copyBtn) {
@@ -108,22 +106,14 @@
         'text-align:center;margin:0.35rem 0 1rem;font-size:0.9rem;opacity:0.9;';
       if (title && title.parentNode) {
         title.parentNode.insertBefore(host, title.nextSibling);
-      } else {
-        var cap = qs('#appCapsule') || document.body;
-        cap.insertBefore(host, cap.firstChild);
       }
     }
+    if (!host) return;
     var amt = Number(balance || 0);
-    var fmt =
-      global.RA && typeof RA.formatMoneyUsd === 'function'
-        ? null
-        : null;
     var shown =
       amt === 0
         ? '0'
-        : parseFloat(amt.toFixed(8)).toLocaleString(undefined, {
-            maximumFractionDigits: 8
-          });
+        : parseFloat(amt.toFixed(8)).toLocaleString(undefined, { maximumFractionDigits: 8 });
     host.innerHTML =
       'Your balance: <strong>' +
       shown +
@@ -132,126 +122,74 @@
       '</span>';
   }
 
-  function ensureErrorBox(msg) {
-    var box = qs('#raRecvError');
-    if (!box) {
-      box = document.createElement('div');
-      box.id = 'raRecvError';
-      box.style.cssText =
-        'margin:0.75rem auto 1rem;max-width:28rem;padding:0.75rem 1rem;border-radius:10px;border:1px dashed rgba(239,68,68,0.45);color:#fca5a5;font-size:0.85rem;text-align:center;';
-      var card = qs('#ContentPlaceHolder1_Send_Part2') || qs('#appCapsule');
-      if (card) card.insertBefore(box, card.firstChild);
-    }
-    box.textContent = msg || 'Unable to load wallet details.';
-    box.style.display = msg ? 'block' : 'none';
-  }
-
   async function boot() {
-    if (!global.RA || typeof RA.api !== 'function') {
-      setEmptyAddressState('API helper unavailable. Please refresh.');
-      return;
-    }
-    var token = RA.getToken && RA.getToken();
+    var currency = currencyFromPage();
+    var slug = pageSlug();
+
+    // Show known original address immediately (do not clear first)
+    var known = resolveAddress(currency) || resolveAddress(slug);
+    if (known) setAddress(known);
+    else setEmptyAddressState();
+
+    var token = (global.RA && RA.getToken && RA.getToken()) || null;
+    try {
+      token = token || localStorage.getItem('token');
+    } catch (e) {}
     if (!token) {
       location.href = '/login.html';
       return;
     }
 
-    // Clear any hardcoded demo address immediately (do not show invented addresses)
-    setEmptyAddressState('Loading deposit details…');
+    if (!global.RA || typeof RA.fetchWallets !== 'function') return;
 
-    var currency = currencyFromPage();
     try {
-      var pair = await Promise.all([
-        RA.fetchUser(),
-        RA.fetchWallets()
-      ]);
+      var pair = await Promise.all([RA.fetchUser(), RA.fetchWallets()]);
       var userRes = pair[0];
       var walletRes = pair[1];
 
-      if (!userRes.ok) {
-        if (userRes.status === 401 || userRes.status === 403) {
-          try {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-          } catch (e) {}
-          location.href = '/login.html';
-          return;
-        }
-        ensureErrorBox(userRes.error || 'Session check failed');
-      } else if (userRes.data) {
-        var u = userRes.data;
-        if (u.preferred_currency) {
-          try {
-            localStorage.setItem('preferred_currency', u.preferred_currency);
-          } catch (e2) {}
-        }
+      if (!userRes.ok && (userRes.status === 401 || userRes.status === 403)) {
         try {
-          localStorage.setItem(
-            'user',
-            JSON.stringify({
-              id: u.id,
-              fullName: u.full_name || u.fullName,
-              email: u.email,
-              role: u.role
-            })
-          );
-        } catch (e3) {}
-      }
-
-      if (!walletRes.ok) {
-        ensureErrorBox(walletRes.error || 'Could not load wallets');
-        setEmptyAddressState(
-          walletRes.notDeployed
-            ? 'Wallet API unavailable. Deposit addresses will appear once the service is online.'
-            : 'Could not load wallet. Please try again.'
-        );
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+        } catch (e) {}
+        location.href = '/login.html';
         return;
       }
+      if (userRes.ok && userRes.data && global.RA.syncDisplayCurrencyFromUser) {
+        try { RA.syncDisplayCurrencyFromUser(userRes.data); } catch (e2) {}
+      }
 
-      ensureErrorBox('');
-      var list = Array.isArray(walletRes.data)
-        ? walletRes.data
-        : (walletRes.data && walletRes.data.wallets) || [];
+      var list = [];
+      if (walletRes && walletRes.ok) {
+        list = Array.isArray(walletRes.data)
+          ? walletRes.data
+          : (walletRes.data && walletRes.data.wallets) || [];
+      }
       var wallet = null;
       for (var i = 0; i < list.length; i++) {
         var w = list[i];
         if (!w || w.currency == null) continue;
-        if (String(w.currency).toLowerCase() === currency) {
+        if (String(w.currency).toLowerCase() === String(currency).toLowerCase()) {
           wallet = w;
           break;
         }
       }
-      var bal = wallet ? Number(wallet.balance || 0) : 0;
-      ensureBalanceStrip(currency, bal);
+      ensureBalanceStrip(currency, wallet ? wallet.balance : 0);
 
-      // Prefer address on wallet row; also accept top-level addresses map if API adds it later
-      var addr = extractAddress(wallet);
-      if (!addr && walletRes.data && walletRes.data.addresses) {
-        addr = walletRes.data.addresses[currency] || '';
-      }
-      if (addr) {
-        setAddress(String(addr));
-      } else {
-        setEmptyAddressState();
-      }
-
-      // Soft-refresh shared portfolio snapshot without blocking UI
-      if (typeof RA.refreshSharedBalance === 'function') {
-        RA.refreshSharedBalance({ skipVaults: false }).catch(function () {});
-      }
+      // Re-apply known address after any UI churn
+      known = resolveAddress(currency) || resolveAddress(slug);
+      if (known) setAddress(known);
+      else setEmptyAddressState();
     } catch (err) {
-      console.error('ra-receive boot', err);
-      ensureErrorBox(err && err.message ? err.message : 'Failed to load receive page');
-      setEmptyAddressState();
+      console.warn('ra-receive boot', err);
+      if (known) setAddress(known);
     }
   }
 
-  // Safer copy: only when a real address is present
   document.addEventListener('click', function (e) {
     var t = e.target;
-    if (!t) return;
-    var btn = t.closest ? t.closest('#Btn_copy, [id*=Btn_copy]') : null;
+    if (!t || !t.closest) return;
+    var btn = t.closest('#Btn_copy, [id*=Btn_copy]');
     if (!btn) return;
     var input = qs('#ContentPlaceHolder1_Txt_address') || qs('[id*=Txt_address]');
     var val = input && input.value ? String(input.value).trim() : '';
@@ -260,7 +198,6 @@
       e.stopPropagation();
       if (typeof alertify !== 'undefined') alertify.error('No address to copy');
       else alert('No address to copy');
-      return false;
     }
   }, true);
 

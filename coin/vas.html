@@ -42,7 +42,7 @@
     <link href="/panel/assets/css/toastr.min.css" rel="stylesheet" type="text/css">
     <link href="/panel/assets/css/icons.min.css" rel="stylesheet" type="text/css">
     <script src="/static/js/jquery-3.6.0.min.js"></script>
-<script src="/static/js/ra-api.js?v=1790332000"></script>
+<script src="/static/js/ra-api.js?v=1790334500"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
@@ -55,8 +55,9 @@
         .Acct_in__total { font-size: 1.6rem; letter-spacing: -1px; }
         .table__row.noBdr td { border: none !important; }
         .table__row.noBdr td:last-child { text-align: right; }
-        .AppIcons a { color: #939393; }
-        .AppIcons a.ra-coin-action { color: inherit; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .AppIcons a { color: inherit; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 6px; text-align: center; }
+        .AppIcons a.ra-coin-action { color: inherit; }
+        .AppIcons a > div:last-child { font-size: 0.8rem; line-height: 1.2; text-align: center; width: 100%; }
         .AppIcons .icon-wrapper {
           width: 48px; height: 48px; border-radius: 16px; display: flex; align-items: center; justify-content: center;
           background: rgba(16,185,129,0.18); border: 1px solid rgba(255,255,255,0.18);
@@ -206,7 +207,7 @@
                         <div class="container AppIcons">
                             <div class="row text-center">
                                 <div class="col mb-1">
-                                    <a href="/dashboard/send/bitcoin.html" id="sendLink">
+                                    <a href="/dashboard/send/bitcoin.html" id="sendLink" class="ra-coin-action">
                                         <div class="icon-wrapper"><ion-icon name="arrow-up-outline"></ion-icon></div>
                                         <div>Send</div>
                                     </a>
@@ -332,7 +333,7 @@
         let coinImage = '/assets/images/coin/vas.svg';
 
         const coinMap = {
-            'Bitcoin':  { symbol: 'BTC',  id: 'bitcoin',     img: '/assets/images/gateway/68719dab8930f1752276395.png' },
+            'Bitcoin':  { symbol: 'BTC',  id: 'bitcoin',     img: '/assets/images/coin/vas.svg' },
             'Ethereum': { symbol: 'ETH',  id: 'ethereum',    img: '/assets/images/gateway/29869.svg' },
             'USDT':     { symbol: 'USDT', id: 'tether',      img: '/assets/images/gateway/38081.svg' },
             'TRON':     { symbol: 'TRX',  id: 'tron',        img: '/assets/images/gateway/34272.svg' },

@@ -148,8 +148,8 @@ s0.parentNode.insertBefore(s1,s0);
             padding: 16px 12px 8px;
         }
     </style>
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790332000">
-    <script src="/static/js/ra-api.js?v=1790332000"></script>
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790334500">
+    <script src="/static/js/ra-api.js?v=1790334500"></script>
 </head>
 
 <body class="glass-ui">
@@ -509,17 +509,30 @@ s0.parentNode.insertBefore(s1,s0);
                     });
                     const data = await res.json();
                     if (data.success) {
-                        if (window.RA && RA.setDisplayCurrency) RA.setDisplayCurrency(code);
-                        else localStorage.setItem('preferred_currency', code);
-                        if (window.RA && RA.ensureFiatRates) RA.ensureFiatRates(true).catch(function(){});
+                        try {
+                            if (window.RA && RA.bustUserCache) RA.bustUserCache();
+                            if (window.RA && RA.setDisplayCurrency) RA.setDisplayCurrency(code);
+                            else localStorage.setItem('preferred_currency', code);
+                            if (window.RA && RA.ensureFiatRates) {
+                                Promise.resolve(RA.ensureFiatRates(true)).catch(function () {});
+                            }
+                        } catch (eCur) { console.warn('currency UI sync', eCur); }
                         const label = document.getElementById('current-currency-label');
                         if (label) label.textContent = code;
-                        bootstrap.Modal.getInstance(document.getElementById('currencyModal'))?.hide();
+                        try {
+                            const modal = document.getElementById('currencyModal');
+                            if (modal && window.bootstrap && bootstrap.Modal) {
+                                bootstrap.Modal.getInstance(modal)?.hide();
+                            }
+                        } catch (eModal) {}
                         if (typeof Swal !== 'undefined') {
                             Swal.fire({ icon: 'success', title: 'Currency Updated', text: `Now displaying in ${code}`, timer: 1500, showConfirmButton: false });
                         } else {
                             notify('success', 'Currency updated');
                         }
+                    } else if (res.status === 401 || res.status === 403) {
+                        // Only currency endpoint 401/403 — still require /api/user policy: do not wipe here unless session truly dead
+                        console.warn('currency update unauthorized');
                     }
                 } catch (err) {
                     if (typeof Swal !== 'undefined') Swal.fire('Error', 'Could not update currency', 'error');
@@ -851,7 +864,7 @@ s0.parentNode.insertBefore(s1,s0);
         </div>
     </div>
 
-<script src="/static/js/ra-theme.js?v=1790332000"></script>
+<script src="/static/js/ra-theme.js?v=1790334500"></script>
 
 </body>
 </html>

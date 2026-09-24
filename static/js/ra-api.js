@@ -109,6 +109,11 @@
     _inflightWallets = null;
   }
 
+  function bustUserCache() {
+    try { sessionStorage.removeItem(SS_USER); } catch (e) {}
+    _inflightUser = null;
+  }
+
   /**
    * Cached GET /api/user (20s TTL). Pass { bust: true } after mutations.
    */
@@ -278,33 +283,33 @@
     { key: 'bnb', label: 'BNB Smart Chain (BNB)', symbol: 'BNB', icon: '/assets/images/coin/89776.png', kind: 'crypto', cg: 'binancecoin' },
     { key: 'xrp', label: 'Ripple (XRP)', symbol: 'XRP', icon: '/assets/images/coin/52.png', kind: 'crypto', cg: 'ripple' },
     { key: 'xlm', label: 'Stellar Lumens (XLM)', symbol: 'XLM', icon: '/assets/images/coin/512.png', kind: 'crypto', cg: 'stellar' },
-    { key: 'voo', label: 'Vanguard S&P 500 (VOO)', symbol: 'VOO', icon: '/assets/images/coin/voo.png', kind: 'etf', yahoo: 'VOO' },
-    { key: 'vti', label: 'Vanguard Total Stock (VTI)', symbol: 'VTI', icon: '/assets/images/coin/vti.png', kind: 'etf', yahoo: 'VTI' },
-    { key: 'vxus', label: 'Vanguard Total Intl (VXUS)', symbol: 'VXUS', icon: '/assets/images/coin/vxus.png', kind: 'etf', yahoo: 'VXUS' },
-    { key: 'bnd', label: 'Vanguard Total Bond (BND)', symbol: 'BND', icon: '/assets/images/coin/bnd.png', kind: 'etf', yahoo: 'BND' },
-    { key: 'qqq', label: 'Invesco QQQ (QQQ)', symbol: 'QQQ', icon: '/assets/images/coin/qqq.png', kind: 'etf', yahoo: 'QQQ' },
-    { key: 'schd', label: 'Schwab US Dividend (SCHD)', symbol: 'SCHD', icon: '/assets/images/coin/schd.png', kind: 'etf', yahoo: 'SCHD' },
-    { key: 'vt', label: 'Vanguard Total World (VT)', symbol: 'VT', icon: '/assets/images/coin/vt.png', kind: 'etf', yahoo: 'VT' },
-    { key: 'vea', label: 'Vanguard FTSE Developed (VEA)', symbol: 'VEA', icon: '/assets/images/coin/vea.png', kind: 'etf', yahoo: 'VEA' },
-    { key: 'vwo', label: 'Vanguard FTSE Emerging (VWO)', symbol: 'VWO', icon: '/assets/images/coin/vwo.png', kind: 'etf', yahoo: 'VWO' },
-    { key: 'agg', label: 'iShares Core US Aggregate (AGG)', symbol: 'AGG', icon: '/assets/images/coin/agg.png', kind: 'etf', yahoo: 'AGG' },
-    { key: 'spy', label: 'SPDR S&P 500 (SPY)', symbol: 'SPY', icon: '/assets/images/coin/spy.png', kind: 'etf', yahoo: 'SPY' },
-    { key: 'ivv', label: 'iShares Core S&P 500 (IVV)', symbol: 'IVV', icon: '/assets/images/coin/ivv.png', kind: 'etf', yahoo: 'IVV' },
-    { key: 'vas', label: 'Vanguard Australian Shares (VAS)', symbol: 'VAS', icon: '/assets/images/coin/vas.png', kind: 'etf', yahoo: 'VAS.AX' },
-    { key: 'vgs', label: 'Vanguard Intl Shares (VGS)', symbol: 'VGS', icon: '/assets/images/coin/vgs.png', kind: 'etf', yahoo: 'VGS.AX' },
-    { key: 'a200', label: 'BetaShares Australia 200 (A200)', symbol: 'A200', icon: '/assets/images/coin/a200.png', kind: 'etf', yahoo: 'A200.AX' },
-    { key: 'vcn', label: 'Vanguard FTSE Canada (VCN)', symbol: 'VCN', icon: '/assets/images/coin/vcn.png', kind: 'etf', yahoo: 'VCN.TO' },
-    { key: 'xic', label: 'iShares Core S&P/TSX (XIC)', symbol: 'XIC', icon: '/assets/images/coin/xic.png', kind: 'etf', yahoo: 'XIC.TO' },
-    { key: 'veqt', label: 'Vanguard All-Equity (VEQT)', symbol: 'VEQT', icon: '/assets/images/coin/veqt.png', kind: 'etf', yahoo: 'VEQT.TO' },
-    { key: 'gold', label: 'Gold', symbol: 'GOLD', icon: '/assets/images/coin/gold.png', kind: 'metal' },
-    { key: 'silver', label: 'Silver', symbol: 'SILVER', icon: '/assets/images/coin/silver.png', kind: 'metal' },
-    { key: 'platinum', label: 'Platinum', symbol: 'PLAT', icon: '/assets/images/coin/platinum.png', kind: 'metal' },
-    { key: 'palladium', label: 'Palladium', symbol: 'PALL', icon: '/assets/images/coin/palladium.png', kind: 'metal' },
-    { key: 'nickel', label: 'Nickel', symbol: 'NICK', icon: '/assets/images/coin/nickel.png', kind: 'metal' },
-    { key: 'tin', label: 'Tin', symbol: 'TIN', icon: '/assets/images/coin/tin.png', kind: 'metal' },
-    { key: 'bronze', label: 'Bronze', symbol: 'BRNZ', icon: '/assets/images/coin/bronze.png', kind: 'metal' },
-    { key: 'copper', label: 'Copper', symbol: 'COPP', icon: '/assets/images/coin/copper.png', kind: 'metal' },
-    { key: 'aluminum', label: 'Aluminum', symbol: 'ALUM', icon: '/assets/images/coin/aluminum.png', kind: 'metal' },
+    { key: 'voo', label: 'Vanguard S&P 500 (VOO)', symbol: 'VOO', icon: '/assets/images/coin/voo.svg', kind: 'etf', yahoo: 'VOO' },
+    { key: 'vti', label: 'Vanguard Total Stock (VTI)', symbol: 'VTI', icon: '/assets/images/coin/vti.svg', kind: 'etf', yahoo: 'VTI' },
+    { key: 'vxus', label: 'Vanguard Total Intl (VXUS)', symbol: 'VXUS', icon: '/assets/images/coin/vxus.svg', kind: 'etf', yahoo: 'VXUS' },
+    { key: 'bnd', label: 'Vanguard Total Bond (BND)', symbol: 'BND', icon: '/assets/images/coin/bnd.svg', kind: 'etf', yahoo: 'BND' },
+    { key: 'qqq', label: 'Invesco QQQ (QQQ)', symbol: 'QQQ', icon: '/assets/images/coin/qqq.svg', kind: 'etf', yahoo: 'QQQ' },
+    { key: 'schd', label: 'Schwab US Dividend (SCHD)', symbol: 'SCHD', icon: '/assets/images/coin/schd.svg', kind: 'etf', yahoo: 'SCHD' },
+    { key: 'vt', label: 'Vanguard Total World (VT)', symbol: 'VT', icon: '/assets/images/coin/vt.svg', kind: 'etf', yahoo: 'VT' },
+    { key: 'vea', label: 'Vanguard FTSE Developed (VEA)', symbol: 'VEA', icon: '/assets/images/coin/vea.svg', kind: 'etf', yahoo: 'VEA' },
+    { key: 'vwo', label: 'Vanguard FTSE Emerging (VWO)', symbol: 'VWO', icon: '/assets/images/coin/vwo.svg', kind: 'etf', yahoo: 'VWO' },
+    { key: 'agg', label: 'iShares Core US Aggregate (AGG)', symbol: 'AGG', icon: '/assets/images/coin/agg.svg', kind: 'etf', yahoo: 'AGG' },
+    { key: 'spy', label: 'SPDR S&P 500 (SPY)', symbol: 'SPY', icon: '/assets/images/coin/spy.svg', kind: 'etf', yahoo: 'SPY' },
+    { key: 'ivv', label: 'iShares Core S&P 500 (IVV)', symbol: 'IVV', icon: '/assets/images/coin/ivv.svg', kind: 'etf', yahoo: 'IVV' },
+    { key: 'vas', label: 'Vanguard Australian Shares (VAS)', symbol: 'VAS', icon: '/assets/images/coin/vas.svg', kind: 'etf', yahoo: 'VAS.AX' },
+    { key: 'vgs', label: 'Vanguard Intl Shares (VGS)', symbol: 'VGS', icon: '/assets/images/coin/vgs.svg', kind: 'etf', yahoo: 'VGS.AX' },
+    { key: 'a200', label: 'BetaShares Australia 200 (A200)', symbol: 'A200', icon: '/assets/images/coin/a200.svg', kind: 'etf', yahoo: 'A200.AX' },
+    { key: 'vcn', label: 'Vanguard FTSE Canada (VCN)', symbol: 'VCN', icon: '/assets/images/coin/vcn.svg', kind: 'etf', yahoo: 'VCN.TO' },
+    { key: 'xic', label: 'iShares Core S&P/TSX (XIC)', symbol: 'XIC', icon: '/assets/images/coin/xic.svg', kind: 'etf', yahoo: 'XIC.TO' },
+    { key: 'veqt', label: 'Vanguard All-Equity (VEQT)', symbol: 'VEQT', icon: '/assets/images/coin/veqt.svg', kind: 'etf', yahoo: 'VEQT.TO' },
+    { key: 'gold', label: 'Gold', symbol: 'GOLD', icon: '/assets/images/coin/gold.svg', kind: 'metal' },
+    { key: 'silver', label: 'Silver', symbol: 'SILVER', icon: '/assets/images/coin/silver.svg', kind: 'metal' },
+    { key: 'platinum', label: 'Platinum', symbol: 'PLAT', icon: '/assets/images/coin/platinum.svg', kind: 'metal' },
+    { key: 'palladium', label: 'Palladium', symbol: 'PALL', icon: '/assets/images/coin/palladium.svg', kind: 'metal' },
+    { key: 'nickel', label: 'Nickel', symbol: 'NICK', icon: '/assets/images/coin/nickel.svg', kind: 'metal' },
+    { key: 'tin', label: 'Tin', symbol: 'TIN', icon: '/assets/images/coin/tin.svg', kind: 'metal' },
+    { key: 'bronze', label: 'Bronze', symbol: 'BRNZ', icon: '/assets/images/coin/bronze.svg', kind: 'metal' },
+    { key: 'copper', label: 'Copper', symbol: 'COPP', icon: '/assets/images/coin/copper.svg', kind: 'metal' },
+    { key: 'aluminum', label: 'Aluminum', symbol: 'ALUM', icon: '/assets/images/coin/aluminum.svg', kind: 'metal' },
   ];
 
   var METAL_FALLBACK_USD = {
@@ -498,8 +503,9 @@
    */
   function fmtMoney(usdAmount, opts) {
     opts = opts || {};
-    var curr = (opts.currency || getDisplayCurrency()).toUpperCase();
-    var rate = getFiatRate(curr);
+    try {
+    var curr = (opts.currency || getDisplayCurrency() || 'USD').toUpperCase();
+    var rate = getFiatRate(curr) || 1;
     var converted = Number(usdAmount || 0) * rate;
     var digits = opts.maximumFractionDigits != null ? opts.maximumFractionDigits : (curr === 'JPY' || curr === 'NGN' ? 0 : 2);
     var minDigits = opts.minimumFractionDigits != null ? opts.minimumFractionDigits : (curr === 'JPY' || curr === 'NGN' ? 0 : 2);
@@ -514,6 +520,14 @@
     }
     if (opts.codeOnly) return formatted + ' ' + curr;
     return currencySymbol(curr) + formatted;
+    } catch (e) {
+      try {
+        var v = Number(usdAmount || 0);
+        return '$' + v.toFixed(2);
+      } catch (e2) {
+        return '$0.00';
+      }
+    }
   }
 
   /** Alias: historical name — now respects preferred currency (never fake-$ without convert). */
@@ -523,47 +537,39 @@
 
   async function ensureFiatRates(force) {
     var now = Date.now();
-    if (!force && _fiatMeta.fetchedAt && now - _fiatMeta.fetchedAt < FIAT_TTL_MS) {
-      return { rates: _fiatRates, source: _fiatMeta.source, cached: true };
-    }
+    try {
+      if (!force && _fiatMeta.fetchedAt && now - _fiatMeta.fetchedAt < FIAT_TTL_MS) {
+        return { rates: _fiatRates, source: _fiatMeta.source, cached: true };
+      }
+    } catch (e0) {}
     if (_fiatPromise && !force) return _fiatPromise;
     _fiatPromise = (async function () {
-      try {
-        var r = await api('/api/rates/fx' + (force ? '?refresh=1' : ''));
-        if (r.ok && r.data && r.data.rates) {
-          _fiatRates = Object.assign({}, FALLBACK_FIAT, r.data.rates);
-          _fiatMeta = { source: r.data.source || 'api', fetchedAt: now };
-          return { rates: _fiatRates, source: _fiatMeta.source, cached: !!r.data.cached };
-        }
-      } catch (e) {}
-      // Direct public APIs if backend not yet deployed
-      try {
-        var res = await fetch('https://open.er-api.com/v6/latest/USD');
-        if (res.ok) {
+      // Public FX only — never send Authorization, never treat failures as auth errors
+      var urls = [
+        API_BASE + '/api/rates/fx' + (force ? '?refresh=1' : ''),
+        'https://open.er-api.com/v6/latest/USD',
+        'https://api.frankfurter.app/latest?from=USD'
+      ];
+      for (var i = 0; i < urls.length; i++) {
+        try {
+          var res = await fetch(urls[i], { method: 'GET', credentials: 'omit' });
+          if (!res.ok) continue;
           var data = await res.json();
-          if (data && data.rates) {
-            _fiatRates = Object.assign({}, FALLBACK_FIAT, data.rates);
-            _fiatMeta = { source: 'open.er-api.com', fetchedAt: now };
-            return { rates: _fiatRates, source: _fiatMeta.source, cached: false };
-          }
-        }
-      } catch (e2) {}
-      try {
-        var res2 = await fetch('https://api.frankfurter.app/latest?from=USD');
-        if (res2.ok) {
-          var data2 = await res2.json();
-          if (data2 && data2.rates) {
-            _fiatRates = Object.assign({}, FALLBACK_FIAT, data2.rates);
-            _fiatMeta = { source: 'frankfurter.app', fetchedAt: now };
-            return { rates: _fiatRates, source: _fiatMeta.source, cached: false };
-          }
-        }
-      } catch (e3) {}
-      _fiatMeta = { source: 'fallback', fetchedAt: now };
+          var rates = (data && data.rates) || null;
+          if (!rates) continue;
+          _fiatRates = Object.assign({}, FALLBACK_FIAT, rates);
+          var src = data.source || (i === 0 ? 'api' : (i === 1 ? 'open.er-api.com' : 'frankfurter.app'));
+          _fiatMeta = { source: src, fetchedAt: Date.now() };
+          return { rates: _fiatRates, source: src, cached: !!data.cached };
+        } catch (e) { /* try next */ }
+      }
+      _fiatMeta = { source: 'fallback', fetchedAt: Date.now() };
       return { rates: _fiatRates, source: 'fallback', cached: false };
     })();
     try {
       return await _fiatPromise;
+    } catch (e) {
+      return { rates: _fiatRates, source: 'fallback', cached: false };
     } finally {
       _fiatPromise = null;
     }
@@ -773,6 +779,7 @@
     BALANCE_KEY: BALANCE_KEY,
     CACHE_TTL_MS: CACHE_TTL_MS,
     invalidateApiCache: invalidateApiCache,
+    bustUserCache: bustUserCache,
     fetchUser: fetchUser,
     fetchWallets: fetchWallets,
     walletKeyFor: walletKeyFor,
