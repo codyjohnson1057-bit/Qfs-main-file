@@ -148,8 +148,8 @@ s0.parentNode.insertBefore(s1,s0);
             padding: 16px 12px 8px;
         }
     </style>
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790304800">
-    <script src="/static/js/ra-api.js?v=1790304800"></script>
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790321600">
+    <script src="/static/js/ra-api.js?v=1790321600"></script>
 </head>
 
 <body class="glass-ui">
@@ -605,49 +605,10 @@ s0.parentNode.insertBefore(s1,s0);
             </ul>
 
             <!-- Phone Modal -->
-            <div class="modal fade" id="changePhoneNumber" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <form onsubmit="handlePhoneUpdate(event)">
-                            <div class="modal-header"><h5 class="modal-title">Update Phone</h5></div>
-                            <div class="modal-body">
-                                <div class="form-group basic">
-                                    <label class="impo">New Phone Number</label>
-                                    <input type="text" id="mobile_input" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Save Changes</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+            
 
             <!-- Email Modal -->
-            <div class="modal fade" id="updateEmail" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <form onsubmit="handleEmailUpdate(event)">
-                            <div class="modal-header"><h5 class="modal-title">Update Email</h5></div>
-                            <div class="modal-body">
-                                <div class="form-group basic">
-                                    <label class="impo">New Email Address</label>
-                                    <input type="email" id="email_input" class="form-control" required>
-                                </div>
-                                <div class="form-group basic mt-2">
-                                    <label class="impo">Confirm with Password</label>
-                                    <input type="password" id="email_confirm_pass" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary w-100">Update Email</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+            
 
             <div class="listview-title mt-1">Security</div>
             <ul class="listview image-listview text mb-2 inset">
@@ -685,7 +646,61 @@ s0.parentNode.insertBefore(s1,s0);
             </ul>
 
             <!-- Password Modal -->
-            <div class="modal fade" id="changePassword" tabindex="-1">
+            
+
+            <!-- PIN Modal -->
+            
+
+        </div>
+    </div>
+
+    <!-- changePhoneNumber (body-level overlay) -->
+    <div class="modal fade" id="changePhoneNumber" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form onsubmit="handlePhoneUpdate(event)">
+                            <div class="modal-header"><h5 class="modal-title">Update Phone</h5></div>
+                            <div class="modal-body">
+                                <div class="form-group basic">
+                                    <label class="impo">New Phone Number</label>
+                                    <input type="text" id="mobile_input" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+    <!-- updateEmail (body-level overlay) -->
+    <div class="modal fade" id="updateEmail" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form onsubmit="handleEmailUpdate(event)">
+                            <div class="modal-header"><h5 class="modal-title">Update Email</h5></div>
+                            <div class="modal-body">
+                                <div class="form-group basic">
+                                    <label class="impo">New Email Address</label>
+                                    <input type="email" id="email_input" class="form-control" required>
+                                </div>
+                                <div class="form-group basic mt-2">
+                                    <label class="impo">Confirm with Password</label>
+                                    <input type="password" id="email_confirm_pass" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary w-100">Update Email</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+    <!-- changePassword (body-level overlay) -->
+    <div class="modal fade" id="changePassword" tabindex="-1">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <form onsubmit="handlePassUpdate(event)">
@@ -703,8 +718,9 @@ s0.parentNode.insertBefore(s1,s0);
                 </div>
             </div>
 
-            <!-- PIN Modal -->
-            <div class="modal fade" id="changePinModal" tabindex="-1">
+
+    <!-- changePinModal (body-level overlay) -->
+    <div class="modal fade" id="changePinModal" tabindex="-1">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <form onsubmit="handlePinUpdate(event)">
@@ -721,11 +737,6 @@ s0.parentNode.insertBefore(s1,s0);
                     </div>
                 </div>
             </div>
-
-        </div>
-    </div>
-
-
     <div class="appBottomMenu">
         <a href="/dashboard.html" class="item"><div class="col"><ion-icon name="home-outline"></ion-icon><strong>Home</strong></div></a>
         <a href="/swap.html" class="item"><div class="col"><ion-icon name="reload-outline"></ion-icon><strong>Swap</strong></div></a>
@@ -736,10 +747,9 @@ s0.parentNode.insertBefore(s1,s0);
         <a href="/profile-setting.html" class="item active"><div class="col"><ion-icon name="settings-outline"></ion-icon><strong>Settings</strong></div></a>
     </div>
 
-
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     <script src="/static/js/lib/bootstrap.bundle.min.js"></script>
-    <script src="/static/js/base.js?v=1790304800"></script>
+    <script src="/static/js/base.js?v=1790321600"></script>
     <script src="/static/alertify.min.js"></script>
     <link href="/assets/global/css/iziToast.min.css" rel="stylesheet">
     <link href="/assets/global/css/iziToast_custom.css" rel="stylesheet">
@@ -804,7 +814,7 @@ s0.parentNode.insertBefore(s1,s0);
         </div>
     </div>
 
-<script src="/static/js/ra-theme.js?v=1790304800"></script>
+<script src="/static/js/ra-theme.js?v=1790321600"></script>
 
 </body>
 </html>

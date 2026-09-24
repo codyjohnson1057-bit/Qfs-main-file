@@ -60,16 +60,28 @@ body.glass-ui::before {
   opacity: 1;
 }
 
-body.glass-ui > * {
+/* Content above decorative ::before — but NEVER trap fixed overlays.
+   Overlay selectors are excluded so Bootstrap/SweetAlert/custom modals
+   keep position:fixed and their own z-index. */
+body.glass-ui > *:not(.modal):not(.modal-backdrop):not(.swal2-container):not(.tier-modal-backdrop):not(#tierModalBackdrop):not(.user-drawer):not(.user-drawer-backdrop):not(#userDrawer):not(#userDrawerBackdrop):not(#overlay):not(#success-overlay):not(.iziToast-wrapper):not(.iziToast):not(.offline-ui):not(.ra-theme-fab) {
   position: relative;
   z-index: 1;
 }
 
-/* Drawers/backdrops must escape the glass-ui child stacking rule */
+/* Escape hatch (also covers dynamically appended nodes + legacy rules) */
 body.glass-ui > #userDrawer,
 body.glass-ui > #userDrawerBackdrop,
 body.glass-ui > .user-drawer,
-body.glass-ui > .user-drawer-backdrop {
+body.glass-ui > .user-drawer-backdrop,
+body.glass-ui > .modal,
+body.glass-ui > .modal-backdrop,
+body.glass-ui > #tierModalBackdrop,
+body.glass-ui > .tier-modal-backdrop,
+body.glass-ui > .swal2-container,
+body.glass-ui > #overlay,
+body.glass-ui > #success-overlay,
+body.glass-ui > .iziToast-wrapper,
+body.glass-ui > .offline-ui {
   position: fixed !important;
 }
 body.glass-ui > #userDrawer,
@@ -79,6 +91,31 @@ body.glass-ui > .user-drawer {
 body.glass-ui > #userDrawerBackdrop,
 body.glass-ui > .user-drawer-backdrop {
   z-index: 1080 !important;
+}
+body.glass-ui > .modal,
+body.glass-ui > #tierModalBackdrop,
+body.glass-ui > .tier-modal-backdrop,
+body.glass-ui > .swal2-container {
+  z-index: 5000 !important;
+}
+body.glass-ui > .modal-backdrop {
+  z-index: 4990 !important;
+}
+body.glass-ui > #overlay,
+body.glass-ui > #success-overlay {
+  z-index: 9999 !important;
+}
+
+/* Nested overlays still trapped by #appCapsule stacking — force them above chrome */
+body.glass-ui .tier-modal-backdrop,
+body.glass-ui #tierModalBackdrop,
+body.glass-ui .modal.show,
+body.glass-ui .modal.action-sheet,
+body.glass-ui .modal.bottom-sheet {
+  z-index: 5000 !important;
+}
+body.glass-ui .modal-backdrop.show {
+  z-index: 4990 !important;
 }
 
 /* ---------- Glass utility ---------- */

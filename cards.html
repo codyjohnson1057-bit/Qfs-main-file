@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/font-awesome.css">
     <link rel="stylesheet" href="/static/css/App_Global.css">
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790215100">
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790321600">
     <script src="/static/js/jquery-3.6.0.min.js"></script>
-    <script src="/static/js/ra-api.js?v=1790215100"></script>
+    <script src="/static/js/ra-api.js?v=1790321600"></script>
     <style>
       .mock-card { border-radius: 1.25rem; padding: 1rem; margin-bottom: 1rem; }
       .toggle-row { display:flex; align-items:center; justify-content:space-between; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
@@ -52,7 +52,7 @@
       .hist-row .muted { font-size:0.7rem; opacity:0.65; }
       @media (max-width:420px){ .tier-grid { grid-template-columns:1fr; } }
       .tier-modal-backdrop {
-        position: fixed; inset: 0; z-index: 5000;
+        position: fixed !important; inset: 0; z-index: 5000 !important;
         background: rgba(1,4,9,0.62);
         backdrop-filter: blur(6px);
         display: flex; align-items: center; justify-content: center;
@@ -125,30 +125,7 @@
             <p id="requestMsg" class="text-muted mt-2" style="font-size:0.8rem;"></p>
         </div>
 
-        <div id="tierModalBackdrop" class="tier-modal-backdrop" aria-hidden="true">
-          <div class="tier-modal-panel glass-panel" role="dialog" aria-modal="true" aria-labelledby="tierModalTitle">
-            <div class="tier-modal-head">
-              <div>
-                <h3 id="tierModalTitle">Choose your card tier</h3>
-                <p class="text-muted" style="font-size:0.78rem;margin:0;">Individual pricing · fee debited on confirm</p>
-              </div>
-              <button type="button" class="tier-modal-close" id="btnCloseTierModal" aria-label="Close">&times;</button>
-            </div>
-            <div class="tier-grid" id="tierGrid">
-              <button type="button" class="tier-opt blue" data-tier="blue" data-fee="500"><strong>Blue</strong><div class="price">$500</div></button>
-              <button type="button" class="tier-opt green" data-tier="green" data-fee="850"><strong>Green</strong><div class="price">$850</div></button>
-              <button type="button" class="tier-opt silver" data-tier="silver" data-fee="1500"><strong>Silver</strong><div class="price">$1,500</div></button>
-              <button type="button" class="tier-opt gold" data-tier="gold" data-fee="3000"><strong>Gold</strong><div class="price">$3,000</div></button>
-            </div>
-            <label class="text-muted" style="font-size:0.75rem;">Pay fee from</label>
-            <select class="form-control mb-2" id="cardPayCurrency"><option value="">Select tier first</option></select>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:0.35rem;">
-              <button class="btn-glass" type="button" id="btnRequestCard" disabled style="flex:1;">Pay &amp; request</button>
-              <button class="btn-glass danger" type="button" id="btnCancelTierModal">Cancel</button>
-            </div>
-            <p id="tierModalMsg" class="text-muted mt-2" style="font-size:0.8rem;"></p>
-          </div>
-        </div>
+        
 
         <div id="cardPendingPanel" class="wallet-card mock-card glass-panel hidden">
             <span class="pill warn">Pending activation</span>
@@ -229,6 +206,33 @@
         </div>
     </div>
 
+
+
+    <!-- TIER PRICING MODAL (body-level — escapes glass-ui #appCapsule stacking) -->
+    <div id="tierModalBackdrop" class="tier-modal-backdrop" aria-hidden="true">
+          <div class="tier-modal-panel glass-panel" role="dialog" aria-modal="true" aria-labelledby="tierModalTitle">
+            <div class="tier-modal-head">
+              <div>
+                <h3 id="tierModalTitle">Choose your card tier</h3>
+                <p class="text-muted" style="font-size:0.78rem;margin:0;">Individual pricing · fee debited on confirm</p>
+              </div>
+              <button type="button" class="tier-modal-close" id="btnCloseTierModal" aria-label="Close">&times;</button>
+            </div>
+            <div class="tier-grid" id="tierGrid">
+              <button type="button" class="tier-opt blue" data-tier="blue" data-fee="500"><strong>Blue</strong><div class="price">$500</div></button>
+              <button type="button" class="tier-opt green" data-tier="green" data-fee="850"><strong>Green</strong><div class="price">$850</div></button>
+              <button type="button" class="tier-opt silver" data-tier="silver" data-fee="1500"><strong>Silver</strong><div class="price">$1,500</div></button>
+              <button type="button" class="tier-opt gold" data-tier="gold" data-fee="3000"><strong>Gold</strong><div class="price">$3,000</div></button>
+            </div>
+            <label class="text-muted" style="font-size:0.75rem;">Pay fee from</label>
+            <select class="form-control mb-2" id="cardPayCurrency"><option value="">Select tier first</option></select>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:0.35rem;">
+              <button class="btn-glass" type="button" id="btnRequestCard" disabled style="flex:1;">Pay &amp; request</button>
+              <button class="btn-glass danger" type="button" id="btnCancelTierModal">Cancel</button>
+            </div>
+            <p id="tierModalMsg" class="text-muted mt-2" style="font-size:0.8rem;"></p>
+          </div>
+        </div>
     <div class="appBottomMenu">
         <a href="/dashboard.html" class="item"><div class="col"><ion-icon name="home-outline"></ion-icon><strong>Home</strong></div></a>
         <a href="/swap.html" class="item"><div class="col"><ion-icon name="reload-outline"></ion-icon><strong>Swap</strong></div></a>

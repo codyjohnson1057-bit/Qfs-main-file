@@ -137,6 +137,6 @@ window.addEventListener('ra-theme-change',function(){resetTilt(wordmark);resetTi
 
 setTimeout(function(){window.location.replace('login.html');},1800);
 </script>
-<script src="/static/js/ra-theme.js?v=1790400001"></script>
+<script src="/static/js/ra-theme.js?v=1790321600"></script>
 </body>
 </html>

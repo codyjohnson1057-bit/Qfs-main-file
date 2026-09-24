@@ -637,7 +637,7 @@
   }
 
 </style>
-<script src="/static/js/ra-api.js?v=1790304800"></script>
+<script src="/static/js/ra-api.js?v=1790321600"></script>
     <link rel="stylesheet" href="static/css/ra-auth.css?v=1790400001">
 </head>
 <body>
@@ -931,7 +931,7 @@ if (loginForm) loginForm.addEventListener('submit', async (e) => {
 <script>
 window.addEventListener('ra-theme-change', function(){ try{ ['login-card','reg-card','logout-card','wordmark'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.transform=''; }); }catch(e){} });
 </script>
-<script src="/static/js/ra-theme.js?v=1790400001"></script>
+<script src="/static/js/ra-theme.js?v=1790321600"></script>
 </body>
 
 </html>

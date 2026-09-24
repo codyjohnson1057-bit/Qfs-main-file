@@ -255,8 +255,8 @@
         }
     </style>
     
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790215100">
-  <script src="/static/js/ra-api.js?v=1790218900"></script>
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790321600">
+  <script src="/static/js/ra-api.js?v=1790321600"></script>
 </head>
 
 <body class="glass-ui">
@@ -1051,7 +1051,47 @@
         </div>
 
         <!-- Deposit Action Sheet -->
-        <div class="modal fade action-sheet" id="depositActionSheet" tabindex="-1" role="dialog">
+        
+
+        <script src="/static/clipboard.min.js"></script>
+        <script>
+            $(document).on("click", "[id*=Btn_copy]", function(e) {
+                e.preventDefault();
+                ClipboardJS.copy($(".copytxt").text());
+                if (typeof alertify !== 'undefined') alertify.success("Copied to clipboard");
+                return false;
+            });
+
+            $(document).on("click", "[data-cat-pop]", function() {
+                var s = $(this);
+                $("#depositActionSheet").attr("data-mvt", s.attr("data-cat-pop"));
+            });
+            $(document).on("click", "[data-href-tz]", function() {
+                var h = $("#depositActionSheet").attr("data-mvt");
+                if (h) {
+                    location.href = 'dashboard/' + h + $(this).attr("data-href-tz");
+                }
+            });
+        </script>
+
+    </div> <!-- /appCapsule -->
+
+    <!-- ===================== BOTTOM NAVIGATION ===================== -->
+
+    <div class="appBottomMenu">
+        <a href="/dashboard.html" class="item active"><div class="col"><ion-icon name="home-outline"></ion-icon><strong>Home</strong></div></a>
+        <a href="/swap.html" class="item"><div class="col"><ion-icon name="reload-outline"></ion-icon><strong>Swap</strong></div></a>
+        <a href="/buy.html" class="item"><div class="col"><ion-icon name="cart-outline"></ion-icon><strong>Buy</strong></div></a>
+        <a href="/cards.html" class="item"><div class="col"><ion-icon name="card-outline"></ion-icon><strong>Cards</strong></div></a>
+        <a href="/payments.html" class="item"><div class="col"><ion-icon name="cash-outline"></ion-icon><strong>Payments</strong></div></a>
+        <a href="/vaults.html" class="item"><div class="col"><ion-icon name="lock-closed-outline"></ion-icon><strong>Vaults</strong></div></a>
+        <a href="/profile-setting.html" class="item"><div class="col"><ion-icon name="settings-outline"></ion-icon><strong>Settings</strong></div></a>
+    </div>
+
+
+
+    <!-- DEPOSIT ACTION SHEET (body-level — escapes #appCapsule stacking) -->
+    <div class="modal fade action-sheet" id="depositActionSheet" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -1212,43 +1252,6 @@
                 </div>
             </div>
         </div>
-
-        <script src="/static/clipboard.min.js"></script>
-        <script>
-            $(document).on("click", "[id*=Btn_copy]", function(e) {
-                e.preventDefault();
-                ClipboardJS.copy($(".copytxt").text());
-                if (typeof alertify !== 'undefined') alertify.success("Copied to clipboard");
-                return false;
-            });
-
-            $(document).on("click", "[data-cat-pop]", function() {
-                var s = $(this);
-                $("#depositActionSheet").attr("data-mvt", s.attr("data-cat-pop"));
-            });
-            $(document).on("click", "[data-href-tz]", function() {
-                var h = $("#depositActionSheet").attr("data-mvt");
-                if (h) {
-                    location.href = 'dashboard/' + h + $(this).attr("data-href-tz");
-                }
-            });
-        </script>
-
-    </div> <!-- /appCapsule -->
-
-    <!-- ===================== BOTTOM NAVIGATION ===================== -->
-
-    <div class="appBottomMenu">
-        <a href="/dashboard.html" class="item active"><div class="col"><ion-icon name="home-outline"></ion-icon><strong>Home</strong></div></a>
-        <a href="/swap.html" class="item"><div class="col"><ion-icon name="reload-outline"></ion-icon><strong>Swap</strong></div></a>
-        <a href="/buy.html" class="item"><div class="col"><ion-icon name="cart-outline"></ion-icon><strong>Buy</strong></div></a>
-        <a href="/cards.html" class="item"><div class="col"><ion-icon name="card-outline"></ion-icon><strong>Cards</strong></div></a>
-        <a href="/payments.html" class="item"><div class="col"><ion-icon name="cash-outline"></ion-icon><strong>Payments</strong></div></a>
-        <a href="/vaults.html" class="item"><div class="col"><ion-icon name="lock-closed-outline"></ion-icon><strong>Vaults</strong></div></a>
-        <a href="/profile-setting.html" class="item"><div class="col"><ion-icon name="settings-outline"></ion-icon><strong>Settings</strong></div></a>
-    </div>
-
-
     <!-- ===================== NOTIFICATION DETAIL MODAL ===================== -->
     <div class="modal fade" id="notifModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
@@ -1289,7 +1292,7 @@
 
     <!-- ==================== SCRIPTS ==================== -->
     <script src="/static/js/lib/bootstrap.bundle.min.js"></script>
-    <script src="/static/js/base.js?v=1790215100"></script>
+    <script src="/static/js/base.js?v=1790321600"></script>
     <script src="/static/alertify.min.js"></script>
     <link href="/assets/global/css/iziToast.min.css" rel="stylesheet">
     <script src="/assets/global/js/iziToast.min.js"></script>
@@ -1478,7 +1481,6 @@
         }
     }
 
-
     // ---- EXTENDED ASSETS: stocks/ETFs (Yahoo) + metals (CoinGecko/static) ----
     // Static metal fallbacks (approx USD). oz = USD/troy oz; lb = USD/lb commodity estimates.
     // Used only when live fetch fails — labeled clearly for maintainers.
@@ -1580,7 +1582,6 @@
         }
         return out;
     }
-
 
     async function fetchPricesAndCompute(walletMap) {
         walletMap = walletMap || window._walletMap || {};
@@ -2041,7 +2042,7 @@
   }, true);
 })();
 </script>
-<script src="/static/js/ra-theme.js?v=1790218900"></script>
+<script src="/static/js/ra-theme.js?v=1790321600"></script>
 
 </body>
 </html>
