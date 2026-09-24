@@ -144,14 +144,106 @@
         #appCapsule { padding: 20px; }
         .user-row { transition: background 0.2s; }
         .user-row:hover { background: #21262d; }
-        .action-buttons .btn { margin-right: 4px; }
+        .action-buttons {
+            white-space: nowrap;
+            width: 1%;
+        }
+        .action-buttons .btn { margin-right: 0; }
         .balance-edit { max-width: 120px; display: inline-block; }
         .modal-lg { max-width: 90%; }
         .tx-red { color: #f85149; font-weight: 600; }
         .tx-green { color: #3fb950; font-weight: 600; }
+
+        /* Left-sliding user detail drawer */
+        .user-drawer-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(1, 4, 9, 0.55);
+            z-index: 1080;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.28s ease, visibility 0.28s ease;
+            backdrop-filter: blur(2px);
+        }
+        .user-drawer-backdrop.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        .user-drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            height: 100dvh;
+            width: min(440px, 92vw);
+            max-width: 92vw;
+            background: #161b22;
+            border-right: 1px solid #30363d;
+            z-index: 1090;
+            display: flex;
+            flex-direction: column;
+            transform: translateX(-100%);
+            transition: transform 0.28s ease;
+            box-shadow: 8px 0 32px rgba(0,0,0,0.45);
+            color: #e6edf3;
+        }
+        .user-drawer.open {
+            transform: translateX(0);
+        }
+        body.user-drawer-open {
+            overflow: hidden !important;
+        }
+        .user-drawer-header {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 16px 18px;
+            border-bottom: 1px solid #30363d;
+            background: #0d1117;
+        }
+        .user-drawer-header h5 {
+            margin: 0;
+            font-size: 1.05rem;
+            font-weight: 700;
+            word-break: break-word;
+        }
+        .user-drawer-sub {
+            margin-top: 4px;
+            font-size: 0.78rem;
+            color: #8b949e;
+            word-break: break-all;
+        }
+        .user-drawer-body {
+            flex: 1 1 auto;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 16px 18px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .user-drawer-footer {
+            flex: 0 0 auto;
+            padding: 12px 14px;
+            border-top: 1px solid #30363d;
+            background: #0d1117;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+        .user-drawer-footer .btn { font-size: 0.78rem; }
+        .user-drawer-body .row > [class*="col-"] {
+            width: 100%;
+            max-width: 100%;
+            flex: 0 0 100%;
+        }
+        .user-drawer-body .table-responsive {
+            max-width: 100%;
+        }
     </style>
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790304800">
-    <script src="/static/js/ra-api.js?v=1790304800"></script>
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790305200">
+    <script src="/static/js/ra-api.js?v=1790305200"></script>
 </head>
 
 <body class="glass-ui">
@@ -401,24 +493,26 @@
 
     <!-- ========== MODALS ========== -->
 
-    <!-- View/Edit User Modal -->
-    <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">User Details</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" id="userModalBody">
-                    <!-- dynamically loaded -->
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button class="btn btn-primary" onclick="saveUserEdit()"><i class="fas fa-save"></i> Save Changes</button>
-                </div>
+    <!-- View/Edit User left drawer (slides from left) -->
+    <div id="userDrawerBackdrop" class="user-drawer-backdrop" aria-hidden="true"></div>
+    <aside id="userDrawer" class="user-drawer" role="dialog" aria-modal="true" aria-labelledby="userDrawerTitle" aria-hidden="true">
+        <div class="user-drawer-header">
+            <div style="min-width:0;flex:1;">
+                <h5 id="userDrawerTitle">User Details</h5>
+                <div class="user-drawer-sub" id="userDrawerSub"></div>
             </div>
+            <button type="button" class="btn-close btn-close-white" onclick="closeUserDrawer()" aria-label="Close"></button>
         </div>
-    </div>
+        <div class="user-drawer-body" id="userModalBody">
+            <!-- dynamically loaded -->
+        </div>
+        <div class="user-drawer-footer" id="userDrawerActions">
+            <button class="btn btn-secondary btn-sm" type="button" onclick="closeUserDrawer()">Close</button>
+            <button class="btn btn-primary btn-sm" type="button" onclick="saveUserEdit()"><i class="fas fa-save"></i> Save</button>
+        </div>
+    </aside>
+    <!-- Legacy id kept hidden so any stray bootstrap.Modal refs fail safely -->
+    <div id="userModal" class="d-none" aria-hidden="true"></div>
 
     <!-- Create User Modal -->
     <div class="modal fade" id="createUserModal" tabindex="-1" aria-hidden="true">
@@ -683,6 +777,7 @@
                 }
                 notify('success', linked ? 'Wallet marked Linked' : 'Wallet marked Unlinked');
                 refreshUsers();
+                refreshOpenUserDrawer();
             } catch (err) {
                 notify('error', err.message);
             }
@@ -717,13 +812,7 @@
                         <td>${statusBadges.join(' ')}</td>
                         <td>${verifiedBadge} ${roleBadge}</td>
                         <td class="action-buttons">
-                            <button class="btn btn-sm btn-outline-primary" onclick="viewUser(${u.id})" title="View/Edit"><i class="fas fa-eye"></i></button>
-                            <button class="btn btn-sm btn-outline-success" onclick="toggleVerify(${u.id}, ${!u.is_verified})" title="Toggle Verify"><i class="fas fa-check-circle"></i></button>
-                            <button class="btn btn-sm btn-outline-warning" onclick="toggleBan(${u.id}, ${!u.is_banned})" title="${u.is_banned ? 'Unban' : 'Ban'}"><i class="fas fa-gavel"></i></button>
-                            <button class="btn btn-sm btn-outline-info" onclick="openBalanceModal(${u.id})" title="Adjust Balance"><i class="fas fa-coins"></i></button>
-                            <button class="btn btn-sm btn-outline-info" onclick="toggleWalletLink(${u.id}, ${!u.is_wallet_linked})" title="${u.is_wallet_linked ? 'Unlink Wallet' : 'Link Wallet'}"><i class="fas fa-link"></i></button>
-                            <button class="btn btn-sm btn-outline-secondary" onclick="impersonate(${u.id})" title="Impersonate"><i class="fas fa-user-secret"></i></button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteUser(${u.id})" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewUser(${u.id})" title="View user"><i class="fas fa-eye"></i></button>
                         </td>
                     </tr>
                 `;
@@ -732,6 +821,39 @@
         }
 
         // ========== VIEW / EDIT USER ==========
+        function refreshOpenUserDrawer() {
+            if (document.body.classList.contains('user-drawer-open') && currentUserId) {
+                viewUser(currentUserId);
+            }
+        }
+
+        function openUserDrawer() {
+            const drawer = document.getElementById('userDrawer');
+            const backdrop = document.getElementById('userDrawerBackdrop');
+            if (!drawer) return;
+            drawer.classList.add('open');
+            drawer.setAttribute('aria-hidden', 'false');
+            if (backdrop) {
+                backdrop.classList.add('open');
+                backdrop.setAttribute('aria-hidden', 'false');
+            }
+            document.body.classList.add('user-drawer-open');
+        }
+
+        function closeUserDrawer() {
+            const drawer = document.getElementById('userDrawer');
+            const backdrop = document.getElementById('userDrawerBackdrop');
+            if (drawer) {
+                drawer.classList.remove('open');
+                drawer.setAttribute('aria-hidden', 'true');
+            }
+            if (backdrop) {
+                backdrop.classList.remove('open');
+                backdrop.setAttribute('aria-hidden', 'true');
+            }
+            document.body.classList.remove('user-drawer-open');
+        }
+
         async function viewUser(id) {
             currentUserId = id;
             try {
@@ -743,7 +865,7 @@
                 userWallets = user.wallets || [];
                 userTransactions = user.transactions || [];
                 renderUserModal(user);
-                new bootstrap.Modal(document.getElementById('userModal')).show();
+                openUserDrawer();
             } catch (err) {
                 notify('error', err.message);
             }
@@ -751,6 +873,11 @@
 
         function renderUserModal(user) {
             const container = document.getElementById('userModalBody');
+            const titleEl = document.getElementById('userDrawerTitle');
+            const subEl = document.getElementById('userDrawerSub');
+            const actionsEl = document.getElementById('userDrawerActions');
+            if (titleEl) titleEl.textContent = user.full_name || user.email || ('User #' + user.id);
+            if (subEl) subEl.textContent = (user.email || '-') + ' · ID ' + user.id;
 
             let walletsHtml = userWallets.map(w =>
                 `<tr>
@@ -806,8 +933,10 @@
                         <div class="mb-2">
                             <label class="form-label">Status</label>
                             <div>
-                                <button class="btn btn-sm ${user.is_banned ? 'btn-danger' : 'btn-outline-secondary'}" onclick="toggleBan(${user.id}, ${!user.is_banned})">${user.is_banned ? 'Unban' : 'Ban'}</button>
-                                <button class="btn btn-sm ${user.is_suspended ? 'btn-warning' : 'btn-outline-secondary'}" onclick="toggleSuspend(${user.id}, ${!user.is_suspended})">${user.is_suspended ? 'Unsuspend' : 'Suspend'}</button>
+                                ${user.is_banned ? '<span class="badge badge-banned">Banned</span>' : ''}
+                                ${user.is_suspended ? '<span class="badge badge-suspended">Suspended</span>' : ''}
+                                ${(!user.is_banned && !user.is_suspended) ? '<span class="badge badge-active">Active</span>' : ''}
+                                <span class="text-muted small ms-1">(use footer actions)</span>
                             </div>
                         </div>
 
@@ -845,6 +974,27 @@
                     </div>
                 </div>
             `;
+
+            if (actionsEl) {
+                const banLabel = user.is_banned ? 'Unban' : 'Ban';
+                const banClass = user.is_banned ? 'btn-danger' : 'btn-outline-warning';
+                const susLabel = user.is_suspended ? 'Unsuspend' : 'Suspend';
+                const susClass = user.is_suspended ? 'btn-warning' : 'btn-outline-secondary';
+                const verLabel = user.is_verified ? 'Unverify' : 'Verify';
+                const linkLabel = user.is_wallet_linked ? 'Unlink wallet' : 'Link wallet';
+                actionsEl.innerHTML = `
+                    <button class="btn btn-sm ${banClass}" type="button" onclick="toggleBan(${user.id}, ${!user.is_banned})"><i class="fas fa-gavel"></i> ${banLabel}</button>
+                    <button class="btn btn-sm ${susClass}" type="button" onclick="toggleSuspend(${user.id}, ${!user.is_suspended})">${susLabel}</button>
+                    <button class="btn btn-sm btn-outline-success" type="button" onclick="toggleVerify(${user.id}, ${!user.is_verified})"><i class="fas fa-check-circle"></i> ${verLabel}</button>
+                    <button class="btn btn-sm btn-outline-info" type="button" onclick="toggleWalletLink(${user.id}, ${!user.is_wallet_linked})"><i class="fas fa-link"></i> ${linkLabel}</button>
+                    <button class="btn btn-sm btn-outline-info" type="button" onclick="openBalanceModal(${user.id})"><i class="fas fa-coins"></i> Balance</button>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" onclick="impersonate(${user.id})"><i class="fas fa-user-secret"></i> Impersonate</button>
+                    <button class="btn btn-sm btn-outline-danger" type="button" onclick="deleteUser(${user.id})"><i class="fas fa-trash"></i> Delete</button>
+                    <button class="btn btn-sm btn-primary ms-auto" type="button" onclick="saveUserEdit()"><i class="fas fa-save"></i> Save</button>
+                    <button class="btn btn-sm btn-secondary" type="button" onclick="closeUserDrawer()">Close</button>
+                `;
+            }
+
             window._currentUser = user;
         }
 
@@ -920,7 +1070,7 @@
                 }
 
                 notify('success', 'User updated successfully');
-                bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
+                closeUserDrawer();
                 refreshUsers();
             } catch (err) {
                 notify('error', err.message);
@@ -1043,6 +1193,7 @@
                 if (!res.ok) throw new Error('Failed');
                 notify('success', `User ${verify ? 'verified' : 'unverified'}`);
                 refreshUsers();
+                refreshOpenUserDrawer();
             } catch (err) { notify('error', err.message); }
         }
 
@@ -1066,6 +1217,7 @@
                 if (!res.ok) throw new Error('Failed');
                 notify('success', `User ${ban ? 'banned' : 'unbanned'}`);
                 refreshUsers();
+                refreshOpenUserDrawer();
             } catch (err) { notify('error', err.message); }
         }
 
@@ -1079,6 +1231,7 @@
                 if (!res.ok) throw new Error('Failed');
                 notify('success', `User ${suspend ? 'suspended' : 'unsuspended'}`);
                 refreshUsers();
+                refreshOpenUserDrawer();
             } catch (err) { notify('error', err.message); }
         }
 
@@ -1099,6 +1252,7 @@
                 });
                 if (!res.ok) throw new Error('Delete failed');
                 notify('success', 'User deleted');
+                closeUserDrawer();
                 refreshUsers();
             } catch (err) { notify('error', err.message); }
         }
@@ -1858,6 +2012,8 @@
 
         // Explicit window exports for onclick= handlers (never rely on script globals alone)
         window.viewUser = viewUser;
+        window.openUserDrawer = openUserDrawer;
+        window.closeUserDrawer = closeUserDrawer;
         window.toggleVerify = toggleVerify;
         window.toggleBan = toggleBan;
         window.toggleSuspend = toggleSuspend;
@@ -1866,6 +2022,18 @@
         window.openBalanceModal = openBalanceModal;
         window.openCreateUser = openCreateUser;
         window.saveUserEdit = saveUserEdit;
+
+        (function bindUserDrawerChrome() {
+            const backdrop = document.getElementById('userDrawerBackdrop');
+            if (backdrop) {
+                backdrop.addEventListener('click', function () { closeUserDrawer(); });
+            }
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && document.body.classList.contains('user-drawer-open')) {
+                    closeUserDrawer();
+                }
+            });
+        })();
         window.loadNotifications = loadNotifications;
         window.loadAuditLogs = loadAuditLogs;
         window.openSendNotification = openSendNotification;
@@ -1890,7 +2058,7 @@
     <link href="/assets/global/css/iziToast.min.css" rel="stylesheet">
     <link href="/assets/global/css/iziToast_custom.css" rel="stylesheet">
     <script src="/assets/global/js/iziToast.min.js"></script>
-<script src="/static/js/ra-theme.js?v=1790304800"></script>
+<script src="/static/js/ra-theme.js?v=1790305200"></script>
 
 </body>
 </html>
