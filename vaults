@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/font-awesome.css">
     <link rel="stylesheet" href="/static/css/App_Global.css">
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790321600">
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790323200">
     <script src="/static/js/jquery-3.6.0.min.js"></script>
-    <script src="/static/js/ra-api.js?v=1790321600"></script>
+    <script src="/static/js/ra-api.js?v=1790323200"></script>
     <style>
       .mock-card { border-radius: 1.25rem; padding: 1.25rem; margin-bottom: 1rem; }
       .pill { display:inline-block; padding: 0.2rem 0.55rem; border-radius: 999px; font-size: 0.7rem; background: rgba(16,185,129,0.18); color: #6ee7b7; }
@@ -19,6 +19,9 @@
       .btn-glass { background: rgba(16,185,129,0.2); border: 1px solid rgba(16,185,129,0.35); color: #ecfdf5; border-radius: 12px; padding: 0.55rem 1rem; cursor: pointer; }
       .btn-glass:disabled { opacity: 0.5; cursor: not-allowed; }
       .btn-glass.ghost { background: transparent; }
+      .btn-glass.danger { background: rgba(239,68,68,0.18); border: 1px solid rgba(239,68,68,0.55); color: #fecaca; }
+      .btn-glass.danger:hover { background: rgba(239,68,68,0.32); }
+      html:not(.dark) .btn-glass.danger { color: #991b1b; background: rgba(239,68,68,0.12); border-color: rgba(185,28,28,0.45); }
       html:not(.dark) .btn-glass { color: #064e3b; }
       .hist-row { display:flex; justify-content:space-between; gap:10px; padding:0.65rem 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:0.85rem; }
       .hist-row .muted { font-size:0.7rem; opacity:0.65; }
@@ -259,7 +262,8 @@
           (v.autosave_amount ? ' · $' + Number(v.autosave_amount) + ' / paycheck' : '') + '</div>' +
           '<div style="display:flex;gap:8px;margin-top:0.65rem;flex-wrap:wrap;">' +
           '<button class="btn-glass" type="button" data-invest="' + (v.id || '') + '">Invest</button>' +
-          '<button class="btn-glass ghost" type="button" data-edit="' + (v.id || '') + '">Edit</button></div>' +
+          '<button class="btn-glass ghost" type="button" data-edit="' + (v.id || '') + '">Edit</button>' +
+          '<button class="btn-glass danger" type="button" data-delete="' + (v.id || '') + '">Delete</button></div>' +
           '</div>';
       }
 
@@ -302,6 +306,37 @@
             document.getElementById('vaultFormTitle').textContent = 'Edit vault';
             document.getElementById('vaultSubmit').textContent = 'Save changes';
             document.getElementById('vaultCancelEdit').classList.remove('hidden');
+          });
+        });
+        listEl.querySelectorAll('[data-delete]').forEach(function(b){
+          b.addEventListener('click', async function(){
+            var id = b.getAttribute('data-delete');
+            var v = list.find(function(x){ return String(x.id) === String(id); });
+            if (!v) return;
+            var bal = Number(v.balance || 0);
+            var msg = 'Delete vault "' + (v.name || id) + '"?';
+            if (bal > 0) {
+              msg += '\n\nRemaining ' + money(bal) + ' will be refunded to your QFS wallet.';
+            } else {
+              msg += '\n\nThis cannot be undone.';
+            }
+            if (!window.confirm(msg)) return;
+            b.disabled = true;
+            b.textContent = 'Deleting…';
+            var r = await RA.api('/api/vaults/' + encodeURIComponent(id), { method: 'DELETE' });
+            if (!r.ok) {
+              b.disabled = false;
+              b.textContent = 'Delete';
+              alert(r.error || 'Failed to delete vault');
+              return;
+            }
+            var refunded = (r.data && r.data.refunded_usd) || 0;
+            if (refunded > 0) {
+              alert('Vault deleted. Refunded ' + money(refunded) + ' to QFS.');
+            }
+            refreshBalanceStrip();
+            loadVaults();
+            loadVaultHistory();
           });
         });
       }
