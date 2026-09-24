@@ -297,41 +297,100 @@
         }
         td.action-buttons { white-space: nowrap; }
     
-        /* QFS overlay escape — SuperRight */
-        body.glass-ui > *:not(.modal):not(.modal-backdrop):not(.swal2-container):not(.user-drawer):not(.user-drawer-backdrop):not(#userDrawer):not(#userDrawerBackdrop):not(.iziToast-wrapper):not(.iziToast) {
-            /* keep content stacking; overlays excluded above via glass-dashboard.css */
-        }
-        body.glass-ui > .modal,
-        body.glass-ui > .modal-backdrop,
-        body.glass-ui > .swal2-container,
-        body.glass-ui .modal.show,
-        body.glass-ui .modal-backdrop.show,
-        .swal2-container {
+        /* QFS overlay escape — SuperRight (drawer must stay usable) */
+        body.glass-ui > #userDrawerBackdrop,
+        body.glass-ui > .user-drawer-backdrop,
+        #userDrawerBackdrop.user-drawer-backdrop {
             position: fixed !important;
-            z-index: 5000 !important;
-        }
-        body.glass-ui > .modal-backdrop,
-        body.glass-ui .modal-backdrop.show {
-            z-index: 4990 !important;
+            inset: 0 !important;
+            z-index: 1080 !important;
         }
         body.glass-ui > #userDrawer,
         body.glass-ui > .user-drawer,
         #userDrawer.user-drawer {
+            position: fixed !important;
             z-index: 1090 !important;
-            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            width: min(560px, 96vw) !important;
+            max-width: 96vw !important;
+            display: flex !important;
+            flex-direction: column !important;
+            transform: translateX(-100%);
+            visibility: visible;
+            pointer-events: auto !important;
         }
-        body.glass-ui > #userDrawerBackdrop,
-        body.glass-ui > .user-drawer-backdrop {
-            z-index: 1080 !important;
-            position: fixed !important;
+        #userDrawer.user-drawer.open,
+        body.glass-ui > #userDrawer.open {
+            transform: translateX(0) !important;
+            z-index: 5200 !important;
         }
-        /* Never let hidden modals steal clicks */
+        #userDrawerBackdrop.open,
+        body.glass-ui > #userDrawerBackdrop.open {
+            z-index: 5150 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+        }
+        body.glass-ui > .modal,
+        body.glass-ui > .swal2-container,
+        .swal2-container {
+            position: fixed !important;
+            z-index: 6000 !important;
+        }
+        body.glass-ui > .modal-backdrop,
+        body.glass-ui .modal-backdrop.show {
+            z-index: 5950 !important;
+        }
         .modal:not(.show) { pointer-events: none !important; }
         .modal-backdrop:not(.show) { display: none !important; pointer-events: none !important; }
 
-    </style>
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790324800">
-    <script src="/static/js/ra-api.js?v=1790324800"></script>
+        /* Beat glass-dashboard .btn-* washes so every drawer action is visible */
+        body.glass-ui .user-drawer .btn,
+        body.glass-ui .user-drawer-actions-top .btn,
+        body.glass-ui .user-drawer-footer .btn {
+            opacity: 1 !important;
+            visibility: visible !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 4px !important;
+            color: #fff !important;
+            border: none !important;
+            font-weight: 600 !important;
+            white-space: nowrap !important;
+        }
+        body.glass-ui .user-drawer .btn-warning { background: #d97706 !important; }
+        body.glass-ui .user-drawer .btn-secondary { background: #4b5563 !important; }
+        body.glass-ui .user-drawer .btn-success { background: #059669 !important; }
+        body.glass-ui .user-drawer .btn-info { background: #0284c7 !important; }
+        body.glass-ui .user-drawer .btn-danger { background: #dc2626 !important; }
+        body.glass-ui .user-drawer .btn-primary { background: #2563eb !important; }
+        body.glass-ui .user-drawer .user-drawer-actions-top {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 8px !important;
+            margin: 10px 0 14px !important;
+            padding: 10px !important;
+            background: #0d1117 !important;
+            border: 1px solid #30363d !important;
+            border-radius: 10px !important;
+            max-height: none !important;
+            overflow: visible !important;
+        }
+        body.glass-ui .user-drawer .user-drawer-footer {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 8px !important;
+            max-height: 46vh !important;
+            overflow-y: auto !important;
+            flex-shrink: 0 !important;
+            z-index: 2 !important;
+        }
+</style>
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790325200">
+    <script src="/static/js/ra-api.js?v=1790325200"></script>
 </head>
 
 <body class="glass-ui">
@@ -921,6 +980,8 @@
             const drawer = document.getElementById('userDrawer');
             const backdrop = document.getElementById('userDrawerBackdrop');
             if (!drawer) return;
+            if (drawer.parentElement !== document.body) document.body.appendChild(drawer);
+            if (backdrop && backdrop.parentElement !== document.body) document.body.appendChild(backdrop);
             drawer.classList.add('open');
             drawer.setAttribute('aria-hidden', 'false');
             if (backdrop) {
@@ -1087,23 +1148,15 @@
                 </div>
             `;
 
+
             if (actionsEl) {
-                const banLabel = user.is_banned ? 'Unban' : 'Ban';
-                const banClass = user.is_banned ? 'btn-danger' : 'btn-warning';
-                const susLabel = user.is_suspended ? 'Unsuspend' : 'Suspend';
-                const susClass = user.is_suspended ? 'btn-warning' : 'btn-secondary';
-                const verLabel = user.is_verified ? 'Unverify' : 'Verify';
-                const linkLabel = user.is_wallet_linked ? 'Unlink wallet' : 'Link wallet';
                 actionsEl.innerHTML = `
-                    <button class="btn btn-sm ${banClass}" type="button" onclick="toggleBan(${user.id}, ${!user.is_banned})"><i class="fas fa-gavel"></i> ${banLabel}</button>
-                    <button class="btn btn-sm ${susClass}" type="button" onclick="toggleSuspend(${user.id}, ${!user.is_suspended})">${susLabel}</button>
-                    <button class="btn btn-sm btn-success" type="button" onclick="toggleVerify(${user.id}, ${!user.is_verified})"><i class="fas fa-check-circle"></i> ${verLabel}</button>
-                    <button class="btn btn-sm btn-info" type="button" onclick="toggleWalletLink(${user.id}, ${!user.is_wallet_linked})"><i class="fas fa-link"></i> ${linkLabel}</button>
-                    <button class="btn btn-sm btn-info" type="button" onclick="openBalanceModal(${user.id})"><i class="fas fa-coins"></i> Balance</button>
-                    <button class="btn btn-sm btn-secondary" type="button" onclick="impersonate(${user.id})"><i class="fas fa-user-secret"></i> Impersonate</button>
-                    <button class="btn btn-sm btn-danger" type="button" onclick="deleteUser(${user.id})"><i class="fas fa-trash"></i> Delete</button>
-                    <button class="btn btn-sm btn-primary ms-auto" type="button" onclick="saveUserEdit()"><i class="fas fa-save"></i> Save</button>
-                    <button class="btn btn-sm btn-secondary" type="button" onclick="closeUserDrawer()">Close</button>
+                    <div class="user-drawer-actions-top" style="width:100%;margin:0 0 8px;padding:8px;background:#0d1117;border:1px solid #30363d;border-radius:10px;">
+                        <h6 style="width:100%;margin:0 0 4px;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.04em;color:#c4b483;">Actions</h6>
+                        ${actionButtonsHtml}
+                    </div>
+                    <button class="btn btn-secondary btn-sm" type="button" onclick="closeUserDrawer()">Close</button>
+                    <button class="btn btn-primary btn-sm" type="button" onclick="saveUserEdit()"><i class="fas fa-save"></i> Save</button>
                 `;
             }
 
@@ -2199,33 +2252,19 @@
     <link href="/assets/global/css/iziToast.min.css" rel="stylesheet">
     <link href="/assets/global/css/iziToast_custom.css" rel="stylesheet">
     <script src="/assets/global/js/iziToast.min.js"></script>
-<script src="/static/js/ra-theme.js?v=1790324800"></script>
+<script src="/static/js/ra-theme.js?v=1790325200"></script>
 
 
 <script>
 (function () {
   function hoistOverlays() {
-    var ids = ['userDrawerBackdrop', 'userDrawer', 'createUserModal', 'editTxModal'];
-    ids.forEach(function (id) {
+    ['userDrawerBackdrop', 'userDrawer', 'createUserModal', 'editTxModal'].forEach(function (id) {
       var el = document.getElementById(id);
-      if (el && el.parentElement !== document.body) {
-        document.body.appendChild(el);
-      }
-    });
-    document.querySelectorAll('.swal2-container').forEach(function (el) {
-      if (el.parentElement !== document.body) document.body.appendChild(el);
+      if (el && el.parentElement !== document.body) document.body.appendChild(el);
     });
   }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', hoistOverlays);
-  } else {
-    hoistOverlays();
-  }
-  // Observe Swal mounts
-  try {
-    var obs = new MutationObserver(function () { hoistOverlays(); });
-    obs.observe(document.documentElement, { childList: true, subtree: true });
-  } catch (e) {}
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', hoistOverlays);
+  else hoistOverlays();
 })();
 </script>
 

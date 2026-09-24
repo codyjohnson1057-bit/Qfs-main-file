@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/font-awesome.css">
     <link rel="stylesheet" href="/static/css/App_Global.css">
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790324800">
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790325200">
     <script src="/static/js/jquery-3.6.0.min.js"></script>
-    <script src="/static/js/ra-api.js?v=1790324800"></script>
+    <script src="/static/js/ra-api.js?v=1790325200"></script>
     <style>
       .mock-card { border-radius: 1.25rem; padding: 1rem; margin-bottom: 1rem; }
       .toggle-row { display:flex; align-items:center; justify-content:space-between; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
