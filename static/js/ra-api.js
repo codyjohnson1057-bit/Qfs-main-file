@@ -160,18 +160,33 @@
   var SYMBOL_TO_WALLET = {
     btc: 'btc', bitcoin: 'btc',
     eth: 'eth', ethereum: 'eth',
-    usdt: 'usdt', tether: 'usdt',
+    usdt: 'usdt', tether: 'usdt', usdtrc: 'usdt', 'usdt_trc': 'usdt', 'usdt-trc20': 'usdt',
     trx: 'tron', tron: 'tron',
     bnb: 'bnb', binancecoin: 'bnb',
     xrp: 'xrp', ripple: 'xrp',
     xlm: 'xlm', stellar: 'xlm', stellar_lumens: 'xlm',
-    qfs: 'qfs', quantumfinancialsystem: 'qfs'
+    qfs: 'qfs', quantumfinancialsystem: 'qfs',
+    // metals — pages use full names; DASHBOARD_ASSETS uses short symbols
+    gold: 'gold',
+    silver: 'silver',
+    platinum: 'platinum', plat: 'platinum',
+    palladium: 'palladium', pall: 'palladium',
+    nickel: 'nickel', nick: 'nickel',
+    tin: 'tin',
+    bronze: 'bronze', brnz: 'bronze',
+    copper: 'copper', copp: 'copper',
+    aluminum: 'aluminum', aluminium: 'aluminum', alum: 'aluminum'
   };
 
   function walletKeyFor(symbolOrSlug) {
     var s = String(symbolOrSlug || '').trim().toLowerCase();
+    if (!s) return '';
+    if (s.endsWith('_wallet')) s = s.slice(0, -7);
     if (SYMBOL_TO_WALLET[s]) return SYMBOL_TO_WALLET[s];
-    return s;
+    // path fragments like /coin/bitcoin.html
+    var base = s.replace(/^.*\//, '').replace(/\.html?$/, '');
+    if (SYMBOL_TO_WALLET[base]) return SYMBOL_TO_WALLET[base];
+    return base || s;
   }
 
   /**

@@ -8,8 +8,22 @@
       "**/node_modules/**"
     ],
     "rewrites": [
-      { "source": "/login", "destination": "/login.html" },
-      { "source": "/register", "destination": "/register.html" }
+      {
+        "source": "/login",
+        "destination": "/login.html"
+      },
+      {
+        "source": "/register",
+        "destination": "/register.html"
+      },
+      {
+        "source": "/settings",
+        "destination": "/profile-setting.html"
+      },
+      {
+        "source": "/settings.html",
+        "destination": "/profile-setting.html"
+      }
     ],
     "headers": [
       {

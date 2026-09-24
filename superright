@@ -296,9 +296,42 @@
             max-width: 100%;
         }
         td.action-buttons { white-space: nowrap; }
+    
+        /* QFS overlay escape — SuperRight */
+        body.glass-ui > *:not(.modal):not(.modal-backdrop):not(.swal2-container):not(.user-drawer):not(.user-drawer-backdrop):not(#userDrawer):not(#userDrawerBackdrop):not(.iziToast-wrapper):not(.iziToast) {
+            /* keep content stacking; overlays excluded above via glass-dashboard.css */
+        }
+        body.glass-ui > .modal,
+        body.glass-ui > .modal-backdrop,
+        body.glass-ui > .swal2-container,
+        body.glass-ui .modal.show,
+        body.glass-ui .modal-backdrop.show,
+        .swal2-container {
+            position: fixed !important;
+            z-index: 5000 !important;
+        }
+        body.glass-ui > .modal-backdrop,
+        body.glass-ui .modal-backdrop.show {
+            z-index: 4990 !important;
+        }
+        body.glass-ui > #userDrawer,
+        body.glass-ui > .user-drawer,
+        #userDrawer.user-drawer {
+            z-index: 1090 !important;
+            position: fixed !important;
+        }
+        body.glass-ui > #userDrawerBackdrop,
+        body.glass-ui > .user-drawer-backdrop {
+            z-index: 1080 !important;
+            position: fixed !important;
+        }
+        /* Never let hidden modals steal clicks */
+        .modal:not(.show) { pointer-events: none !important; }
+        .modal-backdrop:not(.show) { display: none !important; pointer-events: none !important; }
+
     </style>
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790321600">
-    <script src="/static/js/ra-api.js?v=1790321600"></script>
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790324800">
+    <script src="/static/js/ra-api.js?v=1790324800"></script>
 </head>
 
 <body class="glass-ui">
@@ -2166,7 +2199,35 @@
     <link href="/assets/global/css/iziToast.min.css" rel="stylesheet">
     <link href="/assets/global/css/iziToast_custom.css" rel="stylesheet">
     <script src="/assets/global/js/iziToast.min.js"></script>
-<script src="/static/js/ra-theme.js?v=1790321600"></script>
+<script src="/static/js/ra-theme.js?v=1790324800"></script>
+
+
+<script>
+(function () {
+  function hoistOverlays() {
+    var ids = ['userDrawerBackdrop', 'userDrawer', 'createUserModal', 'editTxModal'];
+    ids.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el && el.parentElement !== document.body) {
+        document.body.appendChild(el);
+      }
+    });
+    document.querySelectorAll('.swal2-container').forEach(function (el) {
+      if (el.parentElement !== document.body) document.body.appendChild(el);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', hoistOverlays);
+  } else {
+    hoistOverlays();
+  }
+  // Observe Swal mounts
+  try {
+    var obs = new MutationObserver(function () { hoistOverlays(); });
+    obs.observe(document.documentElement, { childList: true, subtree: true });
+  } catch (e) {}
+})();
+</script>
 
 </body>
 </html>

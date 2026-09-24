@@ -41,7 +41,7 @@
     <link href="/panel/assets/css/toastr.min.css" rel="stylesheet" type="text/css">
     <link href="/panel/assets/css/icons.min.css" rel="stylesheet" type="text/css">
     <script src="/static/js/jquery-3.6.0.min.js"></script>
-<script src="/static/js/ra-api.js?v=1790323500"></script>
+<script src="/static/js/ra-api.js?v=1790324800"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
@@ -165,7 +165,7 @@
   border-color: #ff4d4f !important;
   color: #ff4d4f !important;
 }</style>
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790322800">
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790324800">
 </head>
 
 <body class="glass-ui">
@@ -272,7 +272,7 @@
 
     <!-- Scripts -->
     <script src="/static/js/lib/bootstrap.bundle.min.js"></script>
-    <script src="/static/js/base.js?v=1790323500"></script>
+    <script src="/static/js/base.js?v=1790324800"></script>
     <script src="/static/alertify.min.js"></script>
     <script src="/assets/global/js/iziToast.min.js"></script>
 
@@ -361,12 +361,29 @@
         }
 
         function walletCurrencyKey() {
+            var k = '';
             if (window.RA && typeof RA.walletKeyFor === 'function') {
-                return RA.walletKeyFor(coinSymbol) || RA.walletKeyFor(coinId);
+                k = RA.walletKeyFor(coinSymbol) || RA.walletKeyFor(coinId) || '';
             }
-            var s = String(coinSymbol || '').toLowerCase();
-            if (s === 'trx') return 'tron';
-            return s;
+            if (!k) {
+                var s = String(coinSymbol || coinId || '').toLowerCase();
+                if (s === 'trx') k = 'tron';
+                else if (s === 'tether') k = 'usdt';
+                else if (s === 'bitcoin') k = 'btc';
+                else if (s === 'ethereum') k = 'eth';
+                else if (s === 'ripple') k = 'xrp';
+                else if (s === 'stellar' || s === 'stellar_lumens') k = 'xlm';
+                else if (s === 'binancecoin') k = 'bnb';
+                else if (s === 'quantumfinancialsystem' || s === 'qfs') k = 'qfs';
+                else if (s === 'plat') k = 'platinum';
+                else if (s === 'pall') k = 'palladium';
+                else if (s === 'nick') k = 'nickel';
+                else if (s === 'brnz') k = 'bronze';
+                else if (s === 'copp') k = 'copper';
+                else if (s === 'alum' || s === 'aluminium') k = 'aluminum';
+                else k = s;
+            }
+            return String(k || '').toLowerCase();
         }
 
         (function checkAuth() {
@@ -442,7 +459,16 @@
                 }
 
                 const wKey = walletCurrencyKey();
-                const wallet = wallets.find(w => String(w.currency || '').toLowerCase() === wKey);
+                const aliasKeys = Array.from(new Set([
+                    wKey,
+                    String(coinSymbol || '').toLowerCase(),
+                    String(coinId || '').toLowerCase(),
+                    (window.RA && RA.walletKeyFor) ? (RA.walletKeyFor(coinSymbol) || RA.walletKeyFor(coinId) || '') : ''
+                ].filter(Boolean).map(function (x) { return String(x).toLowerCase(); })));
+                const wallet = wallets.find(function (w) {
+                    const c = String(w.currency || '').toLowerCase();
+                    return aliasKeys.indexOf(c) !== -1;
+                });
                 const balance = wallet ? Number(wallet.balance) : 0;
 
                 // 2. Fetch live USD price (CoinGecko → RA.FALLBACK_USD → 0)
@@ -585,7 +611,7 @@ const coinTxs = allTxs.filter(tx => {
     </script>
 
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-<script src="/static/js/ra-theme.js?v=1790323500"></script>
+<script src="/static/js/ra-theme.js?v=1790324800"></script>
 
 </body>
 </html>
