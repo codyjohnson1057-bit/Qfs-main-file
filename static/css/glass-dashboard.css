@@ -18,8 +18,8 @@
   --glass-panel-strong: rgba(10, 24, 28, 0.47);
   --glass-border: rgba(255, 255, 255, 0.18);
   --glass-border-bright: rgba(16, 185, 129, 0.4);
-  --glass-text: #e8f3f0;
-  --glass-muted: #8aa39c;
+  --glass-text: #f0e6c4;
+  --glass-muted: #c4b483;
   --glass-danger: #ff5c7a;
   --glass-success: #34d399;
   --glass-blur: 28px;
@@ -63,6 +63,22 @@ body.glass-ui::before {
 body.glass-ui > * {
   position: relative;
   z-index: 1;
+}
+
+/* Drawers/backdrops must escape the glass-ui child stacking rule */
+body.glass-ui > #userDrawer,
+body.glass-ui > #userDrawerBackdrop,
+body.glass-ui > .user-drawer,
+body.glass-ui > .user-drawer-backdrop {
+  position: fixed !important;
+}
+body.glass-ui > #userDrawer,
+body.glass-ui > .user-drawer {
+  z-index: 1090 !important;
+}
+body.glass-ui > #userDrawerBackdrop,
+body.glass-ui > .user-drawer-backdrop {
+  z-index: 1080 !important;
 }
 
 /* ---------- Glass utility ---------- */
@@ -1481,6 +1497,23 @@ html.light body.glass-ui button#raThemeToggle.ra-theme-fab {
   background: rgba(236, 253, 245, 0.72) !important;
   border-color: rgba(5, 150, 105, 0.4) !important;
   color: #064e3b !important;
+}
+
+
+/* Dark (default) warm gold accents — html.light section below overrides */
+html.dark body.glass-ui .title,
+html.dark body.glass-ui .pageTitle,
+html.dark body.glass-ui .brand-title,
+html.dark body.glass-ui h2.title,
+html.dark body.glass-ui .balance-value,
+html.dark body.glass-ui .total-balance,
+html.dark body.glass-ui .wallet-card .balance,
+html.dark body.glass-ui .stat-box strong,
+html.dark body.glass-ui .stat-box .value {
+  color: #e8d5a3 !important;
+}
+html.dark body.glass-ui .text-muted {
+  color: #c4b483 !important;
 }
 
 /* ==========================================================================

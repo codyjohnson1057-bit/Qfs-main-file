@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/font-awesome.css">
     <link rel="stylesheet" href="/static/css/App_Global.css">
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790400001">
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790215100">
     <script src="/static/js/jquery-3.6.0.min.js"></script>
-    <script src="/static/js/ra-api.js?v=1790400001"></script>
+    <script src="/static/js/ra-api.js?v=1790215100"></script>
     <style>
       .mock-card { border-radius: 1.25rem; padding: 1rem; margin-bottom: 1rem; }
       .toggle-row { display:flex; align-items:center; justify-content:space-between; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
@@ -51,6 +51,52 @@
       .hist-row { display:flex; justify-content:space-between; gap:10px; padding:0.65rem 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:0.85rem; }
       .hist-row .muted { font-size:0.7rem; opacity:0.65; }
       @media (max-width:420px){ .tier-grid { grid-template-columns:1fr; } }
+      .tier-modal-backdrop {
+        position: fixed; inset: 0; z-index: 5000;
+        background: rgba(1,4,9,0.62);
+        backdrop-filter: blur(6px);
+        display: flex; align-items: center; justify-content: center;
+        padding: 16px; opacity: 0; visibility: hidden;
+        transition: opacity 0.22s ease, visibility 0.22s ease;
+      }
+      .tier-modal-backdrop.open { opacity: 1; visibility: visible; }
+      .tier-modal-panel {
+        width: min(440px, 96vw);
+        max-height: 90dvh;
+        overflow-y: auto;
+        border-radius: 1.25rem;
+        padding: 1.15rem 1.2rem 1.25rem;
+        background: rgba(12, 28, 32, 0.82);
+        border: 1px solid rgba(212, 175, 55, 0.35);
+        box-shadow: 0 20px 48px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.12);
+        backdrop-filter: blur(28px) saturate(1.35);
+        color: var(--glass-text, #f0e6c4);
+        -webkit-overflow-scrolling: touch;
+      }
+      html.light .tier-modal-panel,
+      html:not(.dark) .tier-modal-panel {
+        background: rgba(236, 253, 245, 0.92);
+        border-color: rgba(5, 150, 105, 0.35);
+        color: #050d0a;
+      }
+      .tier-modal-panel h3 { margin: 0 0 0.35rem; font-size: 1.1rem; color: #e8d5a3; }
+      html.light .tier-modal-panel h3,
+      html:not(.dark) .tier-modal-panel h3 { color: #361903; }
+      .tier-modal-head { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:0.5rem; }
+      .tier-modal-close {
+        background: transparent; border: 0; color: inherit; font-size: 1.35rem;
+        line-height: 1; cursor: pointer; opacity: 0.7; padding: 0 4px;
+      }
+      .tier-modal-close:hover { opacity: 1; }
+      .btn-request-main {
+        width: 100%; margin-top: 0.5rem; font-weight: 700; font-size: 0.95rem;
+        background: linear-gradient(135deg, rgba(16,185,129,0.35), rgba(212,175,55,0.28));
+        border: 1px solid rgba(212,175,55,0.45);
+        color: #f0e6c4; border-radius: 12px; padding: 0.75rem 1rem; cursor: pointer;
+      }
+      html.light .btn-request-main,
+      html:not(.dark) .btn-request-main { color: #064e3b; }
+      .btn-request-main:disabled { opacity: 0.5; cursor: not-allowed; }
     </style>
 </head>
 <body class="glass-ui">
@@ -74,7 +120,20 @@
         <div id="raBalanceMount"></div>
         <div id="cardRequestPanel" class="wallet-card mock-card glass-panel hidden">
             <h3 style="font-size:1rem;">Request a card</h3>
-            <p class="text-muted" style="font-size:0.85rem;">Select a tier. Fee is debited from your chosen wallet on submit. Card stays locked until an admin activates it.</p>
+            <p class="text-muted" style="font-size:0.85rem;">Virtual debit card. Choose a tier and pay the fee from your wallet. Your card stays locked until an admin activates it.</p>
+            <button class="btn-request-main" type="button" id="btnOpenTierModal">Request Card — $350</button>
+            <p id="requestMsg" class="text-muted mt-2" style="font-size:0.8rem;"></p>
+        </div>
+
+        <div id="tierModalBackdrop" class="tier-modal-backdrop" aria-hidden="true">
+          <div class="tier-modal-panel glass-panel" role="dialog" aria-modal="true" aria-labelledby="tierModalTitle">
+            <div class="tier-modal-head">
+              <div>
+                <h3 id="tierModalTitle">Choose your card tier</h3>
+                <p class="text-muted" style="font-size:0.78rem;margin:0;">Individual pricing · fee debited on confirm</p>
+              </div>
+              <button type="button" class="tier-modal-close" id="btnCloseTierModal" aria-label="Close">&times;</button>
+            </div>
             <div class="tier-grid" id="tierGrid">
               <button type="button" class="tier-opt blue" data-tier="blue" data-fee="500"><strong>Blue</strong><div class="price">$500</div></button>
               <button type="button" class="tier-opt green" data-tier="green" data-fee="850"><strong>Green</strong><div class="price">$850</div></button>
@@ -83,8 +142,12 @@
             </div>
             <label class="text-muted" style="font-size:0.75rem;">Pay fee from</label>
             <select class="form-control mb-2" id="cardPayCurrency"><option value="">Select tier first</option></select>
-            <button class="btn-glass" type="button" id="btnRequestCard" disabled>Select a tier</button>
-            <p id="requestMsg" class="text-muted mt-2" style="font-size:0.8rem;"></p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:0.35rem;">
+              <button class="btn-glass" type="button" id="btnRequestCard" disabled style="flex:1;">Pay &amp; request</button>
+              <button class="btn-glass danger" type="button" id="btnCancelTierModal">Cancel</button>
+            </div>
+            <p id="tierModalMsg" class="text-muted mt-2" style="font-size:0.8rem;"></p>
+          </div>
         </div>
 
         <div id="cardPendingPanel" class="wallet-card mock-card glass-panel hidden">
@@ -292,7 +355,9 @@
         if (!opts.length) {
           sel.innerHTML = '<option value="">No wallet covers ' + money(feeUsd) + '</option>';
           document.getElementById('btnRequestCard').disabled = true;
-          document.getElementById('requestMsg').textContent = 'Insufficient portfolio value for this tier. Need ' + money(feeUsd) + '.';
+          var tm = document.getElementById('tierModalMsg');
+          if (tm) tm.textContent = 'Insufficient portfolio value for this tier. Need ' + money(feeUsd) + '.';
+          document.getElementById('requestMsg').textContent = '';
           return;
         }
         opts.sort(function(a,b){ return b.usd - a.usd; });
@@ -300,7 +365,9 @@
           return '<option value="'+o.key+'">'+o.label+' · ≈ '+money(o.usd)+'</option>';
         }).join('');
         document.getElementById('btnRequestCard').disabled = false;
-        document.getElementById('btnRequestCard').textContent = 'Request ' + (selectedTier||'') + ' — ' + money(feeUsd);
+        document.getElementById('btnRequestCard').textContent = 'Pay & request — ' + money(feeUsd);
+        var tm = document.getElementById('tierModalMsg');
+        if (tm) tm.textContent = '';
         document.getElementById('requestMsg').textContent = '';
       }
 
@@ -376,9 +443,42 @@
         }
       }
 
+      function openTierModal() {
+        var bd = document.getElementById('tierModalBackdrop');
+        if (!bd) return;
+        bd.classList.add('open');
+        bd.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        var tm = document.getElementById('tierModalMsg');
+        if (tm) tm.textContent = '';
+      }
+      function closeTierModal() {
+        var bd = document.getElementById('tierModalBackdrop');
+        if (!bd) return;
+        bd.classList.remove('open');
+        bd.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+      document.getElementById('btnOpenTierModal').addEventListener('click', function(){
+        openTierModal();
+        loadWallets().then(function(){
+          if (selectedTier && selectedFee > 0) fillPayCurrency(selectedFee);
+        });
+      });
+      document.getElementById('btnCloseTierModal').addEventListener('click', closeTierModal);
+      document.getElementById('btnCancelTierModal').addEventListener('click', closeTierModal);
+      document.getElementById('tierModalBackdrop').addEventListener('click', function(e){
+        if (e.target === this) closeTierModal();
+      });
+      document.addEventListener('keydown', function(e){
+        if (e.key === 'Escape') closeTierModal();
+      });
+
       document.getElementById('btnRequestCard').addEventListener('click', async function(){
-        var msg = document.getElementById('requestMsg');
+        var msg = document.getElementById('tierModalMsg') || document.getElementById('requestMsg');
+        var panelMsg = document.getElementById('requestMsg');
         msg.textContent = '';
+        if (panelMsg) panelMsg.textContent = '';
         if (!selectedTier || !(selectedFee > 0)) {
           msg.textContent = 'Select a card tier first.';
           return;
@@ -403,7 +503,8 @@
           fillPayCurrency(selectedFee);
           return;
         }
-        msg.textContent = (r.data && r.data.message) || ('Request submitted. Fee debited from ' + currency.toUpperCase() + '.');
+        closeTierModal();
+        if (panelMsg) panelMsg.textContent = (r.data && r.data.message) || ('Request submitted. Fee debited from ' + currency.toUpperCase() + '.');
         if (window.RA && RA.refreshSharedBalance) {
           RA.refreshSharedBalance({ force: true }).then(function(s){
             var m=document.getElementById('raBalanceMount');

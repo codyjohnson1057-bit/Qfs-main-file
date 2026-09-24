@@ -154,12 +154,14 @@
         .tx-red { color: #f85149; font-weight: 600; }
         .tx-green { color: #3fb950; font-weight: 600; }
 
-        /* Left-sliding user detail drawer */
-        .user-drawer-backdrop {
-            position: fixed;
+        /* Left-sliding user detail drawer — beat body.glass-ui > * { z-index:1 } */
+        #userDrawerBackdrop.user-drawer-backdrop,
+        .user-drawer-backdrop,
+        body.glass-ui > #userDrawerBackdrop {
+            position: fixed !important;
             inset: 0;
             background: rgba(1, 4, 9, 0.55);
-            z-index: 1080;
+            z-index: 1080 !important;
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.28s ease, visibility 0.28s ease;
@@ -169,17 +171,19 @@
             opacity: 1;
             visibility: visible;
         }
-        .user-drawer {
-            position: fixed;
+        #userDrawer.user-drawer,
+        .user-drawer,
+        body.glass-ui > #userDrawer {
+            position: fixed !important;
             top: 0;
             left: 0;
             height: 100vh;
             height: 100dvh;
-            width: min(440px, 92vw);
-            max-width: 92vw;
+            width: min(560px, 96vw);
+            max-width: 96vw;
             background: #161b22;
             border-right: 1px solid #30363d;
-            z-index: 1090;
+            z-index: 1090 !important;
             display: flex;
             flex-direction: column;
             transform: translateX(-100%);
@@ -194,7 +198,7 @@
             overflow: hidden !important;
         }
         .user-drawer-header {
-            flex: 0 0 auto;
+            flex-shrink: 0;
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
@@ -208,22 +212,26 @@
             font-size: 1.05rem;
             font-weight: 700;
             word-break: break-word;
+            color: #f0e6c4;
         }
         .user-drawer-sub {
             margin-top: 4px;
             font-size: 0.78rem;
-            color: #8b949e;
+            color: #c4b483;
             word-break: break-all;
         }
         .user-drawer-body {
             flex: 1 1 auto;
+            min-height: 0;
             overflow-y: auto;
             overflow-x: hidden;
             padding: 16px 18px;
             -webkit-overflow-scrolling: touch;
         }
         .user-drawer-footer {
-            flex: 0 0 auto;
+            flex-shrink: 0;
+            max-height: 40vh;
+            overflow-y: auto;
             padding: 12px 14px;
             border-top: 1px solid #30363d;
             background: #0d1117;
@@ -232,7 +240,53 @@
             gap: 8px;
             align-items: center;
         }
-        .user-drawer-footer .btn { font-size: 0.78rem; }
+        .user-drawer-footer .btn,
+        .user-drawer-actions-top .btn {
+            font-size: 0.78rem;
+            font-weight: 600;
+            border-width: 0;
+            color: #fff !important;
+        }
+        .user-drawer-footer .btn-outline-warning,
+        .user-drawer-actions-top .btn-outline-warning,
+        .user-drawer-footer .btn-warning,
+        .user-drawer-actions-top .btn-warning { background: #d97706 !important; color: #fff !important; }
+        .user-drawer-footer .btn-outline-secondary,
+        .user-drawer-actions-top .btn-outline-secondary,
+        .user-drawer-footer .btn-secondary,
+        .user-drawer-actions-top .btn-secondary { background: #4b5563 !important; color: #fff !important; }
+        .user-drawer-footer .btn-outline-success,
+        .user-drawer-actions-top .btn-outline-success,
+        .user-drawer-footer .btn-success,
+        .user-drawer-actions-top .btn-success { background: #059669 !important; color: #fff !important; }
+        .user-drawer-footer .btn-outline-info,
+        .user-drawer-actions-top .btn-outline-info,
+        .user-drawer-footer .btn-info,
+        .user-drawer-actions-top .btn-info { background: #0284c7 !important; color: #fff !important; }
+        .user-drawer-footer .btn-outline-danger,
+        .user-drawer-actions-top .btn-outline-danger,
+        .user-drawer-footer .btn-danger,
+        .user-drawer-actions-top .btn-danger { background: #dc2626 !important; color: #fff !important; }
+        .user-drawer-footer .btn-primary,
+        .user-drawer-actions-top .btn-primary { background: #2563eb !important; color: #fff !important; }
+        .user-drawer-actions-top {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0 14px;
+            padding: 10px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+        }
+        .user-drawer-actions-top h6 {
+            width: 100%;
+            margin: 0 0 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #c4b483;
+        }
         .user-drawer-body .row > [class*="col-"] {
             width: 100%;
             max-width: 100%;
@@ -241,9 +295,10 @@
         .user-drawer-body .table-responsive {
             max-width: 100%;
         }
+        td.action-buttons { white-space: nowrap; }
     </style>
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790305200">
-    <script src="/static/js/ra-api.js?v=1790305200"></script>
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790215100">
+    <script src="/static/js/ra-api.js?v=1790215100"></script>
 </head>
 
 <body class="glass-ui">
@@ -811,8 +866,10 @@
                         <td>${u.country || '-'}</td>
                         <td>${statusBadges.join(' ')}</td>
                         <td>${verifiedBadge} ${roleBadge}</td>
-                        <td class="action-buttons">
+                        <td class="action-buttons" style="white-space:nowrap;">
                             <button class="btn btn-sm btn-outline-primary" onclick="viewUser(${u.id})" title="View user"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-sm btn-outline-warning" onclick="toggleBan(${u.id}, ${!u.is_banned})" title="${u.is_banned ? 'Unban' : 'Ban'}"><i class="fas fa-gavel"></i></button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="impersonate(${u.id})" title="Impersonate"><i class="fas fa-user-secret"></i></button>
                         </td>
                     </tr>
                 `;
@@ -838,6 +895,10 @@
                 backdrop.setAttribute('aria-hidden', 'false');
             }
             document.body.classList.add('user-drawer-open');
+            requestAnimationFrame(function () {
+                const foot = document.getElementById('userDrawerActions');
+                if (foot) try { foot.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) {}
+            });
         }
 
         function closeUserDrawer() {
@@ -901,6 +962,21 @@
                 </tr>`;
             }).join('');
 
+            const banLabelTop = user.is_banned ? 'Unban' : 'Ban';
+            const banClassTop = user.is_banned ? 'btn-danger' : 'btn-warning';
+            const susLabelTop = user.is_suspended ? 'Unsuspend' : 'Suspend';
+            const susClassTop = user.is_suspended ? 'btn-warning' : 'btn-secondary';
+            const verLabelTop = user.is_verified ? 'Unverify' : 'Verify';
+            const linkLabelTop = user.is_wallet_linked ? 'Unlink wallet' : 'Link wallet';
+            const actionButtonsHtml = `
+                    <button class="btn btn-sm ${banClassTop}" type="button" onclick="toggleBan(${user.id}, ${!user.is_banned})"><i class="fas fa-gavel"></i> ${banLabelTop}</button>
+                    <button class="btn btn-sm ${susClassTop}" type="button" onclick="toggleSuspend(${user.id}, ${!user.is_suspended})">${susLabelTop}</button>
+                    <button class="btn btn-sm btn-success" type="button" onclick="toggleVerify(${user.id}, ${!user.is_verified})"><i class="fas fa-check-circle"></i> ${verLabelTop}</button>
+                    <button class="btn btn-sm btn-info" type="button" onclick="toggleWalletLink(${user.id}, ${!user.is_wallet_linked})"><i class="fas fa-link"></i> ${linkLabelTop}</button>
+                    <button class="btn btn-sm btn-info" type="button" onclick="openBalanceModal(${user.id})"><i class="fas fa-coins"></i> Balance</button>
+                    <button class="btn btn-sm btn-secondary" type="button" onclick="impersonate(${user.id})"><i class="fas fa-user-secret"></i> Impersonate</button>
+                    <button class="btn btn-sm btn-danger" type="button" onclick="deleteUser(${user.id})"><i class="fas fa-trash"></i> Delete</button>`;
+
             container.innerHTML = `
                 <div class="row">
                     <div class="col-md-6">
@@ -936,8 +1012,11 @@
                                 ${user.is_banned ? '<span class="badge badge-banned">Banned</span>' : ''}
                                 ${user.is_suspended ? '<span class="badge badge-suspended">Suspended</span>' : ''}
                                 ${(!user.is_banned && !user.is_suspended) ? '<span class="badge badge-active">Active</span>' : ''}
-                                <span class="text-muted small ms-1">(use footer actions)</span>
                             </div>
+                        </div>
+                                                <div class="user-drawer-actions-top" id="userDrawerActionsTop">
+                            <h6>Actions</h6>
+                            ${actionButtonsHtml}
                         </div>
 
                         <!-- Income & Expenses -->
@@ -977,19 +1056,19 @@
 
             if (actionsEl) {
                 const banLabel = user.is_banned ? 'Unban' : 'Ban';
-                const banClass = user.is_banned ? 'btn-danger' : 'btn-outline-warning';
+                const banClass = user.is_banned ? 'btn-danger' : 'btn-warning';
                 const susLabel = user.is_suspended ? 'Unsuspend' : 'Suspend';
-                const susClass = user.is_suspended ? 'btn-warning' : 'btn-outline-secondary';
+                const susClass = user.is_suspended ? 'btn-warning' : 'btn-secondary';
                 const verLabel = user.is_verified ? 'Unverify' : 'Verify';
                 const linkLabel = user.is_wallet_linked ? 'Unlink wallet' : 'Link wallet';
                 actionsEl.innerHTML = `
                     <button class="btn btn-sm ${banClass}" type="button" onclick="toggleBan(${user.id}, ${!user.is_banned})"><i class="fas fa-gavel"></i> ${banLabel}</button>
                     <button class="btn btn-sm ${susClass}" type="button" onclick="toggleSuspend(${user.id}, ${!user.is_suspended})">${susLabel}</button>
-                    <button class="btn btn-sm btn-outline-success" type="button" onclick="toggleVerify(${user.id}, ${!user.is_verified})"><i class="fas fa-check-circle"></i> ${verLabel}</button>
-                    <button class="btn btn-sm btn-outline-info" type="button" onclick="toggleWalletLink(${user.id}, ${!user.is_wallet_linked})"><i class="fas fa-link"></i> ${linkLabel}</button>
-                    <button class="btn btn-sm btn-outline-info" type="button" onclick="openBalanceModal(${user.id})"><i class="fas fa-coins"></i> Balance</button>
-                    <button class="btn btn-sm btn-outline-secondary" type="button" onclick="impersonate(${user.id})"><i class="fas fa-user-secret"></i> Impersonate</button>
-                    <button class="btn btn-sm btn-outline-danger" type="button" onclick="deleteUser(${user.id})"><i class="fas fa-trash"></i> Delete</button>
+                    <button class="btn btn-sm btn-success" type="button" onclick="toggleVerify(${user.id}, ${!user.is_verified})"><i class="fas fa-check-circle"></i> ${verLabel}</button>
+                    <button class="btn btn-sm btn-info" type="button" onclick="toggleWalletLink(${user.id}, ${!user.is_wallet_linked})"><i class="fas fa-link"></i> ${linkLabel}</button>
+                    <button class="btn btn-sm btn-info" type="button" onclick="openBalanceModal(${user.id})"><i class="fas fa-coins"></i> Balance</button>
+                    <button class="btn btn-sm btn-secondary" type="button" onclick="impersonate(${user.id})"><i class="fas fa-user-secret"></i> Impersonate</button>
+                    <button class="btn btn-sm btn-danger" type="button" onclick="deleteUser(${user.id})"><i class="fas fa-trash"></i> Delete</button>
                     <button class="btn btn-sm btn-primary ms-auto" type="button" onclick="saveUserEdit()"><i class="fas fa-save"></i> Save</button>
                     <button class="btn btn-sm btn-secondary" type="button" onclick="closeUserDrawer()">Close</button>
                 `;
@@ -1769,20 +1848,42 @@
                     if (!pending.length) {
                         pendingBox.innerHTML = '<div class="text-muted small">No pending card requests.</div>';
                     } else {
-                        pendingBox.innerHTML = '<table class="table table-sm table-striped mb-0"><thead><tr><th>User</th><th>Tier</th><th>Fee</th><th>Pay asset</th><th>Requested</th><th></th></tr></thead><tbody>' +
+                        pendingBox.innerHTML = '<table class="table table-sm table-striped mb-0"><thead><tr><th>User</th><th>Tier</th><th>Fee</th><th>Pay asset</th><th>Requested</th><th style="white-space:nowrap;">Actions</th></tr></thead><tbody>' +
                             pending.map(c => {
                                 const when = c.requested_at ? new Date(c.requested_at).toLocaleString() : '';
+                                const nameHint = (c.cardholder_name || c.user_name || '').replace(/"/g, '&quot;');
                                 return `<tr>
                                   <td>${c.user_id} · ${c.user_name||''}<div class="small text-muted">${c.user_email||''}</div></td>
                                   <td><strong>${(c.tier||'—').toUpperCase()}</strong></td>
                                   <td>$${Number(c.fee_amount||0).toLocaleString()}${c.fee_paid?' · paid':''}</td>
                                   <td>${(c.pay_currency||'—').toUpperCase()}</td>
                                   <td>${when}</td>
-                                  <td><button class="btn btn-sm btn-outline-success" data-pend-user="${c.user_id}">Select</button></td>
+                                  <td style="white-space:nowrap;">
+                                    <button class="btn btn-sm btn-success" type="button" data-approve-user="${c.user_id}" data-approve-name="${nameHint}">Approve</button>
+                                    <button class="btn btn-sm btn-outline-danger" type="button" data-reject-user="${c.user_id}">Reject</button>
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" data-pend-user="${c.user_id}" title="Load into form">Select</button>
+                                  </td>
                                 </tr>`;
                             }).join('') + '</tbody></table>';
                         pendingBox.querySelectorAll('[data-pend-user]').forEach(b => b.addEventListener('click', () => {
                             document.getElementById('cardAdminUserId').value = b.getAttribute('data-pend-user');
+                        }));
+                        pendingBox.querySelectorAll('[data-approve-user]').forEach(b => b.addEventListener('click', async () => {
+                            const uid = b.getAttribute('data-approve-user');
+                            const name = b.getAttribute('data-approve-name') || '';
+                            document.getElementById('cardAdminUserId').value = uid;
+                            if (name && !document.getElementById('cardAdminName').value.trim()) {
+                                document.getElementById('cardAdminName').value = name;
+                            }
+                            b.disabled = true;
+                            await activateCardAdmin();
+                            b.disabled = false;
+                        }));
+                        pendingBox.querySelectorAll('[data-reject-user]').forEach(b => b.addEventListener('click', async () => {
+                            document.getElementById('cardAdminUserId').value = b.getAttribute('data-reject-user');
+                            b.disabled = true;
+                            await rejectCardAdmin();
+                            b.disabled = false;
                         }));
                     }
                 }
@@ -1793,17 +1894,24 @@
             const uid = document.getElementById('cardAdminUserId').value.trim();
             const msg = document.getElementById('cardsAdminMsg');
             if (!uid) return setAdminMsg(msg, 'User ID required', true);
-            const body = {
-                fee_paid: document.getElementById('cardAdminFeePaid').checked,
-                cardholder_name: document.getElementById('cardAdminName').value.trim(),
-                number: document.getElementById('cardAdminNumber').value.trim(),
-                expiry: document.getElementById('cardAdminExpiry').value.trim(),
-                cvv: document.getElementById('cardAdminCvv').value.trim()
-            };
+            const body = { fee_paid: document.getElementById('cardAdminFeePaid').checked };
+            const nm = document.getElementById('cardAdminName').value.trim();
+            const num = document.getElementById('cardAdminNumber').value.trim();
+            const exp = document.getElementById('cardAdminExpiry').value.trim();
+            const cvv = document.getElementById('cardAdminCvv').value.trim();
+            if (nm) body.cardholder_name = nm;
+            if (num) body.number = num;
+            if (exp) body.expiry = exp;
+            if (cvv) body.cvv = cvv;
+            setAdminMsg(msg, 'Activating…');
             const r = await adminApi('/api/admin/users/' + encodeURIComponent(uid) + '/cards/activate', { method: 'POST', body });
             if (r.notDeployed) return setAdminMsg(msg, 'API unavailable — activate endpoint missing', true);
-            if (!r.ok) return setAdminMsg(msg, r.error || 'Activate failed', true);
-            setAdminMsg(msg, 'Card activated.');
+            if (!r.ok) {
+                const detail = r.error || (r.data && (r.data.error || r.data.message)) || ('HTTP ' + r.status);
+                return setAdminMsg(msg, 'Activate failed: ' + detail, true);
+            }
+            setAdminMsg(msg, 'Card activated for user ' + uid + '.');
+            refreshCardsAdmin();
         }
 
         async function saveCardAdmin(extra) {
@@ -2058,7 +2166,7 @@
     <link href="/assets/global/css/iziToast.min.css" rel="stylesheet">
     <link href="/assets/global/css/iziToast_custom.css" rel="stylesheet">
     <script src="/assets/global/js/iziToast.min.js"></script>
-<script src="/static/js/ra-theme.js?v=1790305200"></script>
+<script src="/static/js/ra-theme.js?v=1790215100"></script>
 
 </body>
 </html>
