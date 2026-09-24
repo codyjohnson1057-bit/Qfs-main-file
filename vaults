@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/font-awesome.css">
     <link rel="stylesheet" href="/static/css/App_Global.css">
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790325200">
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790332000">
     <script src="/static/js/jquery-3.6.0.min.js"></script>
-    <script src="/static/js/ra-api.js?v=1790325200"></script>
+    <script src="/static/js/ra-api.js?v=1790332000"></script>
     <style>
       .mock-card { border-radius: 1.25rem; padding: 1.25rem; margin-bottom: 1rem; }
       .pill { display:inline-block; padding: 0.2rem 0.55rem; border-radius: 999px; font-size: 0.7rem; background: rgba(16,185,129,0.18); color: #6ee7b7; }
@@ -120,6 +120,7 @@
       }
 
       function money(n) {
+        if (window.RA && typeof RA.fmtMoney === 'function') return RA.fmtMoney(n);
         return '$' + Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
       }
 
@@ -259,7 +260,7 @@
           '<div style="font-size:1.6rem;font-weight:700;margin:0.5rem 0;">' + money(bal) + '</div>' +
           '<div class="progress"><span style="width:' + pct + '%"></span></div>' +
           '<div class="text-muted mt-1" style="font-size:0.75rem;">' + money(bal) + ' of ' + money(tgt) +
-          (v.autosave_amount ? ' · $' + Number(v.autosave_amount) + ' / paycheck' : '') + '</div>' +
+          (v.autosave_amount ? ' · ' + money(v.autosave_amount) + ' / paycheck' : '') + '</div>' +
           '<div style="display:flex;gap:8px;margin-top:0.65rem;flex-wrap:wrap;">' +
           '<button class="btn-glass" type="button" data-invest="' + (v.id || '') + '">Invest</button>' +
           '<button class="btn-glass ghost" type="button" data-edit="' + (v.id || '') + '">Edit</button>' +

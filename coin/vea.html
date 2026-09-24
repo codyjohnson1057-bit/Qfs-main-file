@@ -42,7 +42,7 @@
     <link href="/panel/assets/css/toastr.min.css" rel="stylesheet" type="text/css">
     <link href="/panel/assets/css/icons.min.css" rel="stylesheet" type="text/css">
     <script src="/static/js/jquery-3.6.0.min.js"></script>
-<script src="/static/js/ra-api.js?v=1790325200"></script>
+<script src="/static/js/ra-api.js?v=1790332000"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
@@ -310,9 +310,10 @@
         }
 
         function formatMoney(usdAmount) {
+            if (window.RA && typeof RA.fmtMoney === 'function') return RA.fmtMoney(usdAmount);
             const curr = getPreferredCurrency();
-            const rate = RATES[curr] || 1;
-            const symbol = CURRENCY_SYMBOLS[curr] || (curr + ' ');
+            const rate = (window.RA && RA.getFiatRate) ? RA.getFiatRate(curr) : (RATES[curr] || 1);
+            const symbol = (window.RA && RA.currencySymbol) ? RA.currencySymbol(curr) : (CURRENCY_SYMBOLS[curr] || (curr + ' '));
             const converted = (Number(usdAmount) * rate).toLocaleString(undefined, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2

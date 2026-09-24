@@ -117,6 +117,7 @@
     if (!opts.bust) {
       var cached = _ssGet(SS_USER);
       if (cached != null) {
+        try { syncDisplayCurrencyFromUser(cached); } catch (e) {}
         return { ok: true, status: 200, data: cached, notDeployed: false, error: null, cached: true, response: null };
       }
       if (_inflightUser) return _inflightUser;
@@ -124,7 +125,10 @@
       invalidateApiCache();
     }
     _inflightUser = api('/api/user').then(function (r) {
-      if (r.ok) _ssSet(SS_USER, r.data);
+      if (r.ok) {
+        _ssSet(SS_USER, r.data);
+        try { syncDisplayCurrencyFromUser(r.data); } catch (e) {}
+      }
       return r;
     }).finally(function () {
       _inflightUser = null;
@@ -439,13 +443,146 @@
     copper: 4.2, aluminum: 1.1
   };
 
-  function formatMoneyUsd(n) {
-    var v = Number(n || 0);
+  /* ---- Display currency (USD base → preferred fiat) ---- */
+  var CURRENCY_SYMBOLS = {
+    USD: '$', EUR: '€', GBP: '£', NGN: '₦', CAD: 'C$', AUD: 'A$',
+    JPY: '¥', CHF: 'CHF', CNY: '¥', INR: '₹', ZAR: 'R', GHS: 'GH₵',
+    KES: 'KSh', AED: 'د.إ', SAR: '﷼', BRL: 'R$', MXN: 'MX$',
+    TRY: '₺', RUB: '₽', SGD: 'S$', NZD: 'NZ$', HKD: 'HK$', SEK: 'kr',
+    NOK: 'kr', DKK: 'kr', PLN: 'zł', PHP: '₱', THB: '฿', MYR: 'RM',
+    IDR: 'Rp', EGP: 'E£', PKR: '₨'
+  };
+  var FALLBACK_FIAT = {
+    USD: 1, EUR: 0.92, GBP: 0.79, NGN: 1600, CAD: 1.36, AUD: 1.53,
+    JPY: 150, CHF: 0.88, CNY: 7.25, INR: 83.5, ZAR: 18.2, GHS: 15.5,
+    KES: 129, AED: 3.67, SAR: 3.75, BRL: 5.4, MXN: 18.2, TRY: 34,
+    RUB: 92, SGD: 1.35, NZD: 1.65, HKD: 7.8, SEK: 10.5, NOK: 10.6,
+    DKK: 6.9, PLN: 3.9, PHP: 58, THB: 35, MYR: 4.5, IDR: 16000,
+    EGP: 48, PKR: 278
+  };
+  var _fiatRates = Object.assign({}, FALLBACK_FIAT);
+  var _fiatMeta = { source: 'fallback', fetchedAt: 0 };
+  var _fiatPromise = null;
+  var FIAT_TTL_MS = 60 * 60 * 1000;
+
+  function getDisplayCurrency() {
     try {
-      return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(v);
+      var c = (localStorage.getItem('preferred_currency') || 'USD').toUpperCase();
+      return c || 'USD';
     } catch (e) {
-      return '$' + v.toFixed(2);
+      return 'USD';
     }
+  }
+
+  function setDisplayCurrency(code) {
+    var c = String(code || 'USD').toUpperCase();
+    try { localStorage.setItem('preferred_currency', c); } catch (e) {}
+    return c;
+  }
+
+  function getFiatRate(code) {
+    var c = String(code || getDisplayCurrency()).toUpperCase();
+    var r = _fiatRates[c];
+    if (r == null || !(Number(r) > 0)) r = FALLBACK_FIAT[c] || 1;
+    return Number(r);
+  }
+
+  function currencySymbol(code) {
+    var c = String(code || getDisplayCurrency()).toUpperCase();
+    return CURRENCY_SYMBOLS[c] || (c + ' ');
+  }
+
+  /**
+   * Format a USD-notional amount in the user's preferred display currency.
+   * Crypto unit amounts must NOT go through this — only fiat USD values.
+   */
+  function fmtMoney(usdAmount, opts) {
+    opts = opts || {};
+    var curr = (opts.currency || getDisplayCurrency()).toUpperCase();
+    var rate = getFiatRate(curr);
+    var converted = Number(usdAmount || 0) * rate;
+    var digits = opts.maximumFractionDigits != null ? opts.maximumFractionDigits : (curr === 'JPY' || curr === 'NGN' ? 0 : 2);
+    var minDigits = opts.minimumFractionDigits != null ? opts.minimumFractionDigits : (curr === 'JPY' || curr === 'NGN' ? 0 : 2);
+    var formatted;
+    try {
+      formatted = converted.toLocaleString(undefined, {
+        minimumFractionDigits: minDigits,
+        maximumFractionDigits: digits
+      });
+    } catch (e) {
+      formatted = converted.toFixed(minDigits);
+    }
+    if (opts.codeOnly) return formatted + ' ' + curr;
+    return currencySymbol(curr) + formatted;
+  }
+
+  /** Alias: historical name — now respects preferred currency (never fake-$ without convert). */
+  function formatMoneyUsd(n) {
+    return fmtMoney(n);
+  }
+
+  async function ensureFiatRates(force) {
+    var now = Date.now();
+    if (!force && _fiatMeta.fetchedAt && now - _fiatMeta.fetchedAt < FIAT_TTL_MS) {
+      return { rates: _fiatRates, source: _fiatMeta.source, cached: true };
+    }
+    if (_fiatPromise && !force) return _fiatPromise;
+    _fiatPromise = (async function () {
+      try {
+        var r = await api('/api/rates/fx' + (force ? '?refresh=1' : ''));
+        if (r.ok && r.data && r.data.rates) {
+          _fiatRates = Object.assign({}, FALLBACK_FIAT, r.data.rates);
+          _fiatMeta = { source: r.data.source || 'api', fetchedAt: now };
+          return { rates: _fiatRates, source: _fiatMeta.source, cached: !!r.data.cached };
+        }
+      } catch (e) {}
+      // Direct public APIs if backend not yet deployed
+      try {
+        var res = await fetch('https://open.er-api.com/v6/latest/USD');
+        if (res.ok) {
+          var data = await res.json();
+          if (data && data.rates) {
+            _fiatRates = Object.assign({}, FALLBACK_FIAT, data.rates);
+            _fiatMeta = { source: 'open.er-api.com', fetchedAt: now };
+            return { rates: _fiatRates, source: _fiatMeta.source, cached: false };
+          }
+        }
+      } catch (e2) {}
+      try {
+        var res2 = await fetch('https://api.frankfurter.app/latest?from=USD');
+        if (res2.ok) {
+          var data2 = await res2.json();
+          if (data2 && data2.rates) {
+            _fiatRates = Object.assign({}, FALLBACK_FIAT, data2.rates);
+            _fiatMeta = { source: 'frankfurter.app', fetchedAt: now };
+            return { rates: _fiatRates, source: _fiatMeta.source, cached: false };
+          }
+        }
+      } catch (e3) {}
+      _fiatMeta = { source: 'fallback', fetchedAt: now };
+      return { rates: _fiatRates, source: 'fallback', cached: false };
+    })();
+    try {
+      return await _fiatPromise;
+    } finally {
+      _fiatPromise = null;
+    }
+  }
+
+  // Keep window.formatMoney in sync for pages that define a local stub later
+  function installGlobalMoneyHelpers() {
+    try {
+      global.formatMoney = function (usd) { return fmtMoney(usd); };
+      global.getPreferredCurrency = getDisplayCurrency;
+    } catch (e) {}
+  }
+  installGlobalMoneyHelpers();
+
+  function syncDisplayCurrencyFromUser(user) {
+    if (!user) return;
+    var c = user.preferred_currency || user.preferredCurrency;
+    if (c) setDisplayCurrency(c);
+    ensureFiatRates(false).catch(function () {});
   }
 
   async function getWalletMap(opts) {
@@ -615,6 +752,15 @@
     portalEmptyHtml: portalEmptyHtml,
     apiNotDeployedHtml: apiNotDeployedHtml,
     formatMoneyUsd: formatMoneyUsd,
+    fmtMoney: fmtMoney,
+    getDisplayCurrency: getDisplayCurrency,
+    setDisplayCurrency: setDisplayCurrency,
+    getFiatRate: getFiatRate,
+    currencySymbol: currencySymbol,
+    ensureFiatRates: ensureFiatRates,
+    CURRENCY_SYMBOLS: CURRENCY_SYMBOLS,
+    FALLBACK_FIAT: FALLBACK_FIAT,
+    syncDisplayCurrencyFromUser: syncDisplayCurrencyFromUser,
     getWalletMap: getWalletMap,
     computePortfolioUsd: computePortfolioUsd,
     getVaultLockedUsd: getVaultLockedUsd,

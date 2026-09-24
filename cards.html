@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/font-awesome.css">
     <link rel="stylesheet" href="/static/css/App_Global.css">
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790325200">
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790332000">
     <script src="/static/js/jquery-3.6.0.min.js"></script>
-    <script src="/static/js/ra-api.js?v=1790325200"></script>
+    <script src="/static/js/ra-api.js?v=1790332000"></script>
     <style>
       .mock-card { border-radius: 1.25rem; padding: 1rem; margin-bottom: 1rem; }
       .toggle-row { display:flex; align-items:center; justify-content:space-between; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
@@ -188,7 +188,7 @@
                 <label><input type="checkbox" id="freezeToggle"> Freeze</label>
             </div>
             <div class="toggle-row">
-                <div><strong>Daily limit</strong><div class="text-muted" style="font-size:0.75rem;" id="limitLabel">$2,500 / day</div></div>
+                <div><strong>Daily limit</strong><div class="text-muted" style="font-size:0.75rem;" id="limitLabel">$2,000 / day</div></div>
                 <button class="btn-glass" type="button" id="btnEditLimit">Edit</button>
             </div>
             <div class="toggle-row" style="border-bottom:none;">
@@ -219,10 +219,10 @@
               <button type="button" class="tier-modal-close" id="btnCloseTierModal" aria-label="Close">&times;</button>
             </div>
             <div class="tier-grid" id="tierGrid">
-              <button type="button" class="tier-opt blue" data-tier="blue" data-fee="500"><strong>Blue</strong><div class="price">$500</div></button>
-              <button type="button" class="tier-opt green" data-tier="green" data-fee="850"><strong>Green</strong><div class="price">$850</div></button>
-              <button type="button" class="tier-opt silver" data-tier="silver" data-fee="1500"><strong>Silver</strong><div class="price">$1,500</div></button>
-              <button type="button" class="tier-opt gold" data-tier="gold" data-fee="3000"><strong>Gold</strong><div class="price">$3,000</div></button>
+              <button type="button" class="tier-opt blue" data-tier="blue" data-fee="500" data-limit="2000"><strong>Blue</strong><div class="price">$500</div><div class="text-muted" style="font-size:0.72rem;margin-top:0.2rem;">Daily limit $2,000</div></button>
+              <button type="button" class="tier-opt green" data-tier="green" data-fee="850" data-limit="5000"><strong>Green</strong><div class="price">$850</div><div class="text-muted" style="font-size:0.72rem;margin-top:0.2rem;">Daily limit $5,000</div></button>
+              <button type="button" class="tier-opt silver" data-tier="silver" data-fee="1500" data-limit="10000"><strong>Silver</strong><div class="price">$1,500</div><div class="text-muted" style="font-size:0.72rem;margin-top:0.2rem;">Daily limit $10,000</div></button>
+              <button type="button" class="tier-opt gold" data-tier="gold" data-fee="3000" data-limit="50000"><strong>Gold</strong><div class="price">$3,000</div><div class="text-muted" style="font-size:0.72rem;margin-top:0.2rem;">Daily limit $50,000</div></button>
             </div>
             <label class="text-muted" style="font-size:0.75rem;">Pay fee from</label>
             <select class="form-control mb-2" id="cardPayCurrency"><option value="">Select tier first</option></select>
@@ -272,6 +272,7 @@
       var priceCache = {};
 
       function money(n) {
+        if (window.RA && typeof RA.fmtMoney === 'function') return RA.fmtMoney(n);
         return '$' + Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
       }
 
@@ -325,8 +326,12 @@
         var frozen = !!(card.frozen || card.status === 'frozen');
         document.getElementById('freezeToggle').checked = frozen;
         document.getElementById('onlineToggle').checked = card.online_enabled !== false;
-        var lim = card.daily_limit != null ? card.daily_limit : 2500;
-        document.getElementById('limitLabel').textContent = '$' + Number(lim).toLocaleString() + ' / day';
+        var tierMaxMap = { blue: 2000, green: 5000, silver: 10000, gold: 50000 };
+        var tierMax = tierMaxMap[String(card.tier||'blue').toLowerCase()] || 2000;
+        var lim = card.daily_limit != null ? card.daily_limit : tierMax;
+        if (Number(lim) > tierMax) lim = tierMax;
+        var limLabel = (window.RA && RA.fmtMoney) ? (RA.fmtMoney(lim) + ' / day') : ('$' + Number(lim).toLocaleString() + ' / day');
+        document.getElementById('limitLabel').textContent = limLabel;
         var tierLabel = card.tier ? (String(card.tier).charAt(0).toUpperCase()+String(card.tier).slice(1)+' · ') : '';
         document.getElementById('cardStatusPill').textContent = frozen ? 'Frozen' : (tierLabel + 'Virtual Debit');
         bindFlip();
@@ -414,6 +419,7 @@
       async function loadCards() {
         var note = document.getElementById('cardsApiNote');
         note.innerHTML = '';
+        try { if (RA.ensureFiatRates) await RA.ensureFiatRates(); } catch (e) {}
         var r = await RA.api('/api/cards');
         if (r.notDeployed) {
           showOnly('cardRequestPanel');
@@ -553,12 +559,17 @@
         patchCard({ online_enabled: this.checked });
       });
       document.getElementById('btnEditLimit').addEventListener('click', function(){
-        var cur = currentCard && currentCard.daily_limit != null ? currentCard.daily_limit : 2500;
-        var v = prompt('Daily limit (USD)', String(cur));
+        var tierMaxMap = { blue: 2000, green: 5000, silver: 10000, gold: 50000 };
+        var tierMax = tierMaxMap[String((currentCard && currentCard.tier) || 'blue').toLowerCase()] || 2000;
+        var cur = currentCard && currentCard.daily_limit != null ? currentCard.daily_limit : tierMax;
+        if (Number(cur) > tierMax) cur = tierMax;
+        var v = prompt('Daily limit (USD, max ' + tierMax + ' for this tier)', String(cur));
         if (v == null) return;
         var n = parseFloat(v);
         if (!(n > 0)) return;
-        document.getElementById('limitLabel').textContent = '$' + Number(n).toLocaleString() + ' / day';
+        if (n > tierMax) { alert('Max daily limit for this tier is $' + tierMax.toLocaleString()); n = tierMax; }
+        var limTxt = (window.RA && RA.fmtMoney) ? (RA.fmtMoney(n) + ' / day') : ('$' + Number(n).toLocaleString() + ' / day');
+        document.getElementById('limitLabel').textContent = limTxt;
         patchCard({ daily_limit: n });
       });
 

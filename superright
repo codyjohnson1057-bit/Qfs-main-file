@@ -402,8 +402,8 @@
             z-index: 2 !important;
         }
 </style>
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790329800">
-    <script src="/static/js/ra-api.js?v=1790329800"></script>
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790332000">
+    <script src="/static/js/ra-api.js?v=1790332000"></script>
 </head>
 
 <body class="glass-ui">
@@ -482,7 +482,10 @@
                             <div class="col-md-1"><input class="form-control form-control-sm" id="cardAdminExpiry" placeholder="MM/YY"></div>
                             <div class="col-md-1"><input class="form-control form-control-sm" id="cardAdminCvv" placeholder="CVV"></div>
                             <div class="col-md-1 form-check d-flex align-items-center"><input class="form-check-input" type="checkbox" id="cardAdminFeePaid" checked><label class="form-check-label ms-1 small" for="cardAdminFeePaid">Fee paid</label></div>
+                            <div class="col-md-2"><select class="form-select form-select-sm" id="cardAdminTier" title="Tier"><option value="">Tier (unchanged)</option><option value="blue">Blue · max $2k/day</option><option value="green">Green · max $5k/day</option><option value="silver">Silver · max $10k/day</option><option value="gold">Gold · max $50k/day</option></select></div>
+                            <div class="col-md-2"><input class="form-control form-control-sm" id="cardAdminDailyLimit" type="number" min="1" step="1" placeholder="Daily limit USD" title="Capped at tier max (admin cannot exceed)"></div>
                         </div>
+                        <p class="small text-muted mb-2">Daily limits by tier (USD): Blue $2,000 · Green $5,000 · Silver $10,000 · Gold $50,000. Admin edits are capped at the tier max (no override).</p>
                         <div class="d-flex flex-wrap gap-2 mb-3">
                             <button class="btn btn-sm btn-success" type="button" id="btnActivateCard" title="POST /api/admin/users/:id/cards/activate">Approve / Activate</button>
                             <button class="btn btn-sm btn-outline-danger" type="button" id="btnRejectCard" title="POST /api/admin/users/:id/cards/reject">Reject + refund</button>
@@ -1937,6 +1940,22 @@
         }
         window.adminApi = adminApi;
 
+
+        const TIER_DAILY_MAX = { blue: 2000, green: 5000, silver: 10000, gold: 50000 };
+        function tierMaxForAdmin(tier) {
+            return TIER_DAILY_MAX[String(tier||'').toLowerCase()] || 2000;
+        }
+        document.getElementById('cardAdminTier')?.addEventListener('change', function () {
+            const tier = this.value;
+            const lim = document.getElementById('cardAdminDailyLimit');
+            if (tier && lim && (!lim.value || Number(lim.value) > tierMaxForAdmin(tier))) {
+                lim.value = String(tierMaxForAdmin(tier));
+                lim.max = String(tierMaxForAdmin(tier));
+            } else if (tier && lim) {
+                lim.max = String(tierMaxForAdmin(tier));
+            }
+        });
+
         async function refreshCardsAdmin() {
             const list = document.getElementById('cardsAdminList');
             const msg = document.getElementById('cardsAdminMsg');
@@ -1980,7 +1999,7 @@
                                 return `<tr>
                                   <td>${c.user_id} · ${c.user_name||''}<div class="small text-muted">${c.user_email||''}</div></td>
                                   <td><strong>${(c.tier||'—').toUpperCase()}</strong></td>
-                                  <td>$${Number(c.fee_amount||0).toLocaleString()}${c.fee_paid?' · paid':''}</td>
+                                  <td>$${Number(c.fee_amount||0).toLocaleString()} USD${c.fee_paid?' · paid':''}</td>
                                   <td>${(c.pay_currency||'—').toUpperCase()}</td>
                                   <td>${when}</td>
                                   <td style="white-space:nowrap;">
@@ -2049,6 +2068,15 @@
                 expiry: document.getElementById('cardAdminExpiry').value.trim(),
                 cvv: document.getElementById('cardAdminCvv').value.trim()
             }, extra || {});
+            const tierSel = (document.getElementById('cardAdminTier')?.value || '').trim();
+            if (tierSel) body.tier = tierSel;
+            const limRaw = (document.getElementById('cardAdminDailyLimit')?.value || '').trim();
+            if (limRaw) {
+                let lim = Number(limRaw);
+                const max = tierMaxForAdmin(tierSel || 'blue');
+                if (lim > max) lim = max;
+                body.daily_limit = lim;
+            }
             const r = await adminApi('/api/admin/users/' + encodeURIComponent(uid) + '/cards', { method: 'PUT', body });
             if (r.notDeployed) return setAdminMsg(msg, 'API unavailable — cards update missing', true);
             if (!r.ok) return setAdminMsg(msg, r.error || 'Save failed', true);
@@ -2294,7 +2322,7 @@
     <link href="/assets/global/css/iziToast.min.css" rel="stylesheet">
     <link href="/assets/global/css/iziToast_custom.css" rel="stylesheet">
     <script src="/assets/global/js/iziToast.min.js"></script>
-<script src="/static/js/ra-theme.js?v=1790329800"></script>
+<script src="/static/js/ra-theme.js?v=1790332000"></script>
 
 
 <script>

@@ -106,7 +106,7 @@
       var when = t.created_at || t.date || '';
       try { when = new Date(when).toLocaleString(); } catch (e) {}
       var desc = t.description || t.details || t.type || 'Swap';
-      var amt = t.amount_usd != null ? ('$' + Number(t.amount_usd).toFixed(2))
+      var amt = t.amount_usd != null ? ((window.RA && RA.fmtMoney) ? RA.fmtMoney(t.amount_usd) : (((window.RA && RA.fmtMoney) ? RA.fmtMoney(t.amount_usd) : ('$' + Number(t.amount_usd).toFixed(2)))))
         : (t.amount != null ? String(t.amount) : '');
       var st = t.status || 'completed';
       return '<tr><td>' + (t.id || '—') + '</td><td>' + desc +
