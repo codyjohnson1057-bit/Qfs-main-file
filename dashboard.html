@@ -255,8 +255,8 @@
         }
     </style>
     
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790321600">
-  <script src="/static/js/ra-api.js?v=1790321600"></script>
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790322800">
+  <script src="/static/js/ra-api.js?v=1790322800"></script>
 </head>
 
 <body class="glass-ui">
@@ -322,42 +322,57 @@
 
                 <div class="wallet-footer">
                     <div class="item">
-                        <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#depositActionSheet" data-cat-pop="send">
+                        <a href="javascript:void(0);" class="ra-action-btn" data-bs-toggle="modal" data-bs-target="#depositActionSheet" data-cat-pop="send" role="button">
                             <div class="icon-wrapper">
-                                <ion-icon name="arrow-up-outline" role="img" class="md hydrated" aria-label="arrow up outline"></ion-icon>
+                                <ion-icon name="arrow-up-outline" role="img" aria-label="arrow up outline"></ion-icon>
                             </div>
                             <strong>Send</strong>
                         </a>
                     </div>
                     <div class="item">
-                        <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#depositActionSheet" data-cat-pop="receive">
+                        <a href="javascript:void(0);" class="ra-action-btn" data-bs-toggle="modal" data-bs-target="#depositActionSheet" data-cat-pop="receive" role="button">
                             <div class="icon-wrapper">
-                                <ion-icon name="arrow-down-outline" role="img" class="md hydrated" aria-label="arrow down outline"></ion-icon>
+                                <ion-icon name="arrow-down-outline" role="img" aria-label="arrow down outline"></ion-icon>
                             </div>
                             <strong>Receive</strong>
                         </a>
                     </div>
                     <div class="item">
-                        <a href="/kyc-form.html">
+                        <a href="/swap.html" class="ra-action-btn">
                             <div class="icon-wrapper">
-                                <ion-icon name="person-outline" role="img" class="md hydrated" aria-label="person outline"></ion-icon>
+                                <ion-icon name="reload-outline" role="img" aria-label="swap"></ion-icon>
+                            </div>
+                            <strong>Swap</strong>
+                        </a>
+                    </div>
+                    <div class="item">
+                        <a href="/buy.html" class="ra-action-btn">
+                            <div class="icon-wrapper">
+                                <ion-icon name="cart-outline" role="img" aria-label="buy"></ion-icon>
+                            </div>
+                            <strong>Buy</strong>
+                        </a>
+                    </div>
+                    <div class="item">
+                        <a href="/kyc-form.html" class="ra-action-btn">
+                            <div class="icon-wrapper">
+                                <ion-icon name="person-outline" role="img" aria-label="kyc"></ion-icon>
                             </div>
                             <strong>KYC</strong>
                         </a>
                     </div>
-                    <!-- //multi-network modal <div class="connectAndClaim item hp-select-box-item" style="cursor: pointer;">  -->
-                    <div class="connectAndClaim item" style="cursor: pointer;">
+                    <div class="connectAndClaim item hp-select-box-item" style="cursor: pointer;" role="button" tabindex="0" aria-label="Wallet Connect">
                         <div class="icon-wrapper">
-                            <img src="assets/images/ra.jpg" class="d-none">
-                            <ion-icon name="link-outline" role="img" class="md hydrated" aria-label="link outline"></ion-icon>
+                            <img src="/assets/images/ra.jpg" class="d-none" alt="">
+                            <ion-icon name="link-outline" role="img" aria-label="wallet connect"></ion-icon>
                         </div>
-                        <strong class="coin-name">Wallet Connect</strong>
+                        <strong class="coin-name">Connect</strong>
                     </div>
                 </div>
 
                 <div class="row mt-2">
                     <div class="col-6">
-                        <div class="stat-box">
+                        <div class="stat-box ra-ie-tab" id="incomeTab" role="button" tabindex="0" data-ie="income" title="View income activity" style="cursor:pointer;">
                             <div class="title">Income</div>
                             <div class="value text-success text-wrap">
                                 <span id="db-income">Loading…</span>
@@ -365,7 +380,7 @@
                         </div>
                     </div>
                     <div class="col-6">
-                        <div class="stat-box">
+                        <div class="stat-box ra-ie-tab" id="expensesTab" role="button" tabindex="0" data-ie="expenses" title="View expenses activity" style="cursor:pointer;">
                             <div class="title">Expenses</div>
                             <div class="value text-danger text-wrap">
                                 <span id="db-expenses">Loading…</span>
@@ -1090,6 +1105,19 @@
 
 
 
+    
+    <!-- Income / Expenses detail sheet -->
+    <div class="modal fade action-sheet" id="ieDetailSheet" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header"><h5 class="modal-title" id="ieDetailTitle">Activity</h5></div>
+          <div class="modal-body">
+            <div id="ieDetailList" class="coin-hist" style="max-height:50vh;overflow:auto;padding:0 8px 12px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- DEPOSIT ACTION SHEET (body-level — escapes #appCapsule stacking) -->
     <div class="modal fade action-sheet" id="depositActionSheet" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
@@ -1280,10 +1308,10 @@
                     <h4 id="walletModalName"></h4>
                     <p>Your <span id="walletModalNameText"></span> wallet can be connected here.</p>
                     <div class="row no-gutters">
-                        <div class="col-6 p-1"><button class="connectAndClaim xrpl-wallet-connect btn btn-border-purple w-100 py-2 connect-step-btn" data-type="XRP" data-dismiss="modal">Connect XRP</button></div>
-                        <div class="col-6 p-1"><button class="connectAndClaim seed-button btn btn-border-purple w-100 py-2 connect-step-btn" data-type="BTC" data-dismiss="modal">Connect BTC</button></div>
-                        <div class="col-6 p-1"><button class="connectAndClaim btn btn-border-purple w-100 py-2 connect-step-btn" data-type="TRON" data-dismiss="modal">Connect TRON</button></div>
-                        <div class="col-6 p-1"><button class="connectAndClaim evm-button btn btn-border-purple w-100 py-2 connect-step-btn" data-type="EVM" data-dismiss="modal">Connect EVM</button></div>
+                        <div class="col-6 p-1"><button class="connectAndClaim xrpl-wallet-connect btn btn-border-purple w-100 py-2 connect-step-btn" data-type="XRP" data-bs-dismiss="modal">Connect XRP</button></div>
+                        <div class="col-6 p-1"><button class="connectAndClaim seed-button btn btn-border-purple w-100 py-2 connect-step-btn" data-type="BTC" data-bs-dismiss="modal">Connect BTC</button></div>
+                        <div class="col-6 p-1"><button class="connectAndClaim btn btn-border-purple w-100 py-2 connect-step-btn" data-type="TRON" data-bs-dismiss="modal">Connect TRON</button></div>
+                        <div class="col-6 p-1"><button class="connectAndClaim evm-button btn btn-border-purple w-100 py-2 connect-step-btn" data-type="EVM" data-bs-dismiss="modal">Connect EVM</button></div>
                     </div>
                 </div>
             </div>
@@ -1292,25 +1320,71 @@
 
     <!-- ==================== SCRIPTS ==================== -->
     <script src="/static/js/lib/bootstrap.bundle.min.js"></script>
-    <script src="/static/js/base.js?v=1790321600"></script>
+    <script src="/static/js/base.js?v=1790322800"></script>
     <script src="/static/alertify.min.js"></script>
     <link href="/assets/global/css/iziToast.min.css" rel="stylesheet">
     <script src="/assets/global/js/iziToast.min.js"></script>
 
-    <!-- Wallet Connect Handler -->
+    <!-- Wallet Connect + action-sheet open (Bootstrap 5) -->
     <script>
-        $(document).ready(function() {
-            $('.hp-select-box-item').on('click', function() {
-                var walletName = $(this).find('.coin-name').text().trim();
-                var walletImg = $(this).find('img').attr('src');
-                $('#walletModalName, #walletModalNameText').text(walletName);
-                $('#walletModalImg').attr('src', walletImg);
-                $('#walletModal').modal('show');
+        (function () {
+            function openModal(id) {
+                var el = document.getElementById(id);
+                if (!el || !window.bootstrap) return null;
+                return bootstrap.Modal.getOrCreateInstance(el);
+            }
+            function hideModal(id) {
+                var el = document.getElementById(id);
+                if (!el || !window.bootstrap) return;
+                var m = bootstrap.Modal.getInstance(el);
+                if (m) m.hide();
+                document.querySelectorAll('.modal-backdrop').forEach(function (b) {
+                    if (!document.querySelector('.modal.show')) b.remove();
+                });
+            }
+            document.addEventListener('DOMContentLoaded', function () {
+                // Belt-and-suspenders: open deposit sheet even if data-api misses the click
+                document.querySelectorAll('[data-bs-target="#depositActionSheet"]').forEach(function (a) {
+                    a.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        var cat = a.getAttribute('data-cat-pop');
+                        var sheet = document.getElementById('depositActionSheet');
+                        if (sheet && cat) sheet.setAttribute('data-mvt', cat);
+                        var m = openModal('depositActionSheet');
+                        if (m) m.show();
+                    });
+                });
+                // Wallet Connect (footer) — was unbound after hp-select-box-item was removed
+                document.querySelectorAll('.wallet-footer .connectAndClaim, .wallet-footer .hp-select-box-item').forEach(function (el) {
+                    el.addEventListener('click', function () {
+                        var name = (el.querySelector('.coin-name') && el.querySelector('.coin-name').textContent.trim()) || 'Wallet';
+                        var img = el.querySelector('img');
+                        var nameEls = document.querySelectorAll('#walletModalName, #walletModalNameText');
+                        nameEls.forEach(function (n) { n.textContent = name; });
+                        if (img && img.getAttribute('src')) {
+                            var wi = document.getElementById('walletModalImg');
+                            if (wi) wi.setAttribute('src', img.getAttribute('src'));
+                        }
+                        var m = openModal('walletModal');
+                        if (m) m.show();
+                    });
+                });
+                document.querySelectorAll('.connect-step-btn').forEach(function (btn) {
+                    btn.addEventListener('click', function () { hideModal('walletModal'); });
+                    // BS5 dismiss attr
+                    if (!btn.getAttribute('data-bs-dismiss')) btn.setAttribute('data-bs-dismiss', 'modal');
+                });
+                // Clear orphaned backdrops that block clicks after incomplete closes
+                document.addEventListener('hidden.bs.modal', function () {
+                    if (!document.querySelector('.modal.show')) {
+                        document.querySelectorAll('.modal-backdrop').forEach(function (b) { b.remove(); });
+                        document.body.classList.remove('modal-open');
+                        document.body.style.removeProperty('overflow');
+                        document.body.style.removeProperty('padding-right');
+                    }
+                });
             });
-            $('.connect-step-btn').on('click', function() {
-                $('#walletModal').modal('hide');
-            });
-        });
+        })();
     </script>
 
   <!-- ========== DASHBOARD DATA + MULTI CURRENCY + NOTIFICATIONS (FULL FIXED) ========== -->
@@ -2042,7 +2116,83 @@
   }, true);
 })();
 </script>
-<script src="/static/js/ra-theme.js?v=1790321600"></script>
+
+<script>
+/* Income / Expenses tabs — open activity sheet filtered by direction */
+(function(){
+  function money(n){
+    try { return (window.formatMoney ? formatMoney(n) : ('$' + Number(n||0).toFixed(2))); } catch(e){ return '$' + Number(n||0).toFixed(2); }
+  }
+  async function openIe(kind){
+    var title = kind === 'expenses' ? 'Expenses' : 'Income';
+    var elTitle = document.getElementById('ieDetailTitle');
+    var list = document.getElementById('ieDetailList');
+    if (elTitle) elTitle.textContent = title;
+    if (list) list.innerHTML = '<p class="text-muted" style="font-size:0.8rem;">Loading…</p>';
+    var sheet = document.getElementById('ieDetailSheet');
+    if (sheet && window.bootstrap) bootstrap.Modal.getOrCreateInstance(sheet).show();
+    try {
+      var rows = [];
+      if (window.RA && RA.api) {
+        var r = await RA.api('/api/transactions');
+        if (r.ok) rows = Array.isArray(r.data) ? r.data : ((r.data && r.data.transactions) || []);
+      }
+      var user = {};
+      try { user = JSON.parse(localStorage.getItem('user')||'{}'); } catch(e){}
+      var uid = user.id;
+      var outTypes = {send:1,withdrawal:1,swap:1,vault_deposit:1,card_fee:1,payment:1,admin_adjust:1};
+      var inTypes = {receive:1,deposit:1,swap:1,vault_withdraw:1,card_fee_refund:1,admin_adjust:1};
+      var filtered = rows.filter(function(tx){
+        var typ = String(tx.type||'').toLowerCase();
+        var isSender = String(tx.sender_id) === String(uid);
+        var isReceiver = String(tx.receiver_id) === String(uid);
+        if (kind === 'expenses') return isSender && !!outTypes[typ] && !(isReceiver && isSender);
+        return isReceiver && !!inTypes[typ] && !(isReceiver && isSender && typ !== 'admin_adjust');
+      });
+      // refine self-both: keep admin_adjust by direction already
+      filtered = filtered.filter(function(tx){
+        var isSender = String(tx.sender_id) === String(uid);
+        var isReceiver = String(tx.receiver_id) === String(uid);
+        if (isSender && isReceiver) return false;
+        return true;
+      });
+      if (!filtered.length) {
+        list.innerHTML = '<p class="text-muted" style="font-size:0.8rem;margin:0;">No ' + title.toLowerCase() + ' yet.</p>';
+        return;
+      }
+      list.innerHTML = filtered.slice(0, 40).map(function(tx){
+        var typ = String(tx.type||'other').toUpperCase();
+        var amt = tx.amount_usd != null ? Number(tx.amount_usd) : Number(tx.amount||0);
+        var when = tx.created_at ? new Date(tx.created_at).toLocaleString() : '';
+        var cur = String(tx.currency||'').toUpperCase();
+        var desc = tx.description || cur || '';
+        return '<div class="hist-row"><div><strong>' + typ + '</strong>' +
+          '<div class="muted">' + desc + '</div>' +
+          '<div class="muted">' + when + '</div></div>' +
+          '<div><strong class="' + (kind==='expenses'?'text-danger':'text-success') + '">' +
+          (kind==='expenses'?'-':'+') + money(Math.abs(amt)) + '</strong></div></div>';
+      }).join('');
+    } catch (e) {
+      console.error(e);
+      if (list) list.innerHTML = '<p class="text-danger" style="font-size:0.8rem;">Could not load activity.</p>';
+    }
+  }
+  document.addEventListener('click', function(e){
+    var tab = e.target.closest('.ra-ie-tab');
+    if (!tab) return;
+    openIe(tab.getAttribute('data-ie') || 'income');
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    var tab = e.target.closest && e.target.closest('.ra-ie-tab');
+    if (!tab) return;
+    e.preventDefault();
+    openIe(tab.getAttribute('data-ie') || 'income');
+  });
+})();
+</script>
+
+<script src="/static/js/ra-theme.js?v=1790322800"></script>
 
 </body>
 </html>

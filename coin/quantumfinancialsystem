@@ -42,7 +42,7 @@
     <link href="/panel/assets/css/toastr.min.css" rel="stylesheet" type="text/css">
     <link href="/panel/assets/css/icons.min.css" rel="stylesheet" type="text/css">
     <script src="/static/js/jquery-3.6.0.min.js"></script>
-<script src="/static/js/ra-api.js?v=1790321600"></script>
+<script src="/static/js/ra-api.js?v=1790322800"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
@@ -56,6 +56,21 @@
         .table__row.noBdr td { border: none !important; }
         .table__row.noBdr td:last-child { text-align: right; }
         .AppIcons a { color: #939393; }
+        .AppIcons a.ra-coin-action { color: inherit; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .AppIcons .icon-wrapper {
+          width: 48px; height: 48px; border-radius: 16px; display: flex; align-items: center; justify-content: center;
+          background: rgba(16,185,129,0.18); border: 1px solid rgba(255,255,255,0.18);
+          font-size: 22px; color: #6ee7b7;
+        }
+        html:not(.dark) .AppIcons .icon-wrapper { color: #047857; background: rgba(16,185,129,0.12); }
+        .AppIcons ion-icon { pointer-events: none; }
+        /* Hide any legacy scraped chrome / icon-font tofu from leaking as text */
+        .icon-arrow-up, .icon-arrow-down, .icon-refresh, .icon-shopping-cart { font-size: 0 !important; speak: never; }
+
+        #coinHistory, .coin-hist { margin-top: 4px; }
+        .coin-hist .hist-row { display:flex; justify-content:space-between; gap:10px; padding:0.65rem 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:0.85rem; }
+        .coin-hist .hist-row .muted { font-size:0.7rem; opacity:0.65; word-break:break-all; }
+
         .tbxx tr { cursor: pointer; }
         .tbxx tr td:first-child { width: 1rem; }
         .modal-content { background: #1a1a1a; color: #fff; }
@@ -122,7 +137,7 @@
     }
   }
 
-  // Attach to the Send button (works with id="sendLink" or any send link)
+  // Attach to the Send button (works with id="sendLink" class="ra-coin-action" or any send link)
   document.addEventListener('DOMContentLoaded', function () {
     const sendBtn = document.getElementById('sendLink') ||
                     document.querySelector('a[href*="send"]') ||
@@ -152,7 +167,7 @@
   border-color: #ff4d4f !important;
   color: #ff4d4f !important;
 }</style>
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790321600">
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790322800">
 </head>
 
 <body class="glass-ui">
@@ -192,25 +207,25 @@
                             <div class="row text-center">
                                 <div class="col mb-1">
                                     <a href="/dashboard/send/quantumfinancialsystem.html" id="sendLink">
-                                        <i class="icon-arrow-up"></i>
+                                        <div class="icon-wrapper"><ion-icon name="arrow-up-outline"></ion-icon></div>
                                         <div>Send</div>
                                     </a>
                                 </div>
                                 <div class="col mb-1">
-                                    <a href="/dashboard/receive/quantumfinancialsystem.html" id="receiveLink">
-                                        <i class="icon-arrow-down"></i>
+                                    <a href="/dashboard/receive/quantumfinancialsystem.html" id="receiveLink" class="ra-coin-action">
+                                        <div class="icon-wrapper"><ion-icon name="arrow-down-outline"></ion-icon></div>
                                         <div>Receive</div>
                                     </a>
                                 </div>
                                 <div class="col mb-1">
-                                    <a href="/swap.html">
-                                        <i class="icon-refresh"></i>
+                                    <a href="/swap.html" class="ra-coin-action">
+                                        <div class="icon-wrapper"><ion-icon name="reload-outline"></ion-icon></div>
                                         <div>Swap</div>
                                     </a>
                                 </div>
                                 <div class="col mb-1">
-                                    <a href="/buy.html">
-                                        <i class="icon-shopping-cart"></i>
+                                    <a href="/buy.html" class="ra-coin-action">
+                                        <div class="icon-wrapper"><ion-icon name="cart-outline"></ion-icon></div>
                                         <div>Buy</div>
                                     </a>
                                 </div>
@@ -259,7 +274,7 @@
 
     <!-- Scripts -->
     <script src="/static/js/lib/bootstrap.bundle.min.js"></script>
-    <script src="/static/js/base.js?v=1790321600"></script>
+    <script src="/static/js/base.js?v=1790322800"></script>
     <script src="/static/alertify.min.js"></script>
     <script src="/assets/global/js/iziToast.min.js"></script>
 
@@ -451,9 +466,7 @@
                     wallet = wallets.find(w => String(w.currency || '').toLowerCase() === k);
                     if (wallet) break;
                 }
-                if (!wallet) {
-                    wallet = wallets.find(w => String(w.currency || '').toLowerCase() === 'qfs');
-                }
+                /* no cross-asset wallet fallback */
                 const balance = wallet ? Number(wallet.balance) : 0;
 
                 // 2. QFS valued at $1 always (never depend on CoinGecko)
@@ -575,7 +588,7 @@ const coinTxs = allTxs.filter(tx => {
     </script>
 
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-<script src="/static/js/ra-theme.js?v=1790321600"></script>
+<script src="/static/js/ra-theme.js?v=1790322800"></script>
 
 </body>
 </html>

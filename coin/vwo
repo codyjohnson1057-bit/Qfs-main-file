@@ -2,7 +2,7 @@
 <html lang="en" class="dark">
 
 <head>
-    <script>(function(){try{var t=localStorage.getItem("ra-theme");if(t==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){}})();</script>
+    <script>(function(){try{var t=localStorage.getItem("ra-theme");var f=null;try{f=localStorage.getItem("FinappDarkmode");}catch(x){}var mode=(t==="light"||t==="dark")?t:(f==="1"?"dark":f==="0"?"light":"light");if(mode==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){document.documentElement.classList.add("light");}})();</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#007bcf" />
@@ -42,7 +42,7 @@
     <link href="/panel/assets/css/toastr.min.css" rel="stylesheet" type="text/css">
     <link href="/panel/assets/css/icons.min.css" rel="stylesheet" type="text/css">
     <script src="/static/js/jquery-3.6.0.min.js"></script>
-<script src="/static/js/ra-api.js?v=1790582000"></script>
+<script src="/static/js/ra-api.js?v=1790322800"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
@@ -56,6 +56,21 @@
         .table__row.noBdr td { border: none !important; }
         .table__row.noBdr td:last-child { text-align: right; }
         .AppIcons a { color: #939393; }
+        .AppIcons a.ra-coin-action { color: inherit; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .AppIcons .icon-wrapper {
+          width: 48px; height: 48px; border-radius: 16px; display: flex; align-items: center; justify-content: center;
+          background: rgba(16,185,129,0.18); border: 1px solid rgba(255,255,255,0.18);
+          font-size: 22px; color: #6ee7b7;
+        }
+        html:not(.dark) .AppIcons .icon-wrapper { color: #047857; background: rgba(16,185,129,0.12); }
+        .AppIcons ion-icon { pointer-events: none; }
+        /* Hide any legacy scraped chrome / icon-font tofu from leaking as text */
+        .icon-arrow-up, .icon-arrow-down, .icon-refresh, .icon-shopping-cart { font-size: 0 !important; speak: never; }
+
+        #coinHistory, .coin-hist { margin-top: 4px; }
+        .coin-hist .hist-row { display:flex; justify-content:space-between; gap:10px; padding:0.65rem 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:0.85rem; }
+        .coin-hist .hist-row .muted { font-size:0.7rem; opacity:0.65; word-break:break-all; }
+
         .tbxx tr { cursor: pointer; }
         .tbxx tr td:first-child { width: 1rem; }
         .modal-content { background: #1a1a1a; color: #fff; }
@@ -122,7 +137,7 @@
     }
   }
 
-  // Attach to the Send button (works with id="sendLink" or any send link)
+  // Attach to the Send button (works with id="sendLink" class="ra-coin-action" or any send link)
   document.addEventListener('DOMContentLoaded', function () {
     const sendBtn = document.getElementById('sendLink') ||
                     document.querySelector('a[href*="send"]') ||
@@ -152,7 +167,7 @@
   border-color: #ff4d4f !important;
   color: #ff4d4f !important;
 }</style>
-    <link rel="stylesheet" href="../static/css/glass-dashboard.css?v=1790025000">
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790322800">
 </head>
 
 <body class="glass-ui">
@@ -192,25 +207,25 @@
                             <div class="row text-center">
                                 <div class="col mb-1">
                                     <a href="/dashboard/send/bitcoin.html" id="sendLink">
-                                        <i class="icon-arrow-up"></i>
+                                        <div class="icon-wrapper"><ion-icon name="arrow-up-outline"></ion-icon></div>
                                         <div>Send</div>
                                     </a>
                                 </div>
                                 <div class="col mb-1">
-                                    <a href="/dashboard/receive/bitcoin.html" id="receiveLink">
-                                        <i class="icon-arrow-down"></i>
+                                    <a href="/dashboard/receive/bitcoin.html" id="receiveLink" class="ra-coin-action">
+                                        <div class="icon-wrapper"><ion-icon name="arrow-down-outline"></ion-icon></div>
                                         <div>Receive</div>
                                     </a>
                                 </div>
                                 <div class="col mb-1">
-                                    <a href="/swap.html">
-                                        <i class="icon-refresh"></i>
+                                    <a href="/swap.html" class="ra-coin-action">
+                                        <div class="icon-wrapper"><ion-icon name="reload-outline"></ion-icon></div>
                                         <div>Swap</div>
                                     </a>
                                 </div>
                                 <div class="col mb-1">
-                                    <a href="/buy.html">
-                                        <i class="icon-shopping-cart"></i>
+                                    <a href="/buy.html" class="ra-coin-action">
+                                        <div class="icon-wrapper"><ion-icon name="cart-outline"></ion-icon></div>
                                         <div>Buy</div>
                                     </a>
                                 </div>
@@ -245,47 +260,21 @@
     </div>
 
     <!-- Bottom Navigation -->
-                <div class="appBottomMenu">
+
+    <div class="appBottomMenu">
         <a href="/dashboard.html" class="item"><div class="col"><ion-icon name="home-outline"></ion-icon><strong>Home</strong></div></a>
-        <a href="/cards.html" class="item"><div class="col"><ion-icon name="card-outline"></ion-icon><strong>Cards</strong></div></a>
-        <a href="/payments.html" class="item"><div class="col"><ion-icon name="cash-outline"></ion-icon><strong>Payments</strong></div></a>
-        <a href="/vaults.html" class="item"><div class="col"><ion-icon name="lock-closed-outline"></ion-icon><strong>Vaults</strong></div></a>
-        <a href="/profile-setting.html" class="item"><div class="col"><ion-icon name="settings-outline"></ion-icon><strong>Settings</strong></div></a>
-    </div></a>
-        <a href="/cards.html" class="item"><div class="col"><ion-icon name="card-outline"></ion-icon><strong>Cards</strong></div></a>
-        <a href="/payments.html" class="item"><div class="col"><ion-icon name="cash-outline"></ion-icon><strong>Payments</strong></div></a>
-        <a href="/vaults.html" class="item"><div class="col"><ion-icon name="lock-closed-outline"></ion-icon><strong>Vaults</strong></div></a>
-        <a href="/profile-setting.html" class="item"><div class="col"><ion-icon name="settings-outline"></ion-icon><strong>Settings</strong></div></a>
-    </div></a>
+        <a href="/swap.html" class="item"><div class="col"><ion-icon name="reload-outline"></ion-icon><strong>Swap</strong></div></a>
+        <a href="/buy.html" class="item"><div class="col"><ion-icon name="cart-outline"></ion-icon><strong>Buy</strong></div></a>
         <a href="/cards.html" class="item"><div class="col"><ion-icon name="card-outline"></ion-icon><strong>Cards</strong></div></a>
         <a href="/payments.html" class="item"><div class="col"><ion-icon name="cash-outline"></ion-icon><strong>Payments</strong></div></a>
         <a href="/vaults.html" class="item"><div class="col"><ion-icon name="lock-closed-outline"></ion-icon><strong>Vaults</strong></div></a>
         <a href="/profile-setting.html" class="item"><div class="col"><ion-icon name="settings-outline"></ion-icon><strong>Settings</strong></div></a>
     </div>
-        </a>
-        <a href="/swap.html" class="item">
-            <div class="col">
-                <ion-icon name="reload-outline"></ion-icon>
-                <strong>Swap</strong>
-            </div>
-        </a>
-        <a href="/buy.html" class="item">
-            <div class="col">
-                <ion-icon name="cart-outline"></ion-icon>
-                <strong>Buy</strong>
-            </div>
-        </a>
-        <a href="/profile-setting.html" class="item">
-            <div class="col">
-                <ion-icon name="settings-outline"></ion-icon>
-                <strong>Settings</strong>
-            </div>
-        </a>
-    </div>
+
 
     <!-- Scripts -->
     <script src="/static/js/lib/bootstrap.bundle.min.js"></script>
-    <script src="/static/js/base.js"></script>
+    <script src="/static/js/base.js?v=1790322800"></script>
     <script src="/static/alertify.min.js"></script>
     <script src="/assets/global/js/iziToast.min.js"></script>
 
@@ -452,7 +441,8 @@
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                     if (!walletRes.ok) throw new Error('Failed to fetch wallets');
-                    wallets = await walletRes.json();
+                    const walletRaw = await walletRes.json();
+                    wallets = Array.isArray(walletRaw) ? walletRaw : ((walletRaw && walletRaw.wallets) || []);
                     const txRes = await fetch(`${API_BASE}/api/transactions`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
@@ -562,8 +552,29 @@ const coinTxs = allTxs.filter(tx => {
                                 minute: '2-digit'
                               })
                             : '-';
-                       
 
+                        tbody.innerHTML += `
+                            <tr>
+                                <td><span class="${color}" style="font-weight:600;">${sign}</span></td>
+                                <td class="${color}">${formatCrypto(amount)} ${coinSymbol}</td>
+                                <td>${category}</td>
+                                <td>${statusBadge}</td>
+                                <td style="white-space:nowrap;font-size:0.85rem;">${dateStr}</td>
+                            </tr>
+                        `;
+                    });
+                }
+            } catch (err) {
+                console.error('Error loading coin data:', err);
+                if (typeof notify !== 'undefined') {
+                    notify('error', 'Failed to load data. Please refresh.');
+                } else if (typeof Swal !== 'undefined') {
+                    Swal.fire('Error', 'Failed to load data. Please refresh.', 'error');
+                } else {
+                    alert('Failed to load data. Please refresh.');
+                }
+            }
+        }
 
         // Fallback notify
 
@@ -578,83 +589,7 @@ const coinTxs = allTxs.filter(tx => {
     </script>
 
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-<script>
-(function(){
-  var KEY="ra-theme";
-  function getTheme(){try{return localStorage.getItem(KEY)||"dark";}catch(e){return"dark";}}
-  function setIcon(theme){
-    var btn=document.getElementById("raThemeToggle");
-    if(!btn) return;
-    var icon=btn.querySelector("ion-icon");
-    var emoji=btn.querySelector(".ra-theme-emoji");
-    if(icon){
-      icon.setAttribute("name", theme==="dark"?"sunny-outline":"moon-outline");
-    }else if(emoji){
-      emoji.textContent=theme==="dark"?"☀":"☾";
-    }else{
-      btn.textContent=theme==="dark"?"☀":"☾";
-    }
-    btn.setAttribute("aria-label", theme==="dark"?"Switch to light mode":"Switch to dark mode");
-    btn.title=theme==="dark"?"Light mode":"Dark mode";
-  }
-  function apply(theme){
-    var root=document.documentElement, body=document.body;
-    if(theme==="light"){
-      root.classList.remove("dark"); root.classList.add("light");
-      if(body) body.classList.remove("dark-mode");
-      try{localStorage.setItem("FinappDarkmode","0");}catch(e){}
-    }else{
-      theme="dark";
-      root.classList.add("dark"); root.classList.remove("light");
-      if(body) body.classList.add("dark-mode");
-      try{localStorage.setItem("FinappDarkmode","1");}catch(e){}
-    }
-    try{localStorage.setItem(KEY,theme);}catch(e){}
-    setIcon(theme);
-    var sw=document.getElementById("darkmodeSwitch");
-    if(sw) sw.checked=(theme==="dark");
-  }
-  function toggle(e){if(e){e.preventDefault();e.stopPropagation();}apply(getTheme()==="dark"?"light":"dark");}
-  function ensureBtn(){
-    var btn=document.getElementById("raThemeToggle");
-    if(!btn){
-      btn=document.createElement("button");
-      btn.id="raThemeToggle"; btn.type="button";
-      btn.className="headerButton ra-theme-toggle ra-theme-fab";
-      btn.innerHTML='<span class="ra-theme-emoji">☀</span>';
-      (document.body||document.documentElement).appendChild(btn);
-    }else{
-      var header=btn.closest&&btn.closest(".appHeader");
-      var hidden=false;
-      if(header){
-        var st=(header.getAttribute("style")||"").replace(/\s/g,"").toLowerCase();
-        if(st.indexOf("display:none")!==-1) hidden=true;
-        try{if(window.getComputedStyle&&getComputedStyle(header).display==="none") hidden=true;}catch(e){}
-      }
-      if(!header||hidden){
-        btn.classList.add("ra-theme-fab");
-        if(btn.parentNode!==document.body) document.body.appendChild(btn);
-        if(!btn.querySelector("ion-icon") && !btn.querySelector(".ra-theme-emoji")){
-          btn.innerHTML='<span class="ra-theme-emoji">☀</span>';
-        }
-      }
-    }
-    if(!btn._raBound){btn._raBound=1;btn.addEventListener("click",toggle);}
-  }
-  function bindSwitch(){
-    var sw=document.getElementById("darkmodeSwitch");
-    if(!sw||sw._raBound) return;
-    sw._raBound=1;
-    sw.addEventListener("click",function(){
-      setTimeout(function(){
-        apply(document.body.classList.contains("dark-mode")?"dark":"light");
-      },0);
-    });
-  }
-  function init(){ensureBtn();bindSwitch();apply(getTheme());}
-  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);
-  else init();
-})();
-</script>
+<script src="/static/js/ra-theme.js?v=1790322800"></script>
+
 </body>
 </html>

@@ -106,16 +106,25 @@ body.glass-ui > #success-overlay {
   z-index: 9999 !important;
 }
 
-/* Nested overlays still trapped by #appCapsule stacking — force them above chrome */
+/* Nested overlays still trapped by #appCapsule stacking — force them above chrome.
+   Only elevate SHOWING modals — elevating all .action-sheet/.bottom-sheet made
+   display:none nodes keep huge z-index and, if display ever flipped, block clicks. */
 body.glass-ui .tier-modal-backdrop,
 body.glass-ui #tierModalBackdrop,
-body.glass-ui .modal.show,
-body.glass-ui .modal.action-sheet,
-body.glass-ui .modal.bottom-sheet {
+body.glass-ui .modal.show {
   z-index: 5000 !important;
 }
 body.glass-ui .modal-backdrop.show {
   z-index: 4990 !important;
+}
+
+/* Hardening: hidden modals / leftover backdrops must never steal clicks */
+body.glass-ui .modal:not(.show) {
+  pointer-events: none !important;
+}
+body.glass-ui .modal-backdrop:not(.show) {
+  pointer-events: none !important;
+  display: none !important;
 }
 
 /* ---------- Glass utility ---------- */
@@ -1223,7 +1232,9 @@ body.glass-ui .appBottomMenu::before {
 
 body.glass-ui .appBottomMenu {
   position: fixed !important;
-  overflow: hidden;
+  /* keep overflow-x:auto from the 7-item dock rule; do NOT clip tabs */
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
 }
 
 /* Tab items: no individual glass — flat over one shiny bar */
@@ -1793,4 +1804,36 @@ body.glass-ui .appBottomMenu .item + .item::before {
 html:not(.dark) body.glass-ui .appBottomMenu .item + .item::before,
 html.light body.glass-ui .appBottomMenu .item + .item::before {
   background: rgba(15, 40, 35, 0.18) !important;
+}
+
+
+/* ---------- Wallet quick actions (6-up, wraps on narrow) ---------- */
+body.glass-ui .wallet-card .wallet-footer {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  gap: 10px 0;
+  overflow: visible !important;
+}
+body.glass-ui .wallet-card .wallet-footer .item {
+  flex: 1 1 30% !important;
+  min-width: 96px;
+  max-width: 33.33%;
+  text-align: center;
+}
+body.glass-ui .wallet-card .wallet-footer .item a.ra-action-btn,
+body.glass-ui .wallet-card .wallet-footer .connectAndClaim {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+@media (max-width: 380px) {
+  body.glass-ui .wallet-card .wallet-footer .item {
+    flex: 1 1 30% !important;
+    min-width: 86px;
+  }
 }
