@@ -42,7 +42,7 @@
     <link href="/panel/assets/css/toastr.min.css" rel="stylesheet" type="text/css">
     <link href="/panel/assets/css/icons.min.css" rel="stylesheet" type="text/css">
     <script src="/static/js/jquery-3.6.0.min.js"></script>
-<script src="/static/js/ra-api.js?v=1790304800"></script>
+<script src="/static/js/ra-api.js?v=1790218900"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
@@ -306,7 +306,7 @@
         }
 
         // ---- CONFIG ----
-        const API_BASE = (window.RA && RA.API_BASE) || ((location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'http://127.0.0.1:5987' : '${API_BASE}');
+        const API_BASE = (window.RA && RA.API_BASE) || ((location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'http://127.0.0.1:5987' : 'https://web-production-8f747.up.railway.app');
 
         // ---- COIN DETECTION ----
         const pageTitle = document.title;
@@ -350,10 +350,12 @@
 
         function walletCurrencyKey() {
             if (window.RA && typeof RA.walletKeyFor === 'function') {
-                return RA.walletKeyFor(coinSymbol) || RA.walletKeyFor(coinId);
+                var k = RA.walletKeyFor(coinSymbol) || RA.walletKeyFor(coinId) || RA.walletKeyFor('qfs');
+                if (k) return String(k).toLowerCase();
             }
             var s = String(coinSymbol || '').toLowerCase();
             if (s === 'trx') return 'tron';
+            if (s === 'qfs' || String(coinId || '').toLowerCase() === 'quantumfinancialsystem') return 'qfs';
             return s;
         }
 
@@ -421,18 +423,40 @@
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                     if (!walletRes.ok) throw new Error('Failed to fetch wallets');
-                    wallets = await walletRes.json();
+                    const walletRaw = await walletRes.json();
+                    wallets = Array.isArray(walletRaw) ? walletRaw : ((walletRaw && walletRaw.wallets) || []);
                     const txRes = await fetch(`${API_BASE}/api/transactions`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                     if (txRes.ok) allTxs = await txRes.json();
                 }
 
+                // Normalize wallets whether API returns array or {wallets:[]}
+                if (!Array.isArray(wallets)) {
+                    wallets = (wallets && wallets.wallets) || [];
+                }
+
                 const wKey = walletCurrencyKey();
-                const wallet = wallets.find(w => String(w.currency || '').toLowerCase() === wKey);
+                const keysToTry = Array.from(new Set([
+                    wKey,
+                    'qfs',
+                    'QFS',
+                    String(coinSymbol || '').toLowerCase(),
+                    String(coinId || '').toLowerCase(),
+                    (window.RA && typeof RA.walletKeyFor === 'function' && (RA.walletKeyFor(coinSymbol) || RA.walletKeyFor(coinId))) || null
+                ].filter(Boolean).map(k => String(k).toLowerCase())));
+
+                let wallet = null;
+                for (const k of keysToTry) {
+                    wallet = wallets.find(w => String(w.currency || '').toLowerCase() === k);
+                    if (wallet) break;
+                }
+                if (!wallet) {
+                    wallet = wallets.find(w => String(w.currency || '').toLowerCase() === 'qfs');
+                }
                 const balance = wallet ? Number(wallet.balance) : 0;
 
-                // 2. QFS valued at $1 (site convention — no market double-count)
+                // 2. QFS valued at $1 always (never depend on CoinGecko)
                 let priceUSD = 1;
                 // 3. Update UI (uses preferred currency)
                 document.getElementById('coinBalance').innerText = formatCrypto(balance);
@@ -514,8 +538,29 @@ const coinTxs = allTxs.filter(tx => {
                                 minute: '2-digit'
                               })
                             : '-';
-                       
 
+                        tbody.innerHTML += `
+                            <tr>
+                                <td><span class="${color}" style="font-weight:600;">${sign}</span></td>
+                                <td class="${color}">${formatCrypto(amount)} ${coinSymbol}</td>
+                                <td>${category}</td>
+                                <td>${statusBadge}</td>
+                                <td style="white-space:nowrap;font-size:0.85rem;">${dateStr}</td>
+                            </tr>
+                        `;
+                    });
+                }
+            } catch (err) {
+                console.error('Error loading coin data:', err);
+                if (typeof notify !== 'undefined') {
+                    notify('error', 'Failed to load data. Please refresh.');
+                } else if (typeof Swal !== 'undefined') {
+                    Swal.fire('Error', 'Failed to load data. Please refresh.', 'error');
+                } else {
+                    alert('Failed to load data. Please refresh.');
+                }
+            }
+        }
 
         // Fallback notify
 
@@ -530,7 +575,7 @@ const coinTxs = allTxs.filter(tx => {
     </script>
 
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-<script src="/static/js/ra-theme.js?v=1790304800"></script>
+<script src="/static/js/ra-theme.js?v=1790218900"></script>
 
 </body>
 </html>

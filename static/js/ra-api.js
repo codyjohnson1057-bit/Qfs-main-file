@@ -605,6 +605,7 @@
     getVaultLockedUsd: getVaultLockedUsd,
     readBalanceSnapshot: readBalanceSnapshot,
     writeBalanceSnapshot: writeBalanceSnapshot,
+    FALLBACK_USD: FALLBACK_USD,
     refreshSharedBalance: refreshSharedBalance,
     balanceStripHtml: balanceStripHtml,
     mountBalanceStrip: mountBalanceStrip,

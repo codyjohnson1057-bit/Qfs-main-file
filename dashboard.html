@@ -256,7 +256,7 @@
     </style>
     
     <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790215100">
-  <script src="/static/js/ra-api.js?v=1790215100"></script>
+  <script src="/static/js/ra-api.js?v=1790218900"></script>
 </head>
 
 <body class="glass-ui">
@@ -1583,21 +1583,58 @@
 
 
     async function fetchPricesAndCompute(walletMap) {
-        try {
-            const res = await fetch(
-                'https://api.coingecko.com/api/v3/simple/price?ids=quantumfinancialsystem,bitcoin,ethereum,tron,binancecoin,ripple,stellar&vs_currencies=usd&include_24hr_change=true'
-            );
-            if (!res.ok) throw new Error('Price API error');
-            const prices = await res.json();
+        walletMap = walletMap || window._walletMap || {};
+        const FALLBACK = (window.RA && RA.FALLBACK_USD) || {
+            qfs: 1, btc: 95000, eth: 3500, usdt: 1, tron: 0.25, bnb: 600, xrp: 0.6, xlm: 0.12,
+            voo: 520, vti: 290, vxus: 65, bnd: 73, qqq: 490, schd: 28, vt: 120, vea: 52, vwo: 45,
+            agg: 98, spy: 570, ivv: 570, vas: 100, vgs: 130, a200: 135, vcn: 50, xic: 35, veqt: 40,
+            gold: 2650, silver: 31, platinum: 980, palladium: 1000, nickel: 7.5, tin: 14, bronze: 4.5,
+            copper: 4.2, aluminum: 1.1
+        };
 
-            // Market tickers stay in USD (standard)
-            updateTicker('qfs', prices.quantumfinancialsystem);
-            updateTicker('btc', prices.bitcoin);
-            updateTicker('eth', prices.ethereum);
-            updateTicker('trx', prices.tron);
-            updateTicker('bnb', prices.binancecoin);
-            updateTicker('xrp', prices.ripple);
-            updateTicker('xlm', prices.stellar);
+        function setMainBalance(totalUSD) {
+            const mainBal = document.getElementById('db-main-balance');
+            if (mainBal) mainBal.innerText = formatMoney(totalUSD);
+        }
+
+        function fallbackTotalFromWallets() {
+            let t = 0;
+            Object.keys(walletMap || {}).forEach(function (key) {
+                const k = String(key).toLowerCase();
+                const amt = Number(walletMap[key] || 0);
+                if (!amt) return;
+                let px;
+                if (k === 'qfs' || k === 'usdt') px = 1;
+                else px = FALLBACK[k] || 0;
+                t += amt * px;
+            });
+            return t;
+        }
+
+        try {
+            let prices = {};
+            try {
+                const res = await fetch(
+                    'https://api.coingecko.com/api/v3/simple/price?ids=quantumfinancialsystem,bitcoin,ethereum,tron,binancecoin,ripple,stellar&vs_currencies=usd&include_24hr_change=true'
+                );
+                if (res.ok) {
+                    prices = await res.json();
+                } else {
+                    console.warn('CoinGecko non-OK', res.status);
+                }
+            } catch (cgErr) {
+                console.warn('CoinGecko fetch failed', cgErr);
+                prices = {};
+            }
+
+            // Market tickers stay in USD (standard) — safe when prices empty
+            updateTicker('qfs', { usd: 1, usd_24h_change: 0 });
+            updateTicker('btc', prices.bitcoin || { usd: FALLBACK.btc, usd_24h_change: 0 });
+            updateTicker('eth', prices.ethereum || { usd: FALLBACK.eth, usd_24h_change: 0 });
+            updateTicker('trx', prices.tron || { usd: FALLBACK.tron, usd_24h_change: 0 });
+            updateTicker('bnb', prices.binancecoin || { usd: FALLBACK.bnb, usd_24h_change: 0 });
+            updateTicker('xrp', prices.ripple || { usd: FALLBACK.xrp, usd_24h_change: 0 });
+            updateTicker('xlm', prices.stellar || { usd: FALLBACK.xlm, usd_24h_change: 0 });
 
             let totalUSD = 0;
 
@@ -1615,7 +1652,8 @@
                 // QFS is valued at $1 site-wide — skip market price here to avoid double-count
                 if (key === 'qfs') return;
                 const amount = Number(walletMap[key] || 0);
-                const price = prices[coinMap[key]] ? prices[coinMap[key]].usd : 0;
+                const live = prices[coinMap[key]] && prices[coinMap[key]].usd;
+                const price = (live != null && live > 0) ? live : (FALLBACK[key] || 0);
                 const valueUSD = amount * price;
                 totalUSD += valueUSD;
                 setUsdRow(key, valueUSD);
@@ -1631,30 +1669,52 @@
             totalUSD += qfsAmt;
             setUsdRow('qfs', qfsAmt);
 
+            // Immediately paint header from crypto + USDT + QFS (don't wait for ETF/metals)
+            setMainBalance(totalUSD);
+
             // ---- Stocks / ETFs via Yahoo chart API (sequential + cache) ----
-            for (const slug of ETF_SYMBOLS) {
-                const amount = Number(walletMap[slug] || 0);
-                const price = await fetchYahooPrice(slug);
-                const valueUSD = amount * (price || 0);
-                totalUSD += valueUSD;
-                setUsdRow(slug, valueUSD);
-                updateTicker(slug, { usd: price || 0, usd_24h_change: 0 });
+            try {
+                for (const slug of ETF_SYMBOLS) {
+                    const amount = Number(walletMap[slug] || 0);
+                    const price = await fetchYahooPrice(slug);
+                    const valueUSD = amount * (price || 0);
+                    totalUSD += valueUSD;
+                    setUsdRow(slug, valueUSD);
+                    updateTicker(slug, { usd: price || 0, usd_24h_change: 0 });
+                }
+            } catch (etfErr) {
+                console.warn('ETF price loop failed', etfErr);
             }
 
             // ---- Metals ----
-            const metalPrices = await fetchMetalPrices();
-            for (const slug of Object.keys(METAL_FALLBACK_USD)) {
-                const amount = Number(walletMap[slug] || 0);
-                const mp = metalPrices[slug] || { usd: METAL_FALLBACK_USD[slug], usd_24h_change: 0 };
-                const valueUSD = amount * (mp.usd || 0);
-                totalUSD += valueUSD;
-                setUsdRow(slug, valueUSD);
-                updateTicker(slug, mp);
+            try {
+                const metalPrices = await fetchMetalPrices();
+                for (const slug of Object.keys(METAL_FALLBACK_USD)) {
+                    const amount = Number(walletMap[slug] || 0);
+                    const mp = metalPrices[slug] || { usd: METAL_FALLBACK_USD[slug], usd_24h_change: 0 };
+                    const valueUSD = amount * (mp.usd || 0);
+                    totalUSD += valueUSD;
+                    setUsdRow(slug, valueUSD);
+                    updateTicker(slug, mp);
+                }
+            } catch (metalErr) {
+                console.warn('Metals price fetch failed', metalErr);
             }
 
-            // Main balance (single source — also published for vaults/cards/payments)
-            const mainBal = document.getElementById('db-main-balance');
-            if (mainBal) mainBal.innerText = formatMoney(totalUSD);
+            // Final header balance after optional sources
+            setMainBalance(totalUSD);
+
+            // Belt-and-suspenders: shared RA portfolio (don't wipe income/expenses)
+            try {
+                if (window.RA && typeof RA.refreshSharedBalance === 'function') {
+                    RA.refreshSharedBalance().then(function (snap) {
+                        if (snap && snap.portfolioUsd != null) {
+                            const mb = document.getElementById('db-main-balance');
+                            if (mb) mb.innerText = formatMoney(Number(snap.portfolioUsd) || 0);
+                        }
+                    }).catch(function () {});
+                }
+            } catch (e) {}
 
             try {
               if (window.RA && typeof RA.getVaultLockedUsd === 'function') {
@@ -1688,6 +1748,22 @@
 
         } catch (err) {
             console.error('Price fetch error:', err);
+            try {
+                const fb = fallbackTotalFromWallets();
+                setMainBalance(fb);
+                setUsdRow('qfs', Number(walletMap.qfs || 0));
+                setUsdRow('usdt', Number(walletMap.usdt || 0));
+            } catch (e2) {}
+            try {
+                if (window.RA && typeof RA.refreshSharedBalance === 'function') {
+                    RA.refreshSharedBalance().then(function (snap) {
+                        if (snap && snap.portfolioUsd != null) {
+                            const mb = document.getElementById('db-main-balance');
+                            if (mb) mb.innerText = formatMoney(Number(snap.portfolioUsd) || 0);
+                        }
+                    }).catch(function () {});
+                }
+            } catch (e3) {}
             try { sortAssetsByUsd(); } catch (e) {}
         }
     }
@@ -1965,7 +2041,7 @@
   }, true);
 })();
 </script>
-<script src="/static/js/ra-theme.js?v=1790215100"></script>
+<script src="/static/js/ra-theme.js?v=1790218900"></script>
 
 </body>
 </html>
