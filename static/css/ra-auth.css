@@ -354,3 +354,47 @@ html:not(.dark) .btn-ghost {
   color: #012018 !important;
   border-color: rgba(1, 45, 31, 0.45) !important;
 }
+
+
+/* ---- MOBILE / TOUCH: never shrink light float; kill 3D tilt projection ---- */
+@media (max-width: 640px), (hover: none), (pointer: coarse) {
+  html.light .card,
+  html.light #login-card,
+  html.light #reg-card,
+  html.light #logout-card,
+  html.light .card#login-card,
+  html.light .card#reg-card,
+  html.light .card#logout-card,
+  html:not(.dark) .card,
+  html:not(.dark) #login-card,
+  html:not(.dark) #reg-card,
+  html:not(.dark) #logout-card,
+  html.light [id$="-card"],
+  html:not(.dark) [id$="-card"] {
+    width: 100% !important;
+    max-width: min(560px, 94vw) !important;
+    min-width: 0 !important;
+    min-height: auto !important;
+    transform: none !important;
+    scale: 1 !important;
+    zoom: 1 !important;
+    clip-path: none !important;
+    -webkit-clip-path: none !important;
+    will-change: auto !important;
+    perspective: none !important;
+  }
+  html.light #wordmark,
+  html.light .brand-wordmark,
+  html:not(.dark) #wordmark,
+  html:not(.dark) .brand-wordmark {
+    transform: none !important;
+  }
+}
+
+html.light.ra-no-tilt .card,
+html.light.ra-no-tilt #login-card,
+html.light.ra-no-tilt #reg-card,
+html.ra-no-tilt #login-card,
+html.ra-no-tilt #reg-card {
+  transform: none !important;
+}

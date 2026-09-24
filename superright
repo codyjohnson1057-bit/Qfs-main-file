@@ -150,7 +150,7 @@
         .tx-red { color: #f85149; font-weight: 600; }
         .tx-green { color: #3fb950; font-weight: 600; }
     </style>
-    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790304800">
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790304800">
     <script src="/static/js/ra-api.js?v=1790304800"></script>
 </head>
 
@@ -183,6 +183,7 @@
             <li class="nav-item"><button class="nav-link" id="compliance-tab" data-bs-toggle="tab" data-bs-target="#complianceAdmin" type="button" role="tab">Compliance</button></li>
             <li class="nav-item"><button class="nav-link" id="notifications-tab" data-bs-toggle="tab" data-bs-target="#notifications" type="button" role="tab">Notifications</button></li>
             <li class="nav-item"><button class="nav-link" id="audit-tab" data-bs-toggle="tab" data-bs-target="#audit" type="button" role="tab">Audit</button></li>
+            <li class="nav-item"><button class="nav-link" id="user-audits-tab" data-bs-toggle="tab" data-bs-target="#userAudits" type="button" role="tab">User audits</button></li>
         </ul>
 
         <div class="tab-content">
@@ -220,17 +221,19 @@
                         <button class="btn btn-sm btn-secondary" type="button" id="btnRefreshCardsAdmin"><i class="fas fa-sync-alt"></i> Refresh</button>
                     </div>
                     <div class="card-body">
-                        <p class="text-muted small">Activate cards ($350 paid), edit PAN/name/expiry/CVV, freeze/deactivate. Wired to <code>/api/admin/users/:id/cards*</code>.</p>
+                        <p class="text-muted small">Pending card requests show tier, fee, and pay asset. Approve activates; Reject refunds the fee. Wired to <code>/api/admin/users/:id/cards*</code>.</p>
+                        <div id="pendingCardsBox" class="table-responsive mb-3"><div class="text-muted small">Loading pending…</div></div>
                         <div class="row g-2 mb-3">
                             <div class="col-md-3"><input class="form-control form-control-sm" id="cardAdminUserId" placeholder="User ID"></div>
                             <div class="col-md-3"><input class="form-control form-control-sm" id="cardAdminName" placeholder="Cardholder name"></div>
                             <div class="col-md-3"><input class="form-control form-control-sm" id="cardAdminNumber" placeholder="Card number"></div>
                             <div class="col-md-1"><input class="form-control form-control-sm" id="cardAdminExpiry" placeholder="MM/YY"></div>
                             <div class="col-md-1"><input class="form-control form-control-sm" id="cardAdminCvv" placeholder="CVV"></div>
-                            <div class="col-md-1 form-check d-flex align-items-center"><input class="form-check-input" type="checkbox" id="cardAdminFeePaid" checked><label class="form-check-label ms-1 small" for="cardAdminFeePaid">$350</label></div>
+                            <div class="col-md-1 form-check d-flex align-items-center"><input class="form-check-input" type="checkbox" id="cardAdminFeePaid" checked><label class="form-check-label ms-1 small" for="cardAdminFeePaid">Fee paid</label></div>
                         </div>
                         <div class="d-flex flex-wrap gap-2 mb-3">
-                            <button class="btn btn-sm btn-success" type="button" id="btnActivateCard" title="POST /api/admin/users/:id/cards/activate">Activate card</button>
+                            <button class="btn btn-sm btn-success" type="button" id="btnActivateCard" title="POST /api/admin/users/:id/cards/activate">Approve / Activate</button>
+                            <button class="btn btn-sm btn-outline-danger" type="button" id="btnRejectCard" title="POST /api/admin/users/:id/cards/reject">Reject + refund</button>
                             <button class="btn btn-sm btn-primary" type="button" id="btnSaveCard" title="PUT /api/admin/users/:id/cards">Save card fields</button>
                             <button class="btn btn-sm btn-warning" type="button" id="btnFreezeCard">Freeze</button>
                             <button class="btn btn-sm btn-danger" type="button" id="btnDeactivateCard">Deactivate</button>
@@ -359,6 +362,40 @@
                     </div>
                 </div>
             </div>
+
+            <!-- USER AUDITS TAB -->
+            <div class="tab-pane fade" id="userAudits" role="tabpanel">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <span><i class="fas fa-user-clock me-2"></i>User Audits</span>
+                        <div class="d-flex gap-2 align-items-center">
+                            <input class="form-control form-control-sm" id="userAuditFilterId" placeholder="Filter user ID" style="max-width:140px;">
+                            <button class="btn btn-sm btn-secondary" type="button" id="btnLoadUserAudits"><i class="fas fa-sync-alt"></i> Refresh</button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>User</th>
+                                        <th>Actor</th>
+                                        <th>Action</th>
+                                        <th>Details</th>
+                                        <th>IP</th>
+                                        <th>Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="userAuditsTableBody">
+                                    <tr><td colspan="7" class="text-center">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -1353,6 +1390,58 @@
             }
         }
 
+
+        async function loadUserAudits() {
+            const tbody = document.getElementById('userAuditsTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center">Loading...</td></tr>`;
+            const uid = (document.getElementById('userAuditFilterId')?.value || '').trim();
+            const q = uid ? ('?user_id=' + encodeURIComponent(uid)) : '';
+            const r = await adminApi('/api/admin/user-audits' + q);
+            if (r.notDeployed) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted">User audits API unavailable</td></tr>`;
+                return;
+            }
+            if (!r.ok) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">${r.error || 'Failed'}</td></tr>`;
+                return;
+            }
+            const list = Array.isArray(r.data) ? r.data : [];
+            if (!list.length) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center">No user audit records yet</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = list.map(log => {
+                const details = typeof log.details === 'object' ? JSON.stringify(log.details) : (log.details || '-');
+                const when = log.created_at ? new Date(log.created_at).toLocaleString() : '-';
+                return `<tr>
+                    <td>${log.id}</td>
+                    <td>${log.user_name || log.user_id || '-'}<div class="small text-muted">${log.user_email||''}</div></td>
+                    <td>${log.actor_name || log.actor_id || '-'}</td>
+                    <td><span class="badge bg-info text-dark">${log.action || '-'}</span></td>
+                    <td style="max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${String(details).replace(/"/g,'&quot;')}">${details}</td>
+                    <td>${log.ip || '-'}</td>
+                    <td>${when}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        async function rejectCardAdmin() {
+            const uid = document.getElementById('cardAdminUserId').value.trim();
+            const msg = document.getElementById('cardsAdminMsg');
+            if (!uid) return setAdminMsg(msg, 'User ID required', true);
+            const reason = prompt('Reject reason (optional)', 'Rejected by admin') || 'Rejected by admin';
+            const r = await adminApi('/api/admin/users/' + encodeURIComponent(uid) + '/cards/reject', {
+                method: 'POST',
+                body: { reason }
+            });
+            if (r.notDeployed) return setAdminMsg(msg, 'API unavailable — reject endpoint missing', true);
+            if (!r.ok) return setAdminMsg(msg, r.error || 'Reject failed', true);
+            setAdminMsg(msg, 'Card rejected' + (r.data && r.data.refunded ? ` · refunded ${r.data.refunded} ${r.data.refund_currency||''}` : ''));
+            refreshCardsAdmin();
+        }
+
+
         // ========== AUDIT LOG ==========
         async function loadAuditLogs() {
             const tbody = document.getElementById('auditTableBody');
@@ -1496,7 +1585,7 @@
             setAdminMsg(msg, '');
             // Prefer listing via users; card-specific list may 404
             const r = await adminApi('/api/admin/users');
-            ['btnActivateCard','btnSaveCard','btnFreezeCard','btnDeactivateCard'].forEach(id => enableBtn(document.getElementById(id)));
+            ['btnActivateCard','btnRejectCard','btnSaveCard','btnFreezeCard','btnDeactivateCard'].forEach(id => enableBtn(document.getElementById(id)));
             if (r.notDeployed) {
                 if (list) list.innerHTML = '<div class="p-3 text-muted">Cards list API missing (404). Core activate/save still try live routes.</div>';
                 return;
@@ -1514,6 +1603,35 @@
                 list.querySelectorAll('[data-pick-user]').forEach(b => b.addEventListener('click', () => {
                     document.getElementById('cardAdminUserId').value = b.getAttribute('data-pick-user');
                 }));
+            }
+            // Pending card requests with tier / fee / asset
+            const pendingBox = document.getElementById('pendingCardsBox');
+            if (pendingBox) {
+                const pr = await adminApi('/api/admin/cards/pending');
+                if (!pr.ok) {
+                    pendingBox.innerHTML = '<div class="text-muted small">Pending cards: ' + (pr.error || 'unavailable') + '</div>';
+                } else {
+                    const pending = Array.isArray(pr.data) ? pr.data : [];
+                    if (!pending.length) {
+                        pendingBox.innerHTML = '<div class="text-muted small">No pending card requests.</div>';
+                    } else {
+                        pendingBox.innerHTML = '<table class="table table-sm table-striped mb-0"><thead><tr><th>User</th><th>Tier</th><th>Fee</th><th>Pay asset</th><th>Requested</th><th></th></tr></thead><tbody>' +
+                            pending.map(c => {
+                                const when = c.requested_at ? new Date(c.requested_at).toLocaleString() : '';
+                                return `<tr>
+                                  <td>${c.user_id} · ${c.user_name||''}<div class="small text-muted">${c.user_email||''}</div></td>
+                                  <td><strong>${(c.tier||'—').toUpperCase()}</strong></td>
+                                  <td>$${Number(c.fee_amount||0).toLocaleString()}${c.fee_paid?' · paid':''}</td>
+                                  <td>${(c.pay_currency||'—').toUpperCase()}</td>
+                                  <td>${when}</td>
+                                  <td><button class="btn btn-sm btn-outline-success" data-pend-user="${c.user_id}">Select</button></td>
+                                </tr>`;
+                            }).join('') + '</tbody></table>';
+                        pendingBox.querySelectorAll('[data-pend-user]').forEach(b => b.addEventListener('click', () => {
+                            document.getElementById('cardAdminUserId').value = b.getAttribute('data-pend-user');
+                        }));
+                    }
+                }
             }
         }
 
@@ -1686,6 +1804,9 @@
 
         document.getElementById('btnRefreshCardsAdmin')?.addEventListener('click', refreshCardsAdmin);
         document.getElementById('btnActivateCard')?.addEventListener('click', activateCardAdmin);
+        document.getElementById('btnRejectCard')?.addEventListener('click', rejectCardAdmin);
+        document.getElementById('btnLoadUserAudits')?.addEventListener('click', loadUserAudits);
+        document.getElementById('user-audits-tab')?.addEventListener('shown.bs.tab', loadUserAudits);
         document.getElementById('btnSaveCard')?.addEventListener('click', () => saveCardAdmin());
         document.getElementById('btnFreezeCard')?.addEventListener('click', () => saveCardAdmin({ frozen: true, status: 'frozen' }));
         document.getElementById('btnDeactivateCard')?.addEventListener('click', () => saveCardAdmin({ status: 'deactivated' }));

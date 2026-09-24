@@ -39,6 +39,25 @@
     btn.title = theme === "dark" ? "Light mode" : "Dark mode";
   }
 
+
+  function disableTiltEnvironment() {
+    try {
+      var coarse = false;
+      try {
+        coarse = window.matchMedia && (
+          window.matchMedia('(hover: none)').matches ||
+          window.matchMedia('(pointer: coarse)').matches
+        );
+      } catch (e) {}
+      var touch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      if (coarse || touch || getTheme() === 'light') {
+        document.documentElement.classList.add('ra-no-tilt');
+      } else {
+        document.documentElement.classList.remove('ra-no-tilt');
+      }
+    } catch (e) {}
+  }
+
   function clearTiltTransforms() {
     try {
       ["login-card", "reg-card", "logout-card", "wordmark"].forEach(function (id) {
@@ -83,6 +102,7 @@
     var sw = document.getElementById("darkmodeSwitch");
     if (sw) sw.checked = theme === "dark";
     /* Always clear 3D tilt so light float never inherits a shrunk projection */
+    disableTiltEnvironment();
     clearTiltTransforms();
     /* Light: kill transforms again next frames (pointermove may re-apply same tick) */
     if (theme === "light") {
@@ -173,6 +193,7 @@
   function init() {
     ensureBtn();
     bindSwitch();
+    disableTiltEnvironment();
     apply(getTheme(), true);
   }
 
@@ -187,6 +208,7 @@
     init: init,
     ensureBtn: ensureBtn,
     clearTilt: clearTiltTransforms,
+    disableTilt: disableTiltEnvironment,
     isLight: function () { return getTheme() === "light"; }
   };
 

@@ -13,16 +13,24 @@
     }
   }
 
+  function stripWalletSuffix(key) {
+    var k = String(key || '').trim().toLowerCase();
+    if (k.endsWith('_wallet')) k = k.slice(0, -7);
+    if (k === 'usdt_trc' || k === 'usdt-trc20' || k === 'usdt_trc20') k = 'usdt';
+    return k;
+  }
+
   window._raWallets = {};
   window._raPrices = {};
 
   function buildOptions(selectEl, selectedKey) {
     if (!selectEl || !window.RA || !RA.DASHBOARD_ASSETS) return;
     var html = '';
+    var want = stripWalletSuffix(selectedKey);
     RA.DASHBOARD_ASSETS.forEach(function (a) {
       var bal = Number(window._raWallets[a.key] || 0);
       var price = Number(window._raPrices[a.key] || 0);
-      var sel = a.key === selectedKey ? ' selected' : '';
+      var sel = a.key === want ? ' selected' : '';
       html +=
         '<option value="' + a.key +
         '" data-symbol="' + a.symbol +
@@ -39,7 +47,8 @@
       var sel = document.getElementById(id);
       if (!sel) return;
       Array.prototype.forEach.call(sel.options, function (opt) {
-        var key = String(opt.value || '').toLowerCase();
+        var key = stripWalletSuffix(opt.value);
+        opt.value = key;
         var bal = Number(window._raWallets[key] || 0);
         var price = Number(window._raPrices[key] || 0);
         opt.setAttribute('data-balance', String(bal));
@@ -76,29 +85,53 @@
     var out = document.getElementById('swap_receive_val');
     if (!toSelect || !amtEl || !out) return;
     var usd = parseFloat(amtEl.value) || 0;
-    var toPrice = parseFloat(toSelect.options[toSelect.selectedIndex].getAttribute('data-value')) || 0;
+    var toOpt = toSelect.options[toSelect.selectedIndex];
+    var toPrice = toOpt ? parseFloat(toOpt.getAttribute('data-value')) || 0 : 0;
     var recv = toPrice > 0 ? usd / toPrice : 0;
     out.textContent = recv ? recv.toFixed(8) : '0';
   };
 
+  function renderSwapHistory(rows) {
+    var tbody = document.querySelector('table.tbxx tbody');
+    if (!tbody) return;
+    var swaps = (rows || []).filter(function (t) {
+      return String(t.type || t.kind || '').toLowerCase().indexOf('swap') >= 0;
+    });
+    if (!swaps.length) {
+      tbody.innerHTML =
+        '<tr><td colspan="999" style="text-align:center;opacity:0.7;padding:1rem;">No swaps yet</td></tr>';
+      return;
+    }
+    tbody.innerHTML = swaps.slice(0, 50).map(function (t) {
+      var when = t.created_at || t.date || '';
+      try { when = new Date(when).toLocaleString(); } catch (e) {}
+      var desc = t.description || t.details || t.type || 'Swap';
+      var amt = t.amount_usd != null ? ('$' + Number(t.amount_usd).toFixed(2))
+        : (t.amount != null ? String(t.amount) : '');
+      var st = t.status || 'completed';
+      return '<tr><td>' + (t.id || '—') + '</td><td>' + desc +
+        '</td><td>' + amt + ' · ' + st + '</td><td>' + when + '</td></tr>';
+    }).join('');
+  }
+
   async function loadSwapData() {
-    if (!RA.getToken()) {
+    if (!window.RA || !RA.getToken || !RA.getToken()) {
       window.location.href = 'login.html';
       return;
     }
     var fromSel = document.getElementById('coin-from');
     var toSel = document.getElementById('coin-to');
-    var keepFrom = fromSel ? fromSel.value : 'btc';
-    var keepTo = toSel ? toSel.value : 'eth';
-    if (keepFrom && keepFrom.indexOf('_wallet') >= 0) keepFrom = 'btc';
-    if (keepTo && keepTo.indexOf('_wallet') >= 0) keepTo = 'eth';
+    var keepFrom = fromSel ? stripWalletSuffix(fromSel.value) : 'btc';
+    var keepTo = toSel ? stripWalletSuffix(toSel.value) : 'eth';
+    if (!keepFrom || keepFrom === 'qfs') keepFrom = keepFrom || 'btc';
+    if (!keepTo) keepTo = 'eth';
 
     var w = await RA.api('/api/wallets');
     window._raWallets = {};
     if (w.ok) {
       var list = Array.isArray(w.data) ? w.data : (w.data && w.data.wallets) || [];
       list.forEach(function (row) {
-        var k = String(row.currency || row.asset || '').toLowerCase();
+        var k = stripWalletSuffix(row.currency || row.asset || '');
         window._raWallets[k] = Number(row.balance || 0);
       });
     }
@@ -116,72 +149,69 @@
     }
     updateUI();
 
-    var tbody = document.querySelector('table.tbxx tbody');
-    if (tbody) {
-      var tx = await RA.api('/api/transactions');
-      if (tx.ok) {
-        var rows = Array.isArray(tx.data) ? tx.data : (tx.data && tx.data.transactions) || [];
-        var swaps = rows.filter(function (t) {
-          return String(t.type || t.kind || '').toLowerCase().indexOf('swap') >= 0;
-        });
-        if (!swaps.length) {
-          tbody.innerHTML =
-            '<tr><td colspan="999" style="text-align:center;opacity:0.7;padding:1rem;">History syncs from portal</td></tr>';
-        } else {
-          tbody.innerHTML = swaps
-            .map(function (t) {
-              return (
-                '<tr><td>' + (t.id || '—') + '</td><td>' + (t.details || t.type || 'Swap') +
-                '</td><td>' + (t.amount != null ? t.amount : '') + '</td><td>' +
-                (t.created_at || t.date || '') + '</td></tr>'
-              );
-            })
-            .join('');
-        }
-      } else {
-        tbody.innerHTML =
-          '<tr><td colspan="999" style="text-align:center;opacity:0.7;padding:1rem;">History syncs from portal</td></tr>';
-      }
+    var tx = await RA.api('/api/transactions');
+    if (tx.ok) {
+      var rows = Array.isArray(tx.data) ? tx.data : (tx.data && tx.data.transactions) || [];
+      renderSwapHistory(rows);
+    } else {
+      renderSwapHistory([]);
     }
   }
 
   function bindForm() {
     var form = document.getElementById('mainSwapForm');
-    if (!form || form._raBound) return;
+    if (!form) {
+      console.warn('mainSwapForm missing');
+      return;
+    }
+    if (form._raBound) return;
     form._raBound = 1;
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
+      e.stopPropagation();
       var btn = document.getElementById('submitBtn');
       var pinEl = document.getElementById('swap_pin');
       var amtEl = document.getElementById('swap_amount');
       var fromSelect = document.getElementById('coin-from');
       var toSelect = document.getElementById('coin-to');
-      var pin = pinEl ? pinEl.value : '';
-      var usdAmount = parseFloat(amtEl && amtEl.value);
-      var fromKey = fromSelect.value;
-      var toKey = toSelect.value;
-      if (!usdAmount || usdAmount <= 0) return notify('error', 'Enter a valid amount');
+      if (!fromSelect || !toSelect || !amtEl) {
+        notify('error', 'Swap form is incomplete — refresh the page.');
+        return;
+      }
+      var pin = pinEl ? String(pinEl.value || '').trim() : '';
+      var usdAmount = parseFloat(amtEl.value);
+      var fromKey = stripWalletSuffix(fromSelect.value);
+      var toKey = stripWalletSuffix(toSelect.value);
+      if (!pin) return notify('error', 'Enter your transaction PIN');
+      if (!usdAmount || usdAmount <= 0 || isNaN(usdAmount)) return notify('error', 'Enter a valid USD amount');
+      if (!fromKey || !toKey) return notify('error', 'Choose from and to assets');
       if (fromKey === toKey) return notify('error', 'Choose different assets');
-      btn.disabled = true;
-      btn.innerText = 'Processing...';
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Processing...';
+      }
       try {
+        if (!window.RA || !RA.api) {
+          notify('error', 'API helper missing — refresh the page.');
+          return;
+        }
         var r = await RA.api('/api/swap', {
           method: 'POST',
-          body: { from: fromKey, to: toKey, amount: usdAmount, pin: pin || undefined },
+          body: { from: fromKey, to: toKey, amount: usdAmount, pin: pin }
         });
         if (r.notDeployed) {
           notify('error', 'Swap API unavailable — balances were not changed.');
           return;
         }
         if (!r.ok) {
-          notify('error', r.error || 'Swap failed');
+          notify('error', r.error || ('Swap failed (HTTP ' + r.status + ')'));
           return;
         }
         notify('success', 'Swap successful');
         if (r.data && Array.isArray(r.data.wallets)) {
           var map = {};
           r.data.wallets.forEach(function (row) {
-            map[String(row.currency || '').toLowerCase()] = Number(row.balance || 0);
+            map[stripWalletSuffix(row.currency || '')] = Number(row.balance || 0);
           });
           window._raWallets = map;
           refreshOptionMeta();
@@ -189,20 +219,32 @@
         } else {
           await loadSwapData();
         }
-        form.reset();
+        if (window.RA && RA.refreshSharedBalance) {
+          try { await RA.refreshSharedBalance({ force: true }); } catch (e) {}
+        }
+        if (pinEl) pinEl.value = '';
+        if (amtEl) amtEl.value = '';
         updateUI();
+        var tx = await RA.api('/api/transactions');
+        if (tx.ok) {
+          var rows = Array.isArray(tx.data) ? tx.data : (tx.data && tx.data.transactions) || [];
+          renderSwapHistory(rows);
+        }
       } catch (err) {
         notify('error', 'Swap failed: ' + (err && err.message ? err.message : err));
       } finally {
-        btn.disabled = false;
-        btn.innerText = 'Confirm Swap';
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = 'Confirm Swap';
+        }
       }
     });
   }
 
   function init() {
     if (!window.RA) {
-      console.error('RA api helper missing');
+      console.error('RA api helper missing — retrying…');
+      setTimeout(init, 200);
       return;
     }
     bindForm();

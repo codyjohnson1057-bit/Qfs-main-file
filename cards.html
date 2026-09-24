@@ -3,14 +3,14 @@
 <head>
     <script>(function(){try{var t=localStorage.getItem("ra-theme");var f=null;try{f=localStorage.getItem("FinappDarkmode");}catch(x){}var mode=(t==="light"||t==="dark")?t:(f==="1"?"dark":f==="0"?"light":"light");if(mode==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){document.documentElement.classList.add("light");}})();</script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Robinhood Alliance - Cards</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/font-awesome.css">
     <link rel="stylesheet" href="/static/css/App_Global.css">
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790304900">
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790400001">
     <script src="/static/js/jquery-3.6.0.min.js"></script>
-    <script src="/static/js/ra-api.js?v=1790304900"></script>
+    <script src="/static/js/ra-api.js?v=1790400001"></script>
     <style>
       .mock-card { border-radius: 1.25rem; padding: 1rem; margin-bottom: 1rem; }
       .toggle-row { display:flex; align-items:center; justify-content:space-between; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
@@ -40,6 +40,17 @@
       .hidden { display:none !important; }
       html:not(.dark) .toggle-row { border-bottom-color: rgba(16,185,129,0.12); }
       html:not(.dark) .btn-glass { color: #064e3b; }
+      .tier-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:0.75rem 0; }
+      .tier-opt { border-radius:14px; padding:0.85rem; cursor:pointer; border:1px solid rgba(255,255,255,0.12); text-align:left; background:rgba(0,0,0,0.18); color:inherit; }
+      .tier-opt.selected { outline:2px solid rgba(16,185,129,0.7); border-color:rgba(16,185,129,0.55); }
+      .tier-opt .price { font-size:1.15rem; font-weight:700; margin-top:0.25rem; }
+      .tier-opt.blue { background:linear-gradient(135deg,rgba(37,99,235,0.35),rgba(10,24,28,0.85)); }
+      .tier-opt.green { background:linear-gradient(135deg,rgba(16,185,129,0.4),rgba(10,24,28,0.85)); }
+      .tier-opt.silver { background:linear-gradient(135deg,rgba(148,163,184,0.4),rgba(10,24,28,0.85)); }
+      .tier-opt.gold { background:linear-gradient(135deg,rgba(212,175,55,0.45),rgba(10,24,28,0.85)); }
+      .hist-row { display:flex; justify-content:space-between; gap:10px; padding:0.65rem 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:0.85rem; }
+      .hist-row .muted { font-size:0.7rem; opacity:0.65; }
+      @media (max-width:420px){ .tier-grid { grid-template-columns:1fr; } }
     </style>
 </head>
 <body class="glass-ui">
@@ -57,21 +68,29 @@
     <div id="appCapsule" class="container" style="padding-bottom: 100px;">
         <div class="section mt-2 mb-2">
             <h2 class="title" style="font-size:1.25rem;">Cards</h2>
-            <p class="text-muted" style="font-size:0.85rem;opacity:0.75;" id="cardsSubtitle">Virtual debit · $350 request fee</p>
+            <p class="text-muted" style="font-size:0.85rem;opacity:0.75;" id="cardsSubtitle">Virtual debit · choose a tier</p>
         </div>
 
         <div id="raBalanceMount"></div>
         <div id="cardRequestPanel" class="wallet-card mock-card glass-panel hidden">
             <h3 style="font-size:1rem;">Request a card</h3>
-            <p class="text-muted" style="font-size:0.85rem;">Get a virtual Visa debit for <strong>$350</strong>. Card stays locked until an admin activates it.</p>
-            <button class="btn-glass" type="button" id="btnRequestCard">Request card — $350</button>
+            <p class="text-muted" style="font-size:0.85rem;">Select a tier. Fee is debited from your chosen wallet on submit. Card stays locked until an admin activates it.</p>
+            <div class="tier-grid" id="tierGrid">
+              <button type="button" class="tier-opt blue" data-tier="blue" data-fee="500"><strong>Blue</strong><div class="price">$500</div></button>
+              <button type="button" class="tier-opt green" data-tier="green" data-fee="850"><strong>Green</strong><div class="price">$850</div></button>
+              <button type="button" class="tier-opt silver" data-tier="silver" data-fee="1500"><strong>Silver</strong><div class="price">$1,500</div></button>
+              <button type="button" class="tier-opt gold" data-tier="gold" data-fee="3000"><strong>Gold</strong><div class="price">$3,000</div></button>
+            </div>
+            <label class="text-muted" style="font-size:0.75rem;">Pay fee from</label>
+            <select class="form-control mb-2" id="cardPayCurrency"><option value="">Select tier first</option></select>
+            <button class="btn-glass" type="button" id="btnRequestCard" disabled>Select a tier</button>
             <p id="requestMsg" class="text-muted mt-2" style="font-size:0.8rem;"></p>
         </div>
 
         <div id="cardPendingPanel" class="wallet-card mock-card glass-panel hidden">
             <span class="pill warn">Pending activation</span>
             <h3 style="font-size:1rem;margin-top:0.5rem;">Waiting for admin</h3>
-            <p class="text-muted" style="font-size:0.85rem;">Your $350 card request was received. Support will activate your card shortly.</p>
+            <p class="text-muted" style="font-size:0.85rem;" id="pendingMsg">Your card request was received. Support will activate your card shortly.</p>
             <div class="flip-scene locked-card" aria-hidden="true">
                 <div class="flip-card">
                     <div class="flip-face front">
@@ -143,7 +162,7 @@
 
         <div class="section mb-3">
             <h3 class="title" style="font-size:1rem;">Recent card activity</h3>
-            <div class="wallet-card mock-card" id="cardHistory"></div>
+            <div class="wallet-card mock-card" id="cardHistory"><p class="text-muted" style="font-size:0.8rem;margin:0;">Loading…</p></div>
         </div>
     </div>
 
@@ -162,7 +181,6 @@
     (function(){
       var KEY="ra-theme";
       function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
-      function timeTheme(){return "light";}
       function getTheme(){var t=stored();if(t==="light"||t==="dark")return t;try{var f=localStorage.getItem("FinappDarkmode");if(f==="1")return "dark";if(f==="0")return "light";}catch(e){}return "light";}
       function apply(theme,persist){
         var root=document.documentElement, body=document.body;
@@ -176,12 +194,19 @@
       if(btn) btn.addEventListener("click", function(e){ e.preventDefault(); apply(getTheme()==="dark"?"light":"dark"); });
       apply(getTheme());
 
-      document.getElementById('cardHistory').innerHTML = RA.portalEmptyHtml('Synced from portal');
       if (window.RA && RA.mountBalanceStrip) {
         RA.mountBalanceStrip(document.getElementById('raBalanceMount'), 'Portfolio (synced)');
       }
 
       var currentCard = null;
+      var selectedTier = null;
+      var selectedFee = 0;
+      var walletCache = {};
+      var priceCache = {};
+
+      function money(n) {
+        return '$' + Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+      }
 
       function showOnly(id) {
         ['cardRequestPanel','cardPendingPanel','cardActivePanel'].forEach(function(x){
@@ -235,8 +260,84 @@
         document.getElementById('onlineToggle').checked = card.online_enabled !== false;
         var lim = card.daily_limit != null ? card.daily_limit : 2500;
         document.getElementById('limitLabel').textContent = '$' + Number(lim).toLocaleString() + ' / day';
-        document.getElementById('cardStatusPill').textContent = frozen ? 'Frozen' : 'Virtual Debit';
+        var tierLabel = card.tier ? (String(card.tier).charAt(0).toUpperCase()+String(card.tier).slice(1)+' · ') : '';
+        document.getElementById('cardStatusPill').textContent = frozen ? 'Frozen' : (tierLabel + 'Virtual Debit');
         bindFlip();
+      }
+
+      async function loadWallets() {
+        walletCache = {};
+        var w = await RA.api('/api/wallets');
+        if (w.ok) {
+          var list = Array.isArray(w.data) ? w.data : (w.data && w.data.wallets) || [];
+          list.forEach(function(row){
+            walletCache[String(row.currency||'').toLowerCase()] = Number(row.balance||0);
+          });
+        }
+        try { priceCache = await RA.fetchAssetPrices(); } catch(e){ priceCache = {}; }
+      }
+
+      function fillPayCurrency(feeUsd) {
+        var sel = document.getElementById('cardPayCurrency');
+        var assets = (window.RA && RA.DASHBOARD_ASSETS) || [{key:'qfs',label:'QFS'}];
+        var opts = [];
+        assets.forEach(function(a){
+          var bal = Number(walletCache[a.key] || 0);
+          var px = Number(priceCache[a.key] || 0);
+          var usd = bal * px;
+          if (usd + 1e-9 >= feeUsd && bal > 0) {
+            opts.push({key:a.key, label:a.label||a.key.toUpperCase(), bal:bal, usd:usd});
+          }
+        });
+        if (!opts.length) {
+          sel.innerHTML = '<option value="">No wallet covers ' + money(feeUsd) + '</option>';
+          document.getElementById('btnRequestCard').disabled = true;
+          document.getElementById('requestMsg').textContent = 'Insufficient portfolio value for this tier. Need ' + money(feeUsd) + '.';
+          return;
+        }
+        opts.sort(function(a,b){ return b.usd - a.usd; });
+        sel.innerHTML = opts.map(function(o){
+          return '<option value="'+o.key+'">'+o.label+' · ≈ '+money(o.usd)+'</option>';
+        }).join('');
+        document.getElementById('btnRequestCard').disabled = false;
+        document.getElementById('btnRequestCard').textContent = 'Request ' + (selectedTier||'') + ' — ' + money(feeUsd);
+        document.getElementById('requestMsg').textContent = '';
+      }
+
+      document.querySelectorAll('.tier-opt').forEach(function(el){
+        el.addEventListener('click', function(){
+          document.querySelectorAll('.tier-opt').forEach(function(x){ x.classList.remove('selected'); });
+          el.classList.add('selected');
+          selectedTier = el.getAttribute('data-tier');
+          selectedFee = Number(el.getAttribute('data-fee') || 0);
+          fillPayCurrency(selectedFee);
+        });
+      });
+
+      async function loadCardHistory() {
+        var box = document.getElementById('cardHistory');
+        var r = await RA.api('/api/transactions');
+        if (!r.ok) {
+          box.innerHTML = '<p class="text-muted" style="font-size:0.8rem;margin:0;">Could not load history.</p>';
+          return;
+        }
+        var rows = Array.isArray(r.data) ? r.data : (r.data && r.data.transactions) || [];
+        var filtered = rows.filter(function(t){
+          var typ = String(t.type || '').toLowerCase();
+          return typ.indexOf('card') >= 0 || typ === 'card_fee' || typ === 'card_fee_refund' || typ === 'card_request';
+        });
+        if (!filtered.length) {
+          box.innerHTML = '<p class="text-muted" style="font-size:0.8rem;margin:0;">No card activity yet.</p>';
+          return;
+        }
+        box.innerHTML = filtered.slice(0, 40).map(function(t){
+          var when = t.created_at || '';
+          try { when = new Date(when).toLocaleString(); } catch(e){}
+          var amt = t.amount_usd != null ? money(t.amount_usd) : (t.amount != null ? String(t.amount) : '—');
+          return '<div class="hist-row"><div><strong>'+(t.type||'card')+'</strong>'+
+            '<div class="muted">'+(t.description||t.currency||'')+' · '+(t.status||'')+'</div>'+
+            '<div class="muted">'+when+'</div></div><div><strong>'+amt+'</strong></div></div>';
+        }).join('');
       }
 
       async function loadCards() {
@@ -260,39 +361,61 @@
         }
         var card = list[0];
         var st = String(card.status || '').toLowerCase();
-        if (st === 'active') {
+        if (st === 'active' || st === 'frozen') {
           renderActive(card);
-        } else {
-          // pending / requested / deactivated / anything else stays locked until admin activates
+        } else if (st === 'pending') {
           showOnly('cardPendingPanel');
+          var fee = card.fee_amount != null ? money(card.fee_amount) : '';
+          var tier = card.tier ? String(card.tier) : '';
+          document.getElementById('pendingMsg').textContent =
+            'Your ' + (tier ? tier + ' ' : '') + 'card request' + (fee ? ' (' + fee + ' fee paid)' : '') +
+            ' was received. Support will activate your card shortly.';
+        } else {
+          // rejected / cancelled → allow new request
+          showOnly('cardRequestPanel');
         }
       }
 
       document.getElementById('btnRequestCard').addEventListener('click', async function(){
         var msg = document.getElementById('requestMsg');
         msg.textContent = '';
+        if (!selectedTier || !(selectedFee > 0)) {
+          msg.textContent = 'Select a card tier first.';
+          return;
+        }
+        var currency = document.getElementById('cardPayCurrency').value;
+        if (!currency) {
+          msg.textContent = 'Choose a wallet that can cover ' + money(selectedFee) + '.';
+          return;
+        }
         this.disabled = true;
-        var r = await RA.api('/api/cards/request', { method: 'POST', body: {} });
+        var r = await RA.api('/api/cards/request', {
+          method: 'POST',
+          body: { tier: selectedTier, currency: currency, pay_currency: currency, from: currency }
+        });
         this.disabled = false;
         if (r.notDeployed) {
           msg.textContent = 'API unavailable — card request could not be submitted right now.';
           return;
         }
         if (!r.ok) {
-          // try POST /api/cards as alias
-          var r2 = await RA.api('/api/cards', { method: 'POST', body: { fee: 350 } });
-          if (r2.notDeployed) {
-            msg.textContent = 'API unavailable — card request could not be submitted right now.';
-            return;
-          }
-          if (!r2.ok) {
-            msg.textContent = r.error || r2.error || 'Request failed';
-            return;
-          }
+          msg.textContent = r.error || 'Request failed';
+          fillPayCurrency(selectedFee);
+          return;
         }
-        msg.textContent = 'Request submitted ($350). Waiting for admin activation.';
-        if (window.RA && RA.refreshSharedBalance) { RA.refreshSharedBalance().then(function(s){ var m=document.getElementById('raBalanceMount'); if(m) m.innerHTML = RA.balanceStripHtml(s, 'Portfolio (synced)'); }); }
+        msg.textContent = (r.data && r.data.message) || ('Request submitted. Fee debited from ' + currency.toUpperCase() + '.');
+        if (window.RA && RA.refreshSharedBalance) {
+          RA.refreshSharedBalance({ force: true }).then(function(s){
+            var m=document.getElementById('raBalanceMount');
+            if(m) m.innerHTML = RA.balanceStripHtml(s, 'Portfolio (synced)');
+          });
+        }
         showOnly('cardPendingPanel');
+        var fee = money((r.data && r.data.fee) || selectedFee);
+        document.getElementById('pendingMsg').textContent =
+          'Your ' + selectedTier + ' card request (' + fee + ' fee paid from ' + currency.toUpperCase() +
+          ') was received. Support will activate your card shortly.';
+        loadCardHistory();
       });
 
       async function patchCard(body) {
@@ -334,7 +457,8 @@
         patchCard({ daily_limit: n });
       });
 
-      loadCards();
+      loadWallets().then(loadCards);
+      loadCardHistory();
     })();
     </script>
 </body>

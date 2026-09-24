@@ -474,8 +474,17 @@
   @media (max-width:520px){
     .card{
       padding:1.7rem 1.15rem calc(2rem + env(safe-area-inset-bottom,0px));
-      max-height:min(90dvh,920px);
+      max-height:none;
+      max-width:min(560px,94vw) !important;
+      width:100% !important;
+      transform:none !important;
       border-radius:1.35rem;
+    }
+    html.light .card, html.light #login-card, html.light #reg-card, html:not(.dark) .card {
+      max-width:min(560px,94vw) !important;
+      width:100% !important;
+      transform:none !important;
+      clip-path:none !important;
     }
     .brand-strip{margin-bottom:1.5rem;}
     .brand-wordmark{font-size:clamp(1.35rem,6vw,2.2rem);}
@@ -629,7 +638,7 @@
 
 </style>
 <script src="/static/js/ra-api.js?v=1790304800"></script>
-    <link rel="stylesheet" href="static/css/ra-auth.css?v=1790304800">
+    <link rel="stylesheet" href="static/css/ra-auth.css?v=1790400001">
 </head>
 <body>
 <button type="button" id="raThemeToggle" class="headerButton ra-theme-toggle ra-theme-fab" aria-label="Switch theme" title="Theme" style="position:fixed;top:max(12px,env(safe-area-inset-top));right:12px;z-index:10001;width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(212,175,55,0.45);background:rgba(2,4,3,0.92);color:#F4D874;cursor:pointer;pointer-events:auto;box-shadow:0 4px 16px rgba(0,0,0,0.55);font-size:20px;line-height:1;">
@@ -817,7 +826,11 @@ const wordmark  = document.getElementById('wordmark');
 const loginCard = document.getElementById('login-card');
 
 function applyTilt(el,x,y,str){
-  if(document.documentElement.classList.contains('light')||!document.documentElement.classList.contains('dark')){if(el&&el.style)el.style.transform='';return;}
+  try{
+    if(document.documentElement.classList.contains('light')||!document.documentElement.classList.contains('dark')||document.documentElement.classList.contains('ra-no-tilt')){if(el&&el.style){el.style.transform='none';el.style.removeProperty('transform');}return;}
+    if(window.matchMedia&&(window.matchMedia('(hover: none)').matches||window.matchMedia('(pointer: coarse)').matches)){if(el&&el.style){el.style.transform='none';el.style.removeProperty('transform');}return;}
+    if(('ontouchstart' in window)||(navigator.maxTouchPoints>0)){if(el&&el.style){el.style.transform='none';el.style.removeProperty('transform');}return;}
+  }catch(e){if(el&&el.style)el.style.transform='none';return;}
   const r=el.getBoundingClientRect();
   const rx=(x-r.left)/r.width-0.5;const ry=(y-r.top)/r.height-0.5;
   el.style.transform = `rotateX(${(-ry * str).toFixed(2)}deg) rotateY(${(rx * str).toFixed(2)}deg) translateZ(6px)`;
@@ -918,7 +931,7 @@ if (loginForm) loginForm.addEventListener('submit', async (e) => {
 <script>
 window.addEventListener('ra-theme-change', function(){ try{ ['login-card','reg-card','logout-card','wordmark'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.transform=''; }); }catch(e){} });
 </script>
-<script src="/static/js/ra-theme.js?v=1790304800"></script>
+<script src="/static/js/ra-theme.js?v=1790400001"></script>
 </body>
 
 </html>
