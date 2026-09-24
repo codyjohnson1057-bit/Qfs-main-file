@@ -296,6 +296,19 @@
             max-width: 100%;
         }
         td.action-buttons { white-space: nowrap; }
+        td.action-buttons { white-space: normal !important; min-width: 220px; max-width: 360px; }
+        td.action-buttons .row-actions {
+            display: flex; flex-wrap: wrap; gap: 4px; align-items: center; max-width: 100%;
+        }
+        td.action-buttons .btn { padding: 0.15rem 0.4rem; line-height: 1.2; }
+        @media (max-width: 768px) {
+            td.action-buttons { max-width: 72vw; }
+            td.action-buttons .row-actions {
+                flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;
+                max-width: 72vw; padding-bottom: 2px;
+            }
+        }
+
     
         /* QFS overlay escape — SuperRight (drawer must stay usable) */
         body.glass-ui > #userDrawerBackdrop,
@@ -389,8 +402,8 @@
             z-index: 2 !important;
         }
 </style>
-    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790325200">
-    <script src="/static/js/ra-api.js?v=1790325200"></script>
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790329000">
+    <script src="/static/js/ra-api.js?v=1790329000"></script>
 </head>
 
 <body class="glass-ui">
@@ -958,10 +971,17 @@
                         <td>${u.country || '-'}</td>
                         <td>${statusBadges.join(' ')}</td>
                         <td>${verifiedBadge} ${roleBadge}</td>
-                        <td class="action-buttons" style="white-space:nowrap;">
+                        <td class="action-buttons">
+                            <div class="row-actions">
                             <button class="btn btn-sm btn-outline-primary" onclick="viewUser(${u.id})" title="View user"><i class="fas fa-eye"></i></button>
                             <button class="btn btn-sm btn-outline-warning" onclick="toggleBan(${u.id}, ${!u.is_banned})" title="${u.is_banned ? 'Unban' : 'Ban'}"><i class="fas fa-gavel"></i></button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="toggleSuspend(${u.id}, ${!u.is_suspended})" title="${u.is_suspended ? 'Unsuspend' : 'Suspend'}"><i class="fas fa-pause"></i></button>
+                            <button class="btn btn-sm btn-outline-success" onclick="toggleVerify(${u.id}, ${!u.is_verified})" title="${u.is_verified ? 'Unverify' : 'Verify'}"><i class="fas fa-check-circle"></i></button>
+                            <button class="btn btn-sm btn-outline-info" onclick="toggleWalletLink(${u.id}, ${!u.is_wallet_linked})" title="${u.is_wallet_linked ? 'Unlink wallet' : 'Link wallet'}"><i class="fas fa-link"></i></button>
+                            <button class="btn btn-sm btn-outline-info" onclick="openBalanceModal(${u.id})" title="Adjust balance"><i class="fas fa-coins"></i></button>
                             <button class="btn btn-sm btn-outline-secondary" onclick="impersonate(${u.id})" title="Impersonate"><i class="fas fa-user-secret"></i></button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteUser(${u.id})" title="Delete user"><i class="fas fa-trash"></i></button>
+                            </div>
                         </td>
                     </tr>
                 `;
@@ -2252,7 +2272,7 @@
     <link href="/assets/global/css/iziToast.min.css" rel="stylesheet">
     <link href="/assets/global/css/iziToast_custom.css" rel="stylesheet">
     <script src="/assets/global/js/iziToast.min.js"></script>
-<script src="/static/js/ra-theme.js?v=1790325200"></script>
+<script src="/static/js/ra-theme.js?v=1790329000"></script>
 
 
 <script>
