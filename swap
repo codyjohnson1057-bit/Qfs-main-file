@@ -3,7 +3,7 @@
 <html lang="en" class="dark">
 
 <head>
-    <script>(function(){try{var t=localStorage.getItem("ra-theme");if(t==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){}})();</script>
+    <script>(function(){try{var t=localStorage.getItem("ra-theme");var f=null;try{f=localStorage.getItem("FinappDarkmode");}catch(x){}var mode=(t==="light"||t==="dark")?t:(f==="1"?"dark":f==="0"?"light":"light");if(mode==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){document.documentElement.classList.add("light");}})();</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#007bcf" />
@@ -1565,13 +1565,11 @@
         }
 
         .tpCoins,
-        .bottom-navigation__icons li:hover,
         .account-buttons a:hover,
         .tpCoins_x:hover {
             /*transform:scale(1.05)*/
         }
 
-        .bottom-navigation__icons li,
         .account-buttons a,
         .tpCoins_x {
             transition: all 0.5s;
@@ -1752,7 +1750,8 @@
             transform: rotate(0deg)
         }
     </style>
-    <link rel="stylesheet" href="static/css/glass-dashboard.css?v=1790025200">
+    <link rel="stylesheet" href="/static/css/glass-dashboard.css?v=1790304800">
+    <script src="/static/js/ra-api.js?v=1790304800"></script>
 </head>
 
 
@@ -1872,75 +1871,7 @@
 </form>
                                 </div>
                             </div>
-                            <script>
-        document.getElementById('mainSwapForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            const pin = document.getElementById('swap_pin').value;
-            const usdAmount = parseFloat(document.getElementById('swap_amount').value);
-            
-            const fromSelect = document.getElementById('coin-from');
-            const toSelect = document.getElementById('coin-to');
-            
-            const fromWallet = fromSelect.value;
-            const toWallet = toSelect.value;
-            
-            const fromField = walletMapping[fromWallet];
-            const toField = walletMapping[toWallet];
-
-            const fromPrice = parseFloat(fromSelect.options[fromSelect.selectedIndex].getAttribute('data-value'));
-            const toPrice = parseFloat(toSelect.options[toSelect.selectedIndex].getAttribute('data-value'));
-
-            // Basic Validation
-            if (userData.pin !== pin) return notify('error', 'Incorrect Transaction PIN');
-            
-            const fromCoinAmountNeeded = usdAmount / fromPrice;
-            if ((userData[fromField] || 0) < fromCoinAmountNeeded) return notify('error', 'Swap failed');
-
-            btn.disabled = true;
-            btn.innerText = "Processing...";
-
-            try {
-                const userRef = db.collection("users").doc(auth.currentUser.uid);
-                
-                await db.runTransaction(async (transaction) => {
-                    const freshDoc = await transaction.get(userRef);
-                    const currentFromBal = freshDoc.data()[fromField] || 0;
-                    const currentToBal = freshDoc.data()[toField] || 0;
-                    
-                    const receiveAmount = usdAmount / toPrice;
-
-                    // Update Balances
-                    transaction.update(userRef, {
-                        [fromField]: currentFromBal - fromCoinAmountNeeded,
-                        [toField]: currentToBal + receiveAmount
-                    });
-
-                    // Log Activity
-                    const logRef = db.collection("transactions").doc();
-                    transaction.set(logRef, {
-                        uid: auth.currentUser.uid,
-                        type: "Swap",
-                        details: `Swapped ${fromCoinAmountNeeded.toFixed(6)} ${fromSelect.options[fromSelect.selectedIndex].getAttribute('data-symbol')} for ${receiveAmount.toFixed(6)} ${toSelect.options[toSelect.selectedIndex].getAttribute('data-symbol')}`,
-                        amount: usdAmount,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                });
-
-                notify('success', 'Swap Successful');
-                document.getElementById('swapForm').reset();
-            } catch (err) {
-                notify('error', 'Swap failed: ' + err.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "Confirm Swap";
-            }
-        });
-
-        function notify(status, message) {
-            iziToast[status]({ title: status.toUpperCase(), message: message, position: "topRight" });
-        }
-    </script>
+                            <script src="/static/js/ra-swap.js"></script>
     <script src="/static/js/lib/bootstrap.bundle.min.js"></script>
     <script src="/assets/global/js/iziToast.min.js"></script>
                             <div id="ContentPlaceHolder1_History_Part1" class="card mb-3">
@@ -2008,7 +1939,7 @@
 
     <script src="/static/js/lib/bootstrap.bundle.min.js"></script>
     <script src="/static/js/plugins/splide.min.js"></script>
-    <script src="/static/js/base.js"></script>
+    <script src="/static/js/base.js?v=1790304800"></script>
     <script src="/static/js/AppMain.js"></script>
     <script src="/static/alertify.min.js"></script>
     <script src="/static/panel.js"></script>
@@ -2077,84 +2008,8 @@
         }
     </script>
 
-<script>
-(function(){
-  var KEY="ra-theme";
-  function getTheme(){try{return localStorage.getItem(KEY)||"dark";}catch(e){return"dark";}}
-  function setIcon(theme){
-    var btn=document.getElementById("raThemeToggle");
-    if(!btn) return;
-    var icon=btn.querySelector("ion-icon");
-    var emoji=btn.querySelector(".ra-theme-emoji");
-    if(icon){
-      icon.setAttribute("name", theme==="dark"?"sunny-outline":"moon-outline");
-    }else if(emoji){
-      emoji.textContent=theme==="dark"?"☀":"☾";
-    }else{
-      btn.textContent=theme==="dark"?"☀":"☾";
-    }
-    btn.setAttribute("aria-label", theme==="dark"?"Switch to light mode":"Switch to dark mode");
-    btn.title=theme==="dark"?"Light mode":"Dark mode";
-  }
-  function apply(theme){
-    var root=document.documentElement, body=document.body;
-    if(theme==="light"){
-      root.classList.remove("dark"); root.classList.add("light");
-      if(body) body.classList.remove("dark-mode");
-      try{localStorage.setItem("FinappDarkmode","0");}catch(e){}
-    }else{
-      theme="dark";
-      root.classList.add("dark"); root.classList.remove("light");
-      if(body) body.classList.add("dark-mode");
-      try{localStorage.setItem("FinappDarkmode","1");}catch(e){}
-    }
-    try{localStorage.setItem(KEY,theme);}catch(e){}
-    setIcon(theme);
-    var sw=document.getElementById("darkmodeSwitch");
-    if(sw) sw.checked=(theme==="dark");
-  }
-  function toggle(e){if(e){e.preventDefault();e.stopPropagation();}apply(getTheme()==="dark"?"light":"dark");}
-  function ensureBtn(){
-    var btn=document.getElementById("raThemeToggle");
-    if(!btn){
-      btn=document.createElement("button");
-      btn.id="raThemeToggle"; btn.type="button";
-      btn.className="headerButton ra-theme-toggle ra-theme-fab";
-      btn.innerHTML='<span class="ra-theme-emoji">☀</span>';
-      (document.body||document.documentElement).appendChild(btn);
-    }else{
-      var header=btn.closest&&btn.closest(".appHeader");
-      var hidden=false;
-      if(header){
-        var st=(header.getAttribute("style")||"").replace(/\s/g,"").toLowerCase();
-        if(st.indexOf("display:none")!==-1) hidden=true;
-        try{if(window.getComputedStyle&&getComputedStyle(header).display==="none") hidden=true;}catch(e){}
-      }
-      if(!header||hidden){
-        btn.classList.add("ra-theme-fab");
-        if(btn.parentNode!==document.body) document.body.appendChild(btn);
-        if(!btn.querySelector("ion-icon") && !btn.querySelector(".ra-theme-emoji")){
-          btn.innerHTML='<span class="ra-theme-emoji">☀</span>';
-        }
-      }
-    }
-    if(!btn._raBound){btn._raBound=1;btn.addEventListener("click",toggle);}
-  }
-  function bindSwitch(){
-    var sw=document.getElementById("darkmodeSwitch");
-    if(!sw||sw._raBound) return;
-    sw._raBound=1;
-    sw.addEventListener("click",function(){
-      setTimeout(function(){
-        apply(document.body.classList.contains("dark-mode")?"dark":"light");
-      },0);
-    });
-  }
-  function init(){ensureBtn();bindSwitch();apply(getTheme());}
-  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);
-  else init();
-})();
-</script>
+<script src="/static/js/ra-theme.js?v=1790304800"></script>
+
 </body>
 
 </html>

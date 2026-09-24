@@ -628,8 +628,8 @@
   }
 
 </style>
-<script src="/static/js/ra-api.js?v=1790301000"></script>
-    <link rel="stylesheet" href="static/css/ra-auth.css?v=1790301000">
+<script src="/static/js/ra-api.js?v=1790304800"></script>
+    <link rel="stylesheet" href="static/css/ra-auth.css?v=1790304800">
 </head>
 <body>
 <button type="button" id="raThemeToggle" class="headerButton ra-theme-toggle ra-theme-fab" aria-label="Switch theme" title="Theme" style="position:fixed;top:max(12px,env(safe-area-inset-top));right:12px;z-index:10001;width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(212,175,55,0.45);background:rgba(2,4,3,0.92);color:#F4D874;cursor:pointer;pointer-events:auto;box-shadow:0 4px 16px rgba(0,0,0,0.55);font-size:20px;line-height:1;">
@@ -918,7 +918,7 @@ if (loginForm) loginForm.addEventListener('submit', async (e) => {
 <script>
 window.addEventListener('ra-theme-change', function(){ try{ ['login-card','reg-card','logout-card','wordmark'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.transform=''; }); }catch(e){} });
 </script>
-<script src="/static/js/ra-theme.js?v=1790301000"></script>
+<script src="/static/js/ra-theme.js?v=1790304800"></script>
 </body>
 
 </html>

@@ -1693,3 +1693,34 @@ html:not(.dark) body.glass-ui .btn-outline-secondary,
 html:not(.dark) body.glass-ui .btn-link {
   color: #012018 !important;
 }
+
+
+/* DOCK UNIFY — kill style.css top accent bar on all glass pages */
+body.glass-ui .appBottomMenu .item:before,
+body.glass-ui .appBottomMenu .item::before {
+  background: transparent !important;
+  height: auto !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+}
+/* re-apply slim vertical dividers after killing :before */
+body.glass-ui .appBottomMenu .item + .item::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 22% !important;
+  bottom: 22% !important;
+  width: 1px !important;
+  height: auto !important;
+  background: rgba(255, 255, 255, 0.28) !important;
+  border-radius: 1px;
+  pointer-events: none;
+  opacity: 0.9;
+  transform: none !important;
+}
+html:not(.dark) body.glass-ui .appBottomMenu .item + .item::before,
+html.light body.glass-ui .appBottomMenu .item + .item::before {
+  background: rgba(15, 40, 35, 0.18) !important;
+}
